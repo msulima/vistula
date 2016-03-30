@@ -1,0 +1,30 @@
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="rx.all.js"></script>
+    <script src="simple.rx.js" defer></script>
+    <script src="clock.js" defer></script>
+    <script type="text/javascript" defer>
+        var timer = Rx.Observable.timer(0, 500)
+                .take(5);
+
+        var output = Rx.Observable.zip(timer, function (timer) {
+            return timer + 2;
+        });
+
+        var multiplied = Rx.Observable.zip(output, function (timer) {
+            return timer * 10;
+        });
+
+        var sink = multiplied.forEach(function (x) {
+            console.log('Next: ', x);
+        });
+    </script>
+</head>
+<body>
+<span id="hello">world</span>
+<span id="debug">world</span><br/>
+<span id="text">world</span>
+</body>
+
+</html>

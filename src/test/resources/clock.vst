@@ -1,0 +1,16 @@
+clicks = click(acc = 0, time => {
+  acc + 1
+})
+
+ticks = clock(acc = 0, time => {
+  acc + 1
+})
+
+start = clock
+
+timeElapsed = clock - start
+
+def realTimeElapsed(elapsed):
+  clock - elapsed
+
+labelText = "It is: " + clock + ", elapsed from entering page: " + timeElapsed + " in " + ticks + " " + realTimeElapsed(start)
