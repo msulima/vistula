@@ -1,20 +1,21 @@
-package pl.msulima.vistula.statments
+package pl.msulima.vistula.transpiler
 
 import org.specs2.mutable.Specification
 import pl.msulima.vistula.testutil.ToProgram
 
-class ExpressionSpec extends Specification {
+class FunctionDefSpec extends Specification {
 
   "transpiles function definition" in {
     val program =
       """
-        |x + y
+        |def x(y):
+        |  return y + 1
       """.stripMargin
 
     Statement.apply(program.toStatement) must_==
       """
-        |Rx.Observable.zip(x, y, function(x, y) {
-        |  return x+y;
-        |});""".stripMargin
+        |function x(y) {
+        |  return y + 1;
+        |};""".stripMargin
   }
 }

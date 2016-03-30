@@ -1,11 +1,11 @@
 var _clock = Observable();
-setInterval(_clock.onNext, 100);
+setInterval(_clock.onNext, 1000);
 var clock = _clock.map(function () {
     return new Date().getTime();
 });
 
 var ticks_acc = 0;
-var ticks = clock.map(function (time) {
+var ticks = clock.map(function () {
     ticks_acc = ticks_acc + 1;
     return ticks_acc;
 });
@@ -20,9 +20,32 @@ timeElapsed.forEach(function (text) {
     document.getElementById("debug").textContent = text;
 });
 
+function serverTime() {
+    var obs = Observable();
+
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        var DONE = this.DONE || 4;
+        if (this.readyState === DONE) {
+            console.log(this.readyState);
+        }
+    };
+    request.open('GET', 'http://localhost:8080/time', true);
+    request.send(null);
+
+    return obs;
+}
+
+function compareWithServerTime(currentTime) {
+    if (Math.floor(currentTime / 1000) % 3 == 0) {
+        return serverTime();
+    } else {
+        return Observable("unknown");
+    }
+}
+
 function realTimeElapsed(elapsed) {
     return clock.map(function (time) {
-        console.log("hi!", time, elapsed);
         return time - elapsed;
     });
 }
@@ -40,3 +63,6 @@ labelText.forEach(function (text) {
     document.getElementById("text").textContent = text;
 });
 
+clock.flatMap(compareWithServerTime).forEach(function (text) {
+    document.getElementById("currentTimeText").textContent = text;
+});

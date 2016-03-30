@@ -1,6 +1,6 @@
 package pl.msulima.vistula
 
-import pl.msulima.vistula.statments.Expression
+import pl.msulima.vistula.transpiler.Expression
 
 object Transpiler {
 

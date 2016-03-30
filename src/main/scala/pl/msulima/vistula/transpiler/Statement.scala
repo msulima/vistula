@@ -1,4 +1,4 @@
-package pl.msulima.vistula.statments
+package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.Ast.stmt
 import pl.msulima.vistula.Nesting
@@ -10,6 +10,6 @@ object Statement {
   }
 
   def apply(nesting: Nesting): PartialFunction[stmt, String] = {
-    If(nesting).orElse(Expression(nesting))
+    If.apply.orElse(Expression.apply).orElse(FunctionDef.apply)
   }
 }

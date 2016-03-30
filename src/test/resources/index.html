@@ -5,7 +5,7 @@
     <script src="simple.rx.js" defer></script>
     <script src="clock.js" defer></script>
     <script type="text/javascript" defer>
-        var timer = Rx.Observable.timer(0, 500)
+        var timer = Rx.Observable.timer(0, 1000)
                 .take(5);
 
         var output = Rx.Observable.zip(timer, function (timer) {
@@ -24,7 +24,8 @@
 <body>
 <span id="hello">world</span>
 <span id="debug">world</span><br/>
-<span id="text">world</span>
+<span id="text">world</span><br/>
+<span id="currentTimeText">world</span>
 </body>
 
 </html>
