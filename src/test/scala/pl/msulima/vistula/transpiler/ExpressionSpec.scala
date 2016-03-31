@@ -5,13 +5,25 @@ import pl.msulima.vistula.testutil.ToProgram
 
 class ExpressionSpec extends Specification {
 
-  "transpiles function definition" in {
+  "transpiles assignment" in {
     val program =
       """
-        |x + y(z)
+        |X = Y + 3
       """.stripMargin
 
     Statement.apply(program.toStatement) must_==
-      """x + y(z)""".stripMargin
+      """X + 3""".stripMargin
+  }
+
+  "transpiles function call" in {
+    val program =
+      """
+        |a(X, Y)
+      """.stripMargin
+
+    Statement.apply(program.toStatement) must_==
+      """Zip([X, Y]).flatMap(function (__args) {
+        |  return a(__args[0], __args[1]);
+        |});""".stripMargin
   }
 }

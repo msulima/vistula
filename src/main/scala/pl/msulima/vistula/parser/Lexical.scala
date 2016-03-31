@@ -1,4 +1,4 @@
-package pl.msulima.vistula
+package pl.msulima.vistula.parser
 
 object WsApi extends fastparse.WhitespaceApi.Wrapper(Lexical.wscomment)
 

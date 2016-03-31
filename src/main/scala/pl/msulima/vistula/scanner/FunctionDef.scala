@@ -1,7 +1,7 @@
 package pl.msulima.vistula.scanner
 
-import pl.msulima.vistula.Ast
-import pl.msulima.vistula.Ast.stmt
+import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.parser.Ast.stmt
 
 object FunctionDef {
 
@@ -13,5 +13,7 @@ object FunctionDef {
       }).toSet
 
       argumentNames ++ body.flatMap(Statement.apply)
+    case Ast.stmt.Return(value) =>
+      Set.empty // value.map(Expression.parseExpression).toSet.flatten
   }
 }

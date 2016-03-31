@@ -1,4 +1,4 @@
-package pl.msulima.vistula
+package pl.msulima.vistula.parser
 
 /**
   * A python abstract syntax tree

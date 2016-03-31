@@ -1,6 +1,7 @@
 package pl.msulima.vistula
 
 import fastparse.all._
+import pl.msulima.vistula.parser.Statements
 
 
 package object testutil {

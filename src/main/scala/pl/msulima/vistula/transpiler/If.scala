@@ -1,6 +1,7 @@
 package pl.msulima.vistula.transpiler
 
-import pl.msulima.vistula.Ast.stmt
+import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.parser.Ast.stmt
 
 object If {
 

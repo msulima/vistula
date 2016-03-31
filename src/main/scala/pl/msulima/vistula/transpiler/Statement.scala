@@ -1,15 +1,10 @@
 package pl.msulima.vistula.transpiler
 
-import pl.msulima.vistula.Ast.stmt
-import pl.msulima.vistula.Nesting
+import pl.msulima.vistula.parser.Ast
 
 object Statement {
 
-  def apply: PartialFunction[stmt, String] = {
-    apply(Nesting(Seq(0)))
-  }
-
-  def apply(nesting: Nesting): PartialFunction[stmt, String] = {
+  lazy val apply: PartialFunction[Ast.stmt, String] = {
     If.apply.orElse(Expression.apply).orElse(FunctionDef.apply)
   }
 }

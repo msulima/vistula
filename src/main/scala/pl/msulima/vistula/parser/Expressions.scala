@@ -1,8 +1,8 @@
-package pl.msulima.vistula
+package pl.msulima.vistula.parser
 
 import fastparse.noApi._
-import pl.msulima.vistula.Lexical.kw
-import pl.msulima.vistula.WsApi._
+import pl.msulima.vistula.parser.Lexical.kw
+import pl.msulima.vistula.parser.WsApi._
 
 /**
   * Python's expression grammar. This is stuff that can be used within a larger

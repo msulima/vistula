@@ -1,9 +1,9 @@
-package pl.msulima.vistula
+package pl.msulima.vistula.parser
 
 import fastparse.noApi._
-import pl.msulima.vistula.Expressions._
-import pl.msulima.vistula.Lexical.kw
-import pl.msulima.vistula.WsApi._
+import pl.msulima.vistula.parser.Expressions._
+import pl.msulima.vistula.parser.Lexical.kw
+import pl.msulima.vistula.parser.WsApi._
 
 object Statements extends Statements(0)
 

@@ -37,6 +37,7 @@ function serverTime() {
 }
 
 function compareWithServerTime(currentTime) {
+    console.log((currentTime / 1000) % 3);
     if (Math.floor(currentTime / 1000) % 3 == 0) {
         return serverTime();
     } else {
@@ -65,4 +66,25 @@ labelText.forEach(function (text) {
 
 clock.flatMap(compareWithServerTime).forEach(function (text) {
     document.getElementById("currentTimeText").textContent = text;
+});
+
+function y(z) {
+    Observable(z);
+}
+
+// X + y(Z)
+
+// W = y(Z)
+// X + W
+
+var X, Z;
+
+var W = Z.flatMap(function (z) {
+    return y(z);
+});
+
+Zip([X, W]).map(function (args) {
+    var x = args[0];
+    var w = args[1];
+    return x + args[1];
 });
