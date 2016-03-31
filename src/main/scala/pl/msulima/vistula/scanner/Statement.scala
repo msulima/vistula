@@ -8,7 +8,7 @@ object Statement {
     If.apply.orElse(Expression.apply).orElse(FunctionDef.apply)
   }
 
-  def apply2: PartialFunction[stmt, Variable] = {
+  def apply2: PartialFunction[stmt, Seq[Variable]] = {
     Expression.apply2
   }
 }

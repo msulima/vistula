@@ -11,47 +11,46 @@ object Expression {
       Set.empty
   }
 
-  def apply2: PartialFunction[Ast.stmt, Variable] = {
-    apply3(VariableCounter())
-  }
-
-  private def apply3(counter: VariableCounter): PartialFunction[Ast.stmt, Variable] = {
+  def apply2: PartialFunction[Ast.stmt, Seq[Variable]] = {
     case Ast.stmt.Assign(Ast.expr.Name(Ast.identifier(target), Ast.expr_context.Load) +: _, value) =>
-      val valueVar = parseExpression(value)
-      Observable(target, valueVar.expression, valueVar.dependencies)
+      val valueVars = parseExpression(new VariableCounter(target))(value)
+
+      (Observable(target, valueVars.head.expression) +: valueVars.tail).reverse
   }
 
-  lazy val parseExpression: PartialFunction[Ast.expr, Variable] = {
-    case expr@Ast.expr.Num(x) => Constant(expr)
-    case expr@Ast.expr.Str(x) => Constant(expr)
-    case expr@Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) => NamedObservable(x)
+  private lazy val parseStatic: PartialFunction[Ast.expr, Seq[Variable]] = {
+    case expr@Ast.expr.Num(x) => Seq(Constant(expr))
+    case expr@Ast.expr.Str(x) => Seq(Constant(expr))
+    case expr@Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) => Seq(NamedObservable(x))
+  }
 
+  private def parseExpression(c: VariableCounter): PartialFunction[Ast.expr, Seq[Variable]] = {
+    parseStatic.orElse(parseDynamic(c))
+  }
+
+  private def parseDynamic(c: VariableCounter): PartialFunction[Ast.expr, Seq[Variable]] = {
     case Ast.expr.BinOp(left, op, right) =>
-      val leftVar = parseExpression(left)
-      val rightVar = parseExpression(right)
+      val leftVar = parseExpression(c)(left)
+      val rightVar = parseExpression(c)(right)
 
-      Observable(VariableCounter.next(), Ast.expr.BinOp(leftVar.reference, op, rightVar.reference), Set(leftVar, rightVar))
+      Observable(c.next(), Ast.expr.BinOp(leftVar.head.reference, op, rightVar.head.reference)) +: (leftVar ++ rightVar)
     case Ast.expr.Compare(left, ops, right +: _) =>
-      val leftVar = parseExpression(left)
-      val rightVar = parseExpression(right)
+      val leftVar = parseExpression(c)(left)
+      val rightVar = parseExpression(c)(right)
 
-      Observable(VariableCounter.next(), Ast.expr.Compare(leftVar.reference, ops, Seq(rightVar.reference)), Set(leftVar, rightVar))
+      Observable(c.next(), Ast.expr.Compare(leftVar.head.reference, ops, Seq(rightVar.head.reference))) +: (leftVar ++ rightVar)
     case expr@Ast.expr.Call(Ast.expr.Name(Ast.identifier(target), Ast.expr_context.Load), args, _, _, _) =>
-      val argsVars = args.map(parseExpression)
+      val argsVars = args.map(parseExpression(c))
 
-      Observable(VariableCounter.next(), expr.copy(args = argsVars.map(_.reference)), argsVars.toSet)
+      Observable(c.next(), expr.copy(args = argsVars.map(_.head.reference))) +: argsVars.flatten
   }
 }
 
-object VariableCounter {
+class VariableCounter(base: String) {
 
   private val x = new AtomicInteger()
 
-  def next() = "T" + x.incrementAndGet()
-}
-
-case class VariableCounter(id: Int = 1) {
-  def next = copy(id = id + 1)
-
-  override def toString = "T" + id
+  def next() = {
+    "__" + base + "_" + x.incrementAndGet()
+  }
 }

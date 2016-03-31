@@ -27,10 +27,10 @@ class ExpressionSpec extends Specification {
 
     val result =
       """
-        |T4 = b(Y)
-        |T5 = a(T2, Z)
-        |T2 = X + 3
-        |W = T2 + T5
+        |__W_2 = b(Y)
+        |__W_3 = a(__W_2, Z)
+        |__W_1 = X + 3
+        |W = __W_1 + __W_3
       """.stripMargin
 
     Statement.apply2(program.toStatement) must_== Statement.apply2(result.toStatement)
