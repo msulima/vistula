@@ -6,9 +6,8 @@ class VistulaSpec extends Specification {
 
   private val HelloWorld =
     """
-      |def realTimeElapsed(elapsed):
-      |  return clock - elapsed
-      | """.stripMargin
+      |W = X + 3 + a(b(Y), Z)
+      |""".stripMargin
 
   "extract dependencies" in {
     val script = Vistula.toJavaScript(HelloWorld)

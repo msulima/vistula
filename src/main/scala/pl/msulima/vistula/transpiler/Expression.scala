@@ -26,6 +26,6 @@ object Expression {
       }
       s"${parseExpression(x)} $operator ${parseExpression(y)}"
     case Ast.expr.Call(func, args, _, _, _) =>
-      Rx.call(parseExpression(func), args.map(parseExpression))
+      s"${parseExpression(func)}(${args.map(parseExpression).mkString(", ")})"
   }
 }

@@ -27,12 +27,12 @@ class ExpressionSpec extends Specification {
 
     val result =
       """
-        |__W_2 = b(Y)
-        |__W_3 = a(__W_2, Z)
         |__W_1 = X + 3
-        |W = __W_1 + __W_3
+        |__W_5 = b(Y)
+        |__W_4 = a(__W_5, Z)
+        |W = __W_1 + __W_4
       """.stripMargin
 
-    Statement.apply2(program.toStatement) must_== Statement.apply2(result.toStatement)
+    Flatter(Statement.apply2(program.toStatement)) must_== Statement.applySeq(result.toProgram)
   }
 }

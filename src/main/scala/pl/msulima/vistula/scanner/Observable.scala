@@ -1,7 +1,7 @@
 package pl.msulima.vistula.scanner
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.parser.Ast.expr
+import pl.msulima.vistula.parser.Ast.{expr, stmt}
 
 sealed trait Variable {
 
@@ -11,7 +11,9 @@ sealed trait Variable {
 
   def expression: Ast.expr
 
-  protected def ind(indent: Int) = "  " * indent
+  def statement: Ast.stmt
+
+  protected def ind(indent: Int) = "   +" * indent
 }
 
 case class Constant(expression: Ast.expr) extends Variable {
@@ -22,6 +24,8 @@ case class Constant(expression: Ast.expr) extends Variable {
     s"\n${ind(indent)} Const: $expression"
   }
 
+  override def statement: stmt = Ast.stmt.Expr(expression)
+
   override def reference: expr = expression
 }
 
@@ -30,21 +34,26 @@ case class NamedObservable(name: String) extends Variable {
   override def toString = prettyPrint(0)
 
   override def prettyPrint(indent: Int): String = {
-    s"\n${ind(indent)} Named: $name"
+    s"\n${ind(indent)} NamedObservable: $name"
   }
 
-  override def reference: expr = Ast.expr.Name(Ast.identifier(name), Ast.expr_context.Load)
+  override def statement: stmt = Ast.stmt.Expr(reference)
 
   override def expression: expr = reference
+
+  override def reference: expr = Ast.expr.Name(Ast.identifier(name), Ast.expr_context.Load)
 }
 
-case class Observable(name: String, expression: Ast.expr) extends Variable {
+case class Observable(name: String, expression: Ast.expr, dependsOn: Seq[Variable]) extends Variable {
 
   override def toString = prettyPrint(0)
 
   override def prettyPrint(indent: Int): String = {
-    s"\n${ind(indent)} $name = $expression"
+    s"""
+       |${ind(indent)} $name = $expression${dependsOn.map(_.prettyPrint(indent + 1)).mkString("")}""".stripMargin
   }
+
+  override def statement: stmt = Ast.stmt.Assign(Seq(reference), expression)
 
   override def reference: expr = Ast.expr.Name(Ast.identifier(name), Ast.expr_context.Load)
 }
