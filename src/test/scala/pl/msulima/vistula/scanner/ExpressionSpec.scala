@@ -12,13 +12,14 @@ class ExpressionSpec extends Specification {
   "transpiles binary operation" in {
     val program =
       """
+        |Y = 42
         |X = Y + 3
       """.stripMargin
 
-    Statement.apply2(program.toStatement) must_== Seq(
-      Observable("X", BinOp(Name(identifier("Y"), Load), Add, Num(3)), Seq(
-        NamedObservable("Y"),
-        Constant(Num(3))
+    program.toScanned must_== Seq(
+      FlatVariable("Y", Num(42), Seq()),
+      FlatVariable("X", BinOp(Name(identifier("Y"), Load), Add, Num(3)), Seq(
+        NamedObservable("Y")
       ))
     )
   }
@@ -37,6 +38,6 @@ class ExpressionSpec extends Specification {
         |W = __W_1 + __W_4
       """.stripMargin
 
-    Statement.apply2(program.toStatement) must_== Statement.applySeq(result.toProgram)
+    program.toScanned must_== result.toScanned
   }
 }

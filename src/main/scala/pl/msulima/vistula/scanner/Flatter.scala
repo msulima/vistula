@@ -2,27 +2,29 @@ package pl.msulima.vistula.scanner
 
 object Flatter {
 
-  def apply(program: Seq[Variable]): Seq[Variable] = {
+  def apply(program: Seq[Variable]): Seq[FlatVariable] = {
     program.flatMap(apply)
   }
 
-  def apply(variable: Variable): Seq[Variable] = {
+  def apply(variable: Variable): Seq[FlatVariable] = {
     variable match {
       case obs: Observable =>
         val flatDependencies = obs.dependsOn.flatMap(apply)
-        val flatObs = obs.copy(dependsOn = obs.dependsOn.map(flatten))
-        flatDependencies :+ flatObs
+
+        flatDependencies :+ FlatVariable(obs.name, obs.expression, obs.dependsOn.flatMap(flatten))
       case _: Constant | _: NamedObservable =>
         Seq()
     }
   }
 
-  private def flatten(variable: Variable): Variable = {
+  private def flatten(variable: Variable): Option[NamedObservable] = {
     variable match {
       case x: Observable =>
-        NamedObservable(x.name)
-      case x@(_: Constant | _: NamedObservable) =>
-        x
+        Some(NamedObservable(x.name))
+      case x: NamedObservable =>
+        Some(x)
+      case x: Constant =>
+        None
     }
   }
 }

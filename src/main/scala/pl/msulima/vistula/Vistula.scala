@@ -2,6 +2,8 @@ package pl.msulima.vistula
 
 import fastparse.all._
 import pl.msulima.vistula.parser.{Ast, Statements}
+import pl.msulima.vistula.scanner.FlatVariable
+import pl.msulima.vistula.transpiler.Statement
 
 object Vistula {
 
@@ -13,17 +15,11 @@ object Vistula {
     (Statements.file_input ~ End).parse(input).get.value
   }
 
-  private def scan(program: Seq[Ast.stmt]): Seq[Observable] = {
-    program.map(statement => {
-      Observable(scanner.Statement.apply(statement), statement)
-    })
+  private def scan(program: Seq[Ast.stmt]): Seq[FlatVariable] = {
+    scanner.Statement.applySeq(program)
   }
 
-  private def transpile(program: Seq[Observable]) = {
-    program.map(obs => {
-      transpiler.Statement.apply(obs.statement)
-    }).mkString("\n\n")
+  private def transpile(program: Seq[FlatVariable]) = {
+    program.map(Statement.apply2).mkString("\n")
   }
 }
-
-case class Observable(variables: Set[String], statement: Ast.stmt)

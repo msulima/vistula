@@ -8,13 +8,14 @@ object Expression {
 
   def apply2: PartialFunction[Ast.stmt, Seq[Variable]] = {
     case Ast.stmt.Assign(Ast.expr.Name(Ast.identifier(target), Ast.expr_context.Load) +: _, value) =>
-      Seq(parseExpression(new VariableCounter(target))(value))
-  }
+      val result = if (parseStatic.isDefinedAt(value)) {
+        Observable(target, value, Seq())
+      } else {
+        val (expr, variables) = parseDynamic(new VariableCounter(target))(value)
+        Observable(target, expr, variables)
+      }
 
-  private lazy val parseStatic: PartialFunction[Ast.expr, Variable] = {
-    case expr@Ast.expr.Num(x) => Constant(expr)
-    case expr@Ast.expr.Str(x) => Constant(expr)
-    case expr@Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) => NamedObservable(x)
+      Seq(result)
   }
 
   private def parseExpression(c: VariableCounter): PartialFunction[Ast.expr, Variable] = {
@@ -23,6 +24,12 @@ object Expression {
       case (expr, variables) =>
         Observable(name, expr, variables)
     }))
+  }
+
+  private lazy val parseStatic: PartialFunction[Ast.expr, Variable] = {
+    case expr@Ast.expr.Num(x) => Constant(expr)
+    case expr@Ast.expr.Str(x) => Constant(expr)
+    case expr@Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) => NamedObservable(x)
   }
 
   private def parseDynamic(c: VariableCounter): PartialFunction[Ast.expr, (Ast.expr, Seq[Variable])] = {
@@ -48,11 +55,7 @@ class VariableCounter(base: String) {
   private val x = new AtomicInteger()
 
   def next() = {
-    val id = x.getAndIncrement()
-    if (id == 0) {
-      base
-    } else {
-      "__" + base + "_" + id
-    }
+    val id = x.incrementAndGet()
+    "__" + base + "_" + id
   }
 }

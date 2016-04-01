@@ -15,6 +15,10 @@ package object testutil {
     def toProgram = {
       (Statements.file_input ~ End).parse(code).get.value
     }
+
+    def toScanned = {
+      pl.msulima.vistula.scanner.Statement.applySeq((Statements.file_input ~ End).parse(code).get.value)
+    }
   }
 
 }

@@ -2,6 +2,11 @@ package pl.msulima.vistula.scanner
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.{expr, stmt}
+import pl.msulima.vistula.scanner.Ind.ind
+
+object Ind {
+  def ind(indent: Int) = "   +" * indent
+}
 
 sealed trait Variable {
 
@@ -13,7 +18,6 @@ sealed trait Variable {
 
   def statement: Ast.stmt
 
-  protected def ind(indent: Int) = "   +" * indent
 }
 
 case class Constant(expression: Ast.expr) extends Variable {
@@ -56,4 +60,18 @@ case class Observable(name: String, expression: Ast.expr, dependsOn: Seq[Variabl
   override def statement: stmt = Ast.stmt.Assign(Seq(reference), expression)
 
   override def reference: expr = Ast.expr.Name(Ast.identifier(name), Ast.expr_context.Load)
+}
+
+case class FlatVariable(name: String, expression: Ast.expr, dependsOn: Seq[NamedObservable]) {
+
+  override def toString = prettyPrint(0)
+
+  private def prettyPrint(indent: Int): String = {
+    s"""
+       |${ind(indent)} $name = $expression${dependsOn.map(_.prettyPrint(indent + 1)).mkString("")}""".stripMargin
+  }
+
+  def statement: stmt = Ast.stmt.Assign(Seq(reference), expression)
+
+  def reference: expr = Ast.expr.Name(Ast.identifier(name), Ast.expr_context.Load)
 }

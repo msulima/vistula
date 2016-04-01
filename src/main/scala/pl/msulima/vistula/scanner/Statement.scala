@@ -8,11 +8,11 @@ object Statement {
     If.apply
   }
 
-  def applySeq(program: Seq[Ast.stmt]): Seq[Variable] = {
+  def applySeq(program: Seq[Ast.stmt]): Seq[FlatVariable] = {
     program.flatMap(apply2)
   }
 
-  def apply2: PartialFunction[Ast.stmt, Seq[Variable]] = {
+  def apply2: PartialFunction[Ast.stmt, Seq[FlatVariable]] = {
     (Expression.apply2).orElse(FunctionDef.apply2).andThen(Flatter.apply)
   }
 }
