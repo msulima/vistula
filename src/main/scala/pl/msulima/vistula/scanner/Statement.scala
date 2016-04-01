@@ -13,6 +13,6 @@ object Statement {
   }
 
   def apply2: PartialFunction[Ast.stmt, Seq[Variable]] = {
-    (Expression.apply2).orElse(FunctionDef.apply2)
+    (Expression.apply2).orElse(FunctionDef.apply2).andThen(Flatter.apply)
   }
 }

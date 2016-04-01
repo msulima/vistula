@@ -8,23 +8,21 @@ object Flatter {
 
   def apply(variable: Variable): Seq[Variable] = {
     variable match {
-      case x: Constant =>
+      case obs: Observable =>
+        val flatDependencies = obs.dependsOn.flatMap(apply)
+        val flatObs = obs.copy(dependsOn = obs.dependsOn.map(flatten))
+        flatDependencies :+ flatObs
+      case _: Constant | _: NamedObservable =>
         Seq()
-      case x: NamedObservable =>
-        Seq()
-      case x: Observable =>
-        x.dependsOn.flatMap(apply) :+ x.copy(dependsOn = x.dependsOn.map(flatten))
     }
   }
 
   private def flatten(variable: Variable): Variable = {
     variable match {
-      case x: Constant =>
-        x
-      case x: NamedObservable =>
-        x
       case x: Observable =>
         NamedObservable(x.name)
+      case x@(_: Constant | _: NamedObservable) =>
+        x
     }
   }
 }
