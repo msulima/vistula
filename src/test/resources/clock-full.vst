@@ -1,0 +1,27 @@
+clicks = onClick(acc = 0, time => {
+  acc + 1
+})
+
+ticks = clock(acc = 0, time => {
+  acc + 1
+})
+
+start = clock
+
+timeElapsed = clock - start
+
+def serverTime():
+  xhr("localhost:8080/time")
+
+def compareWithServerTime(currentTime):
+  if (currentTime / 1000) % 3 == 0:
+    serverTime()
+  else:
+    "unknown"
+
+def realTimeElapsed(elapsed):
+  clock - elapsed
+
+labelText = "It is: " + clock + ", elapsed from entering page: " + timeElapsed + " in " + ticks + " " + realTimeElapsed(start)
+
+currentTimeText = compareWithServerTime(clock)

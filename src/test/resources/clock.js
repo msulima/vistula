@@ -12,79 +12,45 @@ var ticks = clock.map(function () {
 
 var start = Observable(new Date().getTime());
 
-var timeElapsed = Zip([clock, start]).map(function (args) {
-    return args[0] - args[1];
-});
-
-timeElapsed.forEach(function (text) {
-    document.getElementById("debug").textContent = text;
-});
-
-function serverTime() {
-    var obs = Observable();
-
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function () {
-        var DONE = this.DONE || 4;
-        if (this.readyState === DONE) {
-            console.log(this.readyState);
-        }
-    };
-    request.open('GET', 'http://localhost:8080/time', true);
-    request.send(null);
-
-    return obs;
-}
-
-function compareWithServerTime(currentTime) {
-    console.log((currentTime / 1000) % 3);
-    if (Math.floor(currentTime / 1000) % 3 == 0) {
-        return serverTime();
-    } else {
-        return Observable("unknown");
-    }
-}
-
 function realTimeElapsed(elapsed) {
     return clock.map(function (time) {
         return time - elapsed;
     });
 }
 
-var _realTimeElapsed_start = Zip([start]).flatMap(function (args) {
-    return realTimeElapsed(args[0]);
-});
+/*-------*/
 
-var labelText = Zip([clock, timeElapsed, ticks, start, _realTimeElapsed_start]).map(function (args) {
-    return "It is: " + args[0] + ", elapsed from entering page: " + args[1] + " real time " + args[4] + " in " + args[2] + " ticks";
+var timeElapsed = Zip([clock, start]).map(function (__args) {
+    var clock = __args[0]; var start = __args[1];
+    return clock - start;
 });
-
+var __labelText_6 = clock.map(function (clock) {
+    return "It is: " + clock;
+});
+var __labelText_5 = __labelText_6.map(function (__labelText_6) {
+    return __labelText_6 + ", elapsed from entering page: ";
+});
+var __labelText_4 = Zip([__labelText_5, timeElapsed]).map(function (__args) {
+    var __labelText_5 = __args[0]; var timeElapsed = __args[1];
+    return __labelText_5 + timeElapsed;
+});
+var __labelText_3 = __labelText_4.map(function (__labelText_4) {
+    return __labelText_4 + " in ";
+});
+var __labelText_2 = Zip([__labelText_3, ticks]).map(function (__args) {
+    var __labelText_3 = __args[0]; var ticks = __args[1];
+    return __labelText_3 + ticks;
+});
+var __labelText_1 = __labelText_2.map(function (__labelText_2) {
+    return __labelText_2 + " ";
+});
+var __labelText_14 = start.flatMap(realTimeElapsed);
+var labelText = Zip([__labelText_1, __labelText_14]).map(function (__args) {
+    var __labelText_1 = __args[0]; var __labelText_14 = __args[1];
+    return __labelText_1 + __labelText_14;
+});
+/*-----*/
 
 labelText.forEach(function (text) {
     document.getElementById("text").textContent = text;
-});
-
-clock.flatMap(compareWithServerTime).forEach(function (text) {
-    document.getElementById("currentTimeText").textContent = text;
-});
-
-function y(z) {
-    Observable(z);
-}
-
-// X + y(Z)
-
-// W = y(Z)
-// X + W
-
-var X, Z;
-
-var W = Z.flatMap(function (z) {
-    return y(z);
-});
-
-Zip([X, W]).map(function (args) {
-    var x = args[0];
-    var w = args[1];
-    return x + args[1];
 });
