@@ -11,7 +11,7 @@ class ExpressionSpec extends Specification {
         |X = Y + 3
       """.stripMargin
 
-    program.toScanned.map(Statement.apply2) must_== Seq(
+    program.toScanned.map(Statement.apply) must_== Seq(
       """var X = Y.map(function (Y) {
         |  return Y + 3;
         |});""".stripMargin
@@ -24,7 +24,7 @@ class ExpressionSpec extends Specification {
         |a(X, Y)
       """.stripMargin
 
-    program.toScanned.map(Statement.apply2) must_==
+    program.toScanned.map(Statement.apply) must_==
       """Zip([X, Y]).flatMap(function (__args) {
         |  return a(__args[0], __args[1]);
         |});""".stripMargin

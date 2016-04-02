@@ -12,6 +12,6 @@ class FunctionDefSpec extends Specification {
         |  return y + 1
       """.stripMargin
 
-    Statement.apply2(program.toStatement) must_== Set("y")
+    Statement.apply(program.toStatement) must_== Set("y")
   }
 }

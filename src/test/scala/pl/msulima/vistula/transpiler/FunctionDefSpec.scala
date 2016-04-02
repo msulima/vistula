@@ -12,7 +12,7 @@ class FunctionDefSpec extends Specification {
         |  return y + 1
       """.stripMargin
 
-    Statement.apply(program.toStatement) must_==
+    Statement.apply(program.toScanned) must_==
       """
         |function x(y) {
         |  return y + 1;
