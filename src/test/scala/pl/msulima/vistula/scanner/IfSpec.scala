@@ -16,6 +16,6 @@ class IfSpec extends Specification {
         |  3
       """.stripMargin
 
-    Statement.apply(program.toStatement) must_== Set("x", "y", "z")
+    If.apply(program.toStatement) must_== Set("x", "y", "z")
   }
 }

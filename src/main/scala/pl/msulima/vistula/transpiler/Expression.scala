@@ -1,15 +1,20 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.scanner.FlatVariable
+import pl.msulima.vistula.scanner.{FlatVariable, ResultVariable, ScanResult}
 
 object Expression {
 
-  def apply: PartialFunction[FlatVariable, String] = {
-    case FlatVariable(target, value: Ast.expr.Call, dependsOn) =>
-      s"var $target = ${parseExpression(value)};"
-    case FlatVariable(target, value, dependsOn) =>
-      s"var $target = ${Rx.map(dependsOn.map(_.name), parseExpression(value))};"
+  def apply: PartialFunction[ScanResult, String] = {
+    case ResultVariable(variables) =>
+      variables.map(parseFlatVariable).mkString("\n")
+  }
+
+  private lazy val parseFlatVariable: PartialFunction[FlatVariable, String] = {
+    case FlatVariable(Some(target), value: Ast.expr.Call, dependsOn) =>
+      s"var ${target.name} = ${parseExpression(value)};"
+    case FlatVariable(Some(target), value, dependsOn) =>
+      s"var ${target.name} = ${Rx.map(dependsOn.map(_.name.name), parseExpression(value))};"
   }
 
   private lazy val parseExpression: PartialFunction[Ast.expr, String] = {

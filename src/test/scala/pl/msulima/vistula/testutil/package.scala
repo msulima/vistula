@@ -2,6 +2,7 @@ package pl.msulima.vistula
 
 import fastparse.all._
 import pl.msulima.vistula.parser.Statements
+import pl.msulima.vistula.scanner.ResultVariable
 
 
 package object testutil {
@@ -16,8 +17,15 @@ package object testutil {
       (Statements.file_input ~ End).parse(code).get.value
     }
 
+    def toScannedVariables = {
+      toScanned.flatMap({
+        case ResultVariable(variables) =>
+          variables
+      })
+    }
+
     def toScanned = {
-      pl.msulima.vistula.scanner.Statement.applySeq((Statements.file_input ~ End).parse(code).get.value)
+      pl.msulima.vistula.scanner.Scanner.apply((Statements.file_input ~ End).parse(code).get.value)
     }
   }
 
