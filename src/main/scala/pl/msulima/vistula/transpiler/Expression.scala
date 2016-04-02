@@ -6,8 +6,8 @@ import pl.msulima.vistula.scanner.FlatVariable
 object Expression {
 
   def apply: PartialFunction[FlatVariable, String] = {
-    case FlatVariable(target, Ast.expr.Call(Ast.expr.Name(Ast.identifier(func), Ast.expr_context.Load), args, _, _, _), dependsOn) =>
-      s"var $target = ${Rx.call(func, dependsOn.map(_.name))};"
+    case FlatVariable(target, value: Ast.expr.Call, dependsOn) =>
+      s"var $target = ${parseExpression(value)};"
     case FlatVariable(target, value, dependsOn) =>
       s"var $target = ${Rx.map(dependsOn.map(_.name), parseExpression(value))};"
   }

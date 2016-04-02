@@ -21,12 +21,11 @@ class ExpressionSpec extends Specification {
   "transpiles function call" in {
     val program =
       """
-        |a(X, Y)
+        |X = a(Y, 3)
       """.stripMargin
 
-    program.toScanned.map(Statement.apply) must_==
-      """Zip([X, Y]).flatMap(function (__args) {
-        |  return a(__args[0], __args[1]);
-        |});""".stripMargin
+    program.toScanned.map(Statement.apply) must_== Seq(
+      """var X = a(Y, 3);""".stripMargin
+    )
   }
 }
