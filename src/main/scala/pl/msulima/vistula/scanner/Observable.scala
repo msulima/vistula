@@ -2,11 +2,8 @@ package pl.msulima.vistula.scanner
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.{expr, stmt}
-import pl.msulima.vistula.scanner.Ind.ind
+import pl.msulima.vistula.util.Indent.ind
 
-object Ind {
-  def ind(indent: Int) = "   +" * indent
-}
 
 sealed trait Variable {
 

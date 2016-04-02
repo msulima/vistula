@@ -6,7 +6,7 @@ import pl.msulima.vistula.parser.Ast
 
 object Expression {
 
-  def apply2: PartialFunction[Ast.stmt, Seq[Variable]] = {
+  def apply: PartialFunction[Ast.stmt, Seq[Variable]] = {
     case Ast.stmt.Assign(Ast.expr.Name(Ast.identifier(target), Ast.expr_context.Load) +: _, value) =>
       val result = if (parseStatic.isDefinedAt(value)) {
         Observable(target, value, Seq())
@@ -27,8 +27,8 @@ object Expression {
   }
 
   private lazy val parseStatic: PartialFunction[Ast.expr, Variable] = {
-    case expr@Ast.expr.Num(x) => Constant(expr)
-    case expr@Ast.expr.Str(x) => Constant(expr)
+    case expr: Ast.expr.Num => Constant(expr)
+    case expr: Ast.expr.Str => Constant(expr)
     case expr@Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) => NamedObservable(x)
   }
 

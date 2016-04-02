@@ -20,6 +20,6 @@ object Vistula {
   }
 
   private def transpile(program: Seq[FlatVariable]) = {
-    program.map(Statement.apply2).mkString("\n")
+    program.map(Statement.apply).mkString("\n")
   }
 }
