@@ -45,6 +45,14 @@ function compareWithServerTime(currentTime) {
     }
 }
 
+function oddTime(currentTime) {
+    if (currentTime % 2 == 0) {
+        return currentTime;
+    } else {
+        return Observable("unknown");
+    }
+}
+
 function realTimeElapsed(elapsed) {
     return clock.map(function (time) {
         return time - elapsed;

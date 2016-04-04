@@ -16,7 +16,7 @@ class IfSpec extends Specification {
         |  3
       """.stripMargin
 
-    Statement.apply(program.toScanned) must_==
+    Transpiler.apply(program.toScanned) must_==
       """if (y < 3) {
         |  x
         |} else if (y > 0) {

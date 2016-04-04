@@ -11,10 +11,15 @@ object Expression {
   }
 
   private lazy val parseFlatVariable: PartialFunction[FlatVariable, String] = {
-    case FlatVariable(Some(target), value: Ast.expr.Call, dependsOn) =>
-      s"var ${target.name} = ${parseExpression(value)};"
-    case FlatVariable(Some(target), value, dependsOn) =>
-      s"var ${target.name} = ${Rx.map(dependsOn.map(_.name.name), parseExpression(value))};"
+    case FlatVariable(target, value: Ast.expr.Call, dependsOn) =>
+      s"${toTarget(target)} ${parseExpression(value)};"
+    case FlatVariable(target, value, dependsOn) =>
+      s"${toTarget(target)} ${Rx.map(dependsOn.map(_.name.name), parseExpression(value))};"
+  }
+
+  private def toTarget(id: Option[Ast.identifier]) = id match {
+    case Some(Ast.identifier(name)) => s"var $name ="
+    case None => "return"
   }
 
   private lazy val parseExpression: PartialFunction[Ast.expr, String] = {

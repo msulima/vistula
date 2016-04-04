@@ -19,6 +19,12 @@ def compareWithServerTime(currentTime):
   else:
     "unknown"
 
+def oddTime(clock):
+  if clock % 2 == 0:
+    clock
+  else:
+    "even"
+
 def realTimeElapsed(elapsed):
   clock - elapsed
 

@@ -1,3 +1,6 @@
+def realTimeElapsed(elapsed):
+  clock - elapsed
+
 timeElapsed = clock - start
 
 labelText = "It is: " + clock + ", elapsed from entering page: " + timeElapsed + " in " + ticks + " " + realTimeElapsed(start)

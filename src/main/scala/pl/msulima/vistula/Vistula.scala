@@ -3,7 +3,7 @@ package pl.msulima.vistula
 import fastparse.all._
 import pl.msulima.vistula.parser.{Ast, Statements}
 import pl.msulima.vistula.scanner.ScanResult
-import pl.msulima.vistula.transpiler.Statement
+import pl.msulima.vistula.transpiler.Transpiler
 
 object Vistula {
 
@@ -20,6 +20,6 @@ object Vistula {
   }
 
   private def transpile(program: Seq[ScanResult]) = {
-    program.map(Statement.apply).mkString("\n")
+    program.map(Transpiler.apply).mkString("\n")
   }
 }

@@ -1,13 +1,15 @@
 package pl.msulima.vistula.transpiler
 
-import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.parser.Ast.stmt
+import pl.msulima.vistula.scanner.{Function, ScanResult}
+import pl.msulima.vistula.util.Indent
 
 object FunctionDef {
 
-  val apply: PartialFunction[stmt, String] = {
-    case Ast.stmt.FunctionDef(name: Ast.identifier, args: Ast.arguments, body: Seq[stmt], _) =>
-      ""
+  def apply: PartialFunction[ScanResult, String] = {
+    case Function(name, arguments, body) =>
+      s"""function ${name.name}(${arguments.map(_.name).mkString(", ")}) {
+         |${Indent.leftPad(Transpiler(body).mkString("\n"))}
+         |}""".stripMargin
     //      val argumentNames = args.args.map(arg => arg match {
     //        case Ast.expr.Name(id, _) =>
     //          id.name

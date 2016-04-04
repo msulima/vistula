@@ -20,7 +20,9 @@ class VistulaSpec extends Specification {
 
   "transpiles clock" in {
     val script = Vistula.toJavaScript(Source.fromInputStream(getClass.getResourceAsStream("/clock.vst")).mkString)
+    println("/*-----*/")
     println(script)
+    println("/*-----*/")
     script must not(beEmpty)
   }
 }

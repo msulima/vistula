@@ -12,14 +12,14 @@ var ticks = clock.map(function () {
 
 var start = Observable(new Date().getTime());
 
-function realTimeElapsed(elapsed) {
-    return clock.map(function (time) {
-        return time - elapsed;
-    });
-}
-
 /*-------*/
 
+function realTimeElapsed(elapsed) {
+    return Zip([clock, elapsed]).map(function (__args) {
+        var clock = __args[0]; var elapsed = __args[1];
+        return clock - elapsed;
+    });
+}
 var timeElapsed = Zip([clock, start]).map(function (__args) {
     var clock = __args[0]; var start = __args[1];
     return clock - start;
@@ -44,7 +44,7 @@ var __labelText_2 = Zip([__labelText_3, ticks]).map(function (__args) {
 var __labelText_1 = __labelText_2.map(function (__labelText_2) {
     return __labelText_2 + " ";
 });
-var __labelText_14 = start.flatMap(realTimeElapsed);
+var __labelText_14 = realTimeElapsed(start);
 var labelText = Zip([__labelText_1, __labelText_14]).map(function (__args) {
     var __labelText_1 = __args[0]; var __labelText_14 = __args[1];
     return __labelText_1 + __labelText_14;
