@@ -7,9 +7,9 @@ object If {
 
   def apply: PartialFunction[Ast.stmt, ScanResult] = {
     case stmt.If(testExpr, body, orElse) =>
-
       val test = Expression.parseSingleExpression(testExpr)
+      val ifCondition = test.copy(variables = test.variables.init :+ test.variables.last.copy(name = Some(Ast.identifier("__ifCondition"))))
 
-      ResultIf(test, Scanner(body), Scanner(orElse))
+      ResultIf(ifCondition, Scanner(body), Scanner(orElse))
   }
 }

@@ -9,6 +9,6 @@ object Transpiler {
   }
 
   def apply: PartialFunction[ScanResult, String] = {
-    Expression.apply.orElse(FunctionDef.apply)
+    Expression.apply.orElse(FunctionDef.apply).orElse(If.apply)
   }
 }

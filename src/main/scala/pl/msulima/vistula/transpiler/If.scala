@@ -1,23 +1,21 @@
 package pl.msulima.vistula.transpiler
 
+import pl.msulima.vistula.scanner.{ResultIf, ScanResult}
+import pl.msulima.vistula.util.Indent
+
 object If {
 
-  //  // filter?
-  //
-  //  lazy val apply: PartialFunction[stmt, String] = {
-  //    case stmt.If(test, body, orElse) =>
-  ////      s"""if (${Expression.parseExpression(test)}) {
-  ////          |  ${body.map(Statement.apply).mkString("\n")}
-  ////          |} ${orElse.map(parseOrElse).mkString("\n")}""".stripMargin
-  //  }
-  //
-  //  lazy val parseOrElse: PartialFunction[stmt, String] = {
-  //    case x@stmt.If(test, body, orelse) =>
-  //      s"else ${apply(x)}"
-  //    case x: stmt.Expr =>
-  //      s"""else {
-  //          |  Expression.apply(x)
-  //          |}""".stripMargin
-  //  }
+  def apply: PartialFunction[ScanResult, String] = {
+    case ResultIf(test, body, other) =>
+      s"""${Transpiler.apply(test)}
+         |${Rx.flatMap("__ifCondition", transpileBody(body, other))};""".stripMargin
+  }
 
+  private def transpileBody(body: Seq[ScanResult], other: Seq[ScanResult]) = {
+    s"""if (__ifCondition) {
+        |${Indent.leftPad(Transpiler.apply(body))}
+        |} else {
+        |${Indent.leftPad(Transpiler.apply(other))}
+        |}""".stripMargin
+  }
 }

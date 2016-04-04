@@ -8,21 +8,22 @@ class IfSpec extends Specification {
   "transpiles if" in {
     val program =
       """
-        |if y < 3:
-        |  x
-        |elif y > 0:
-        |  z
+        |if X < 3:
+        |  X
         |else:
         |  3
       """.stripMargin
 
-    Transpiler.apply(program.toScanned) must_==
-      """if (y < 3) {
-        |  x
-        |} else if (y > 0) {
-        |  z
-        |} else {
-        |  3
-        |}""".stripMargin
+    program.toScanned.map(Transpiler.apply).head must_==
+      """var __ifCondition = X.map(function (X) {
+        |  return X < 3;
+        |});
+        |__ifCondition.flatMap(function (__ifCondition) {
+        |  if (__ifCondition) {
+        |    return X;
+        |  } else {
+        |    return Observable(3);
+        |  }
+        |});""".stripMargin
   }
 }

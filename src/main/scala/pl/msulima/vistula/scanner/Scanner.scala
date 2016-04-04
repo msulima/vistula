@@ -9,6 +9,6 @@ object Scanner {
   }
 
   def apply: PartialFunction[Ast.stmt, ScanResult] = {
-    Expression.apply.orElse(FunctionDef.apply)
+    Expression.apply.orElse(FunctionDef.apply).orElse(If.apply)
   }
 }

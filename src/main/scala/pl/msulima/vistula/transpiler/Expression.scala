@@ -13,8 +13,10 @@ object Expression {
   private lazy val parseFlatVariable: PartialFunction[FlatVariable, String] = {
     case FlatVariable(target, value: Ast.expr.Call, dependsOn) =>
       s"${toTarget(target)} ${parseExpression(value)};"
+    case FlatVariable(target, value, Nil) =>
+      s"${toTarget(target)} Observable(${parseExpression(value)});"
     case FlatVariable(target, value, dependsOn) =>
-      s"${toTarget(target)} ${Rx.map(dependsOn.map(_.name.name), parseExpression(value))};"
+      s"${toTarget(target)} ${Rx.map(dependsOn.map(_.name.name), s"return ${parseExpression(value)};")};"
   }
 
   private def toTarget(id: Option[Ast.identifier]) = id match {
