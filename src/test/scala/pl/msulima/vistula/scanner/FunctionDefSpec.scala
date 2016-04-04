@@ -35,7 +35,7 @@ class FunctionDefSpec extends Specification {
     )
 
     program.toScanned must_== Seq(
-      Function(identifier("a"), Seq(identifier("X")), body)
+      ResultFunction(identifier("a"), Seq(identifier("X")), body)
     )
   }
 }

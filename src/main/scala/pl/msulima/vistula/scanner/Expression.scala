@@ -17,17 +17,21 @@ object Expression {
 
       ResultVariable(Flatter(result))
     case Ast.stmt.Expr(value) =>
-      val result = if (parseStatic.isDefinedAt(value)) {
-        FlatVariable(None, value, Seq())
-      } else {
-        val (expr, variables) = parseDynamic(new VariableCounter(Ast.identifier("__S")))(value)
+      parseSingleExpression(value)
+  }
 
-        FlatVariable(None, expr, variables.collect({
-          case x: NamedObservable => x
-        }))
-      }
+  def parseSingleExpression(value: Ast.expr) = {
+    val result = if (parseStatic.isDefinedAt(value)) {
+      FlatVariable(None, value, Seq())
+    } else {
+      val (expr, variables) = parseDynamic(new VariableCounter(Ast.identifier("__S")))(value)
 
-      ResultVariable(Seq(result))
+      FlatVariable(None, expr, variables.collect({
+        case x: NamedObservable => x
+      }))
+    }
+
+    ResultVariable(Seq(result))
   }
 
   private def parseExpression(c: VariableCounter): PartialFunction[Ast.expr, Variable] = {

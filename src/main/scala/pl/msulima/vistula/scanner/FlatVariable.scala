@@ -5,7 +5,9 @@ import pl.msulima.vistula.util.Indent
 
 trait ScanResult
 
-case class Function(name: Ast.identifier, arguments: Seq[Ast.identifier], body: Seq[ScanResult]) extends ScanResult
+case class ResultFunction(name: Ast.identifier, arguments: Seq[Ast.identifier], body: Seq[ScanResult]) extends ScanResult
+
+case class ResultIf(test: ResultVariable, body: Seq[ScanResult], other: Seq[ScanResult]) extends ScanResult
 
 case class ResultVariable(variables: Seq[FlatVariable]) extends ScanResult
 

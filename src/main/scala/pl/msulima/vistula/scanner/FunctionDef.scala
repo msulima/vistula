@@ -10,8 +10,6 @@ object FunctionDef {
       val argumentIds = arguments.args.map({
         case Ast.expr.Name(id, Ast.expr_context.Param) => id
       })
-      Function(name, argumentIds, Scanner(body))
-    //    case Ast.stmt.Return(value) =>
-    //      Seq.empty // value.map(Expression.parseExpression).toSet.flatten
+      ResultFunction(name, argumentIds, Scanner(body))
   }
 }

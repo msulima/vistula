@@ -5,8 +5,11 @@ import pl.msulima.vistula.parser.Ast.stmt
 
 object If {
 
-  def apply: PartialFunction[Ast.stmt, Seq[Variable]] = {
-    case stmt.If(test, body, orElse) =>
-      Seq.empty // Expression.parseExpression(test) ++ body.flatMap(Statement.apply) ++ orElse.flatMap(If.apply.orElse(Expression.apply))
+  def apply: PartialFunction[Ast.stmt, ScanResult] = {
+    case stmt.If(testExpr, body, orElse) =>
+
+      val test = Expression.parseSingleExpression(testExpr)
+
+      ResultIf(test, Scanner(body), Scanner(orElse))
   }
 }
