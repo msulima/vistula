@@ -8,7 +8,7 @@ object If {
   def apply: PartialFunction[ScanResult, String] = {
     case ResultIf(test, body, other) =>
       s"""${Transpiler.apply(test)}
-         |${Rx.flatMap("__ifCondition", transpileBody(body, other))};""".stripMargin
+         |return ${Rx.flatMap("__ifCondition", transpileBody(body, other))};""".stripMargin
   }
 
   private def transpileBody(body: Seq[ScanResult], other: Seq[ScanResult]) = {

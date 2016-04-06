@@ -15,7 +15,7 @@ class IfSpec extends Specification {
   "transpiles if" in {
     val program =
       """
-        |if X < 3:
+        |if X * 2 < 3:
         |  3
         |else:
         |  Z = Y + 3
@@ -24,8 +24,9 @@ class IfSpec extends Specification {
 
     If.apply(program.toStatement) must_== ResultIf(
       ResultVariable(Seq(
-        FlatVariable(None, Compare(Name(identifier("X"), Load), ArrayBuffer(Lt), Seq(Num(3))), Seq(NamedObservable(identifier("X")))))
-      ),
+        FlatVariable(Some(identifier("__Temp_1")), BinOp(Name(identifier("X"), Load), Mult, Num(2)), Seq(NamedObservable(identifier("X")))),
+        FlatVariable(Some(identifier("__ifCondition")), Compare(Name(identifier("__Temp_1"), Load), ArrayBuffer(Lt), Seq(Num(3))), Seq(NamedObservable(identifier("__Temp_1"))))
+      )),
       Seq(
         ResultVariable(Seq(FlatVariable(None, Num(3), Seq())))
       ),

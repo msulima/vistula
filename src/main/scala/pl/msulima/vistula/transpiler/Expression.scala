@@ -13,6 +13,8 @@ object Expression {
   private lazy val parseFlatVariable: PartialFunction[FlatVariable, String] = {
     case FlatVariable(target, value: Ast.expr.Call, dependsOn) =>
       s"${toTarget(target)} ${parseExpression(value)};"
+    case FlatVariable(target, Ast.expr.Name(variable, Ast.expr_context.Load), Nil) =>
+      s"${toTarget(target)} ${variable.name};"
     case FlatVariable(target, value, Nil) =>
       s"${toTarget(target)} Observable(${parseExpression(value)});"
     case FlatVariable(target, value, dependsOn) =>
@@ -32,12 +34,19 @@ object Expression {
       val operator = op match {
         case Ast.operator.Add => "+"
         case Ast.operator.Sub => "-"
+        case Ast.operator.Mult => "*"
+        case Ast.operator.Div => "/"
+        case Ast.operator.Mod => "%"
       }
       s"${parseExpression(x)} $operator ${parseExpression(y)}"
     case Ast.expr.Compare(x, op +: _, y +: _) =>
       val operator = op match {
         case Ast.cmpop.Lt => "<"
+        case Ast.cmpop.LtE => "<="
         case Ast.cmpop.Gt => ">"
+        case Ast.cmpop.GtE => ">="
+        case Ast.cmpop.Eq => "=="
+        case Ast.cmpop.NotEq => "!="
       }
       s"${parseExpression(x)} $operator ${parseExpression(y)}"
     case Ast.expr.Call(func, args, _, _, _) =>

@@ -18,7 +18,7 @@ class IfSpec extends Specification {
       """var __ifCondition = X.map(function (X) {
         |  return X < 3;
         |});
-        |__ifCondition.flatMap(function (__ifCondition) {
+        |return __ifCondition.flatMap(function (__ifCondition) {
         |  if (__ifCondition) {
         |    return X;
         |  } else {

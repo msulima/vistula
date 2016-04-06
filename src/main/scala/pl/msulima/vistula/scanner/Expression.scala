@@ -6,39 +6,29 @@ import pl.msulima.vistula.parser.Ast
 
 object Expression {
 
-  def apply: PartialFunction[Ast.stmt, ScanResult] = {
+  def apply: PartialFunction[Ast.stmt, ResultVariable] = {
     case Ast.stmt.Assign(Ast.expr.Name(target, Ast.expr_context.Load) +: _, value) =>
-      val result = if (parseStatic.isDefinedAt(value)) {
-        Observable(target, value, Seq())
-      } else {
-        val (expr, variables) = parseDynamic(new VariableCounter(target))(value)
-        Observable(target, expr, variables)
-      }
-
-      ResultVariable(Flatter(result))
+      parseSingleExpression(Some(target), value)
     case Ast.stmt.Expr(value) =>
-      parseSingleExpression(value)
+      parseSingleExpression(None, value)
   }
 
-  def parseSingleExpression(value: Ast.expr) = {
+  private def parseSingleExpression(target: Option[Ast.identifier], value: Ast.expr) = {
     val result = if (parseStatic.isDefinedAt(value)) {
-      FlatVariable(None, value, Seq())
+      Observable(target, value, Seq())
     } else {
-      val (expr, variables) = parseDynamic(new VariableCounter(Ast.identifier("__S")))(value)
-
-      FlatVariable(None, expr, variables.collect({
-        case x: NamedObservable => x
-      }))
+      val (expr, variables) = parseDynamic(new VariableCounter(target.getOrElse(Ast.identifier("Temp"))))(value)
+      Observable(target, expr, variables)
     }
 
-    ResultVariable(Seq(result))
+    ResultVariable(Flatter(result))
   }
 
   private def parseExpression(c: VariableCounter): PartialFunction[Ast.expr, Variable] = {
     val name = c.next()
     parseStatic.orElse(parseDynamic(c).andThen({
       case (expr, variables) =>
-        Observable(name, expr, variables)
+        Observable(Some(name), expr, variables)
     }))
   }
 

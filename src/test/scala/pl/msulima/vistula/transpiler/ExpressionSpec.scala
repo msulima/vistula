@@ -5,6 +5,17 @@ import pl.msulima.vistula.testutil.ToProgram
 
 class ExpressionSpec extends Specification {
 
+  "transpiles simple statement" in {
+    val program =
+      """
+        |X
+      """.stripMargin
+
+    program.toScanned.map(Transpiler.apply) must_== Seq(
+      "return X;"
+    )
+  }
+
   "transpiles assignment" in {
     val program =
       """

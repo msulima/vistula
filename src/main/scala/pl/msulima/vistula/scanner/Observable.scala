@@ -37,12 +37,12 @@ case class NamedObservable(name: Ast.identifier) extends Variable {
   override def reference: expr = Ast.expr.Name(name, Ast.expr_context.Load)
 }
 
-case class Observable(name: Ast.identifier, expression: Ast.expr, dependsOn: Seq[Variable]) extends Variable {
+case class Observable(name: Option[Ast.identifier], expression: Ast.expr, dependsOn: Seq[Variable]) extends Variable {
 
   override def prettyPrint(indent: Int): String = {
     s"""
        |${ind(indent)} $name = $expression${dependsOn.map(_.prettyPrint(indent + 1)).mkString("")}""".stripMargin
   }
 
-  override def reference: expr = Ast.expr.Name(name, Ast.expr_context.Load)
+  override def reference: expr = Ast.expr.Name(name.get, Ast.expr_context.Load)
 }
