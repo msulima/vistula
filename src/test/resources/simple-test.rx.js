@@ -1,26 +1,27 @@
-var clock = Observable();
-setInterval(clock.onNext, 1000);
+var clock = new ObservableImpl();
+setInterval(clock.onNext.bind(clock), 1000);
 
-var justOne = Observable(1000);
+var justOne = new ObservableImpl(1000);
 
 var secondClock = clock.map(function () {
     return new Date().getTime() / 1000;
 });
 
-var third = secondClock.flatMap(function (time) {
-    return justOne.map(function (x) {
-        return x * time;
-    });
-});
-
 secondClock.forEach(function (time) {
-    console.log("second", time);
+    document.getElementById("secondClock").textContent = JSON.stringify(time);
 });
 
-third.forEach(function (time) {
-    console.log("third", time);
-});
-
-Zip([secondClock, third]).forEach(function (zip) {
-    console.log("zip", zip);
-});
+//
+//var third = secondClock.flatMap(function (time) {
+//    return justOne.map(function (x) {
+//        return x * time;
+//    });
+//});
+//
+//third.forEach(function (time) {
+//    console.log("third", time);
+//});
+//
+//Zip([secondClock, third]).forEach(function (zip) {
+//    document.getElementById("zip").textContent = JSON.stringify(zip);
+//});

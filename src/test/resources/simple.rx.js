@@ -1,5 +1,5 @@
 function Zip(observables) {
-    var observable = Observable();
+    var observable = new Observable();
 
     var results = observables.map(function () {
         return {
@@ -39,6 +39,39 @@ function Functor(functor, isSingle) {
     }
 }
 
+var ObservableImpl = function (value) {
+    this.hasValue = typeof(value) !== "undefined";
+    this.lastValue = this.hasValue ? value : null;
+    this.observers = [];
+};
+
+ObservableImpl.prototype.forEach = function (callback) {
+    this.observers.push(callback);
+
+    if (this.hasValue) {
+        callback(this.lastValue);
+    }
+};
+
+ObservableImpl.prototype.onNext = function (value) {
+    this.hasValue = true;
+    this.lastValue = value;
+
+    this.observers.map(function (callback) {
+        callback(value);
+    });
+};
+
+ObservableImpl.prototype.map = function (callback) {
+    var observable = new ObservableImpl();
+
+    this.forEach(function (value) {
+        observable.onNext(callback(value));
+    });
+
+    return observable;
+};
+
 function Observable(value) {
     var hasValue = typeof(value) !== "undefined";
     var lastValue = hasValue ? value : null;
@@ -72,7 +105,7 @@ function Observable(value) {
     }
 
     function map(functor) {
-        var observable = Observable();
+        var observable = new Observable();
         forEach(function (next) {
             observable.onNext(functor(next));
         });
@@ -81,7 +114,7 @@ function Observable(value) {
     }
 
     function flatMap(functor) {
-        var observable = Observable();
+        var observable = new Observable();
         _forEach(Functor(function (next) {
             var nestedObservable = functor(next);
 
