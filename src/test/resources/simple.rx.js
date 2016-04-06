@@ -1,5 +1,5 @@
 function Zip(observables) {
-    var observable = new Observable();
+    var observable = new ObservableImpl();
 
     var results = observables.map(function () {
         return {
@@ -30,13 +30,6 @@ function Zip(observables) {
     }
 
     return observable;
-}
-
-function Functor(functor, isSingle) {
-    return {
-        isSingle: isSingle || false,
-        apply: functor
-    }
 }
 
 var ObservableImpl = function (value) {
@@ -71,6 +64,13 @@ ObservableImpl.prototype.map = function (callback) {
 
     return observable;
 };
+
+function Functor(functor, isSingle) {
+    return {
+        isSingle: isSingle || false,
+        apply: functor
+    }
+}
 
 function Observable(value) {
     var hasValue = typeof(value) !== "undefined";

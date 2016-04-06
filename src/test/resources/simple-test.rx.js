@@ -1,14 +1,26 @@
-var clock = new ObservableImpl();
-setInterval(clock.onNext.bind(clock), 1000);
+var timer = new ObservableImpl();
+setInterval(timer.onNext.bind(timer), 1000);
 
 var justOne = new ObservableImpl(1000);
 
-var secondClock = clock.map(function () {
-    return new Date().getTime() / 1000;
+var millisClock = timer.map(function () {
+    return new Date().getTime();
 });
 
-secondClock.forEach(function (time) {
-    document.getElementById("secondClock").textContent = JSON.stringify(time);
+var secondsClock = millisClock.map(function (time) {
+    return Math.floor(time / 1000);
+});
+
+millisClock.forEach(function (time) {
+    document.getElementById("millisClock").textContent = JSON.stringify(time);
+});
+
+secondsClock.forEach(function (time) {
+    document.getElementById("secondsClock").textContent = JSON.stringify(time);
+});
+
+Zip([millisClock, secondsClock]).forEach(function (zip) {
+    document.getElementById("zip").textContent = JSON.stringify(zip);
 });
 
 //
