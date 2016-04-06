@@ -1,7 +1,7 @@
 var timer = new ObservableImpl();
 setInterval(timer.onNext.bind(timer), 1000);
 
-var justOne = ConstantObservable(1000);
+var justOne = ConstantObservable(1);
 
 var millisClock = timer.map(function () {
     return new Date().getTime();
@@ -13,6 +13,10 @@ var secondsClock = millisClock.map(function (time) {
 
 var delayedClock = millisClock.flatMap(function (time) {
     return DelayedObservable(time, 500);
+});
+
+var constant = millisClock.flatMap(function (time) {
+    return justOne;
 });
 
 millisClock.forEach(function (time) {
@@ -29,6 +33,10 @@ Zip([millisClock, secondsClock]).forEach(function (zip) {
 
 delayedClock.forEach(function (time) {
     document.getElementById("delayedClock").textContent = JSON.stringify(time);
+});
+
+constant.forEach(function (time) {
+    document.getElementById("constant").textContent = JSON.stringify(time);
 });
 
 //

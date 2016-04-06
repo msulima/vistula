@@ -22,7 +22,7 @@ class IfSpec extends Specification {
         |  if (__ifCondition) {
         |    return X;
         |  } else {
-        |    return Observable(3);
+        |    return ConstantObservable(3);
         |  }
         |});""".stripMargin
   }

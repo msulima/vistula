@@ -1,6 +1,12 @@
+def oddTime(clock):
+  if clock % 2 == 0:
+    clock
+  else:
+    "no"
+
 def realTimeElapsed(elapsed):
   clock - elapsed
 
 timeElapsed = clock - start
 
-labelText = "It is: " + clock + ", elapsed from entering page: " + timeElapsed + " in " + ticks + " " + realTimeElapsed(start)
+labelText = "It is: " + clock + ", elapsed from entering page: " + timeElapsed + " in " + ticks + " real: " + realTimeElapsed(start) + " is odd: " + oddTime(clock)

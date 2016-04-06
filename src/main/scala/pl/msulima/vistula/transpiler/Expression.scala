@@ -16,7 +16,7 @@ object Expression {
     case FlatVariable(target, Ast.expr.Name(variable, Ast.expr_context.Load), Nil) =>
       s"${toTarget(target)} ${variable.name};"
     case FlatVariable(target, value, Nil) =>
-      s"${toTarget(target)} Observable(${parseExpression(value)});"
+      s"${toTarget(target)} ConstantObservable(${parseExpression(value)});"
     case FlatVariable(target, value, dependsOn) =>
       s"${toTarget(target)} ${Rx.map(dependsOn.map(_.name.name), s"return ${parseExpression(value)};")};"
   }

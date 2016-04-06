@@ -1,6 +1,7 @@
-var _clock = Observable();
-setInterval(_clock.onNext, 1000);
-var clock = _clock.map(function () {
+var timer = new ObservableImpl();
+setInterval(timer.onNext.bind(timer), 1000);
+
+var clock = timer.map(function () {
     return new Date().getTime();
 });
 
@@ -10,7 +11,7 @@ var ticks = clock.map(function () {
     return ticks_acc;
 });
 
-var start = Observable(new Date().getTime());
+var start = ConstantObservable(new Date().getTime());
 
 var timeElapsed = Zip([clock, start]).map(function (args) {
     return args[0] - args[1];
@@ -21,7 +22,7 @@ timeElapsed.forEach(function (text) {
 });
 
 function serverTime() {
-    var obs = Observable();
+    var obs = new ObservableImpl();
 
     var request = new XMLHttpRequest();
     request.onreadystatechange = function () {
@@ -41,21 +42,29 @@ function compareWithServerTime(currentTime) {
     if (Math.floor(currentTime / 1000) % 3 == 0) {
         return serverTime();
     } else {
-        return Observable("unknown");
+        return ConstantObservable("unknown");
     }
 }
 
-function oddTime(currentTime) {
-    if (currentTime % 2 == 0) {
-        return currentTime;
-    } else {
-        return Observable("unknown");
-    }
+function oddTime(CurrentTime) {
+    var X = CurrentTime.map(function (currentTime) {
+        return currentTime % 2 == 0;
+    });
+
+    return X.flatMap(function (x) {
+        if (x) {
+            return CurrentTime;
+        } else {
+            return ConstantObservable("unknown");
+        }
+    });
 }
 
 function realTimeElapsed(elapsed) {
-    return clock.map(function (time) {
-        return time - elapsed;
+    return Zip([clock, elapsed]).map(function (__args) {
+        var clock = __args[0];
+        var elapsed = __args[1];
+        return clock - elapsed;
     });
 }
 

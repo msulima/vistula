@@ -6,7 +6,7 @@ class RxSpec extends Specification {
 
   "transpiles constants" in {
     Rx.map(Seq(), "42") must_==
-      "Observable(42)"
+      "ConstantObservable(42)"
   }
 
   "transpiles single reactive variable" in {

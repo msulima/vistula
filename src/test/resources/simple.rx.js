@@ -8,16 +8,23 @@ ObservableImpl.prototype.forEach = function (callback) {
     this.observers.push(callback);
 
     if (this.hasValue) {
-        callback(this.lastValue);
+        callback(this.lastValue, this.unsubscribe.bind(this, callback));
     }
 };
 
 ObservableImpl.prototype.onNext = function (value) {
     this.hasValue = true;
     this.lastValue = value;
+    var _this = this;
 
     this.observers.map(function (callback) {
-        callback(value);
+        callback(value, _this.unsubscribe.bind(_this, callback));
+    });
+};
+
+ObservableImpl.prototype.unsubscribe = function (callback) {
+    this.observers = this.observers.filter(function (observer) {
+        return observer != callback;
     });
 };
 
@@ -32,13 +39,21 @@ ObservableImpl.prototype.map = function (callback) {
 };
 
 ObservableImpl.prototype.flatMap = function (callback) {
-    var observable = new ObservableImpl();
+    var proxy = new ObservableImpl();
+    var currentObservable = null;
 
     this.forEach(function (next) {
         var nestedObservable = callback(next);
+        currentObservable = nestedObservable;
 
-        nestedObservable.forEach(observable.onNext.bind(observable));
+        nestedObservable.forEach(function (value, unsubscribeCallback) {
+            if (nestedObservable == currentObservable) {
+                proxy.onNext(value);
+            } else {
+                unsubscribeCallback();
+            }
+        });
     });
 
-    return observable;
+    return proxy;
 };
