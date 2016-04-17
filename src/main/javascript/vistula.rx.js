@@ -1,3 +1,5 @@
+'use strict';
+
 var ObservableImpl = function () {
     this.hasValue = false;
     this.lastValue = null;
@@ -57,3 +59,5 @@ ObservableImpl.prototype.flatMap = function (callback) {
 
     return proxy;
 };
+
+module.exports.ObservableImpl = ObservableImpl;

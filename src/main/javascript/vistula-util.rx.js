@@ -1,3 +1,7 @@
+'use strict';
+
+var ObservableImpl = require('./vistula.rx.js').ObservableImpl;
+
 function Zip(observables) {
     var observable = new ObservableImpl();
 
@@ -45,3 +49,31 @@ function DelayedObservable(value, delay) {
     }, delay);
     return observable;
 }
+
+function aggregate(Initial, Source, createSource) {
+    let $Obs = new ObservableImpl();
+    Initial.forEach((initial, unsubscribe) => {
+        unsubscribe();
+
+        let $acc = initial;
+        $Obs.onNext($acc);
+
+        let $Following = Source.flatMap((source) => {
+            return createSource($acc, source);
+        });
+
+        $Following.forEach((following) => {
+            $acc = following;
+            $Obs.onNext(following);
+        });
+    });
+
+    return $Obs
+}
+
+module.exports = {
+    Zip: Zip,
+    DelayedObservable: DelayedObservable,
+    ConstantObservable: ConstantObservable,
+    aggregate: aggregate
+};
