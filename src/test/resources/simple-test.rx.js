@@ -1,7 +1,7 @@
-var timer = new ObservableImpl();
+var timer = new vistula.ObservableImpl();
 setInterval(timer.onNext.bind(timer), 1000);
 
-var justOne = ConstantObservable(1);
+var justOne = vistula.ConstantObservable(1);
 
 var millisClock = timer.map(function () {
     return new Date().getTime();
@@ -12,7 +12,7 @@ var secondsClock = millisClock.map(function (time) {
 });
 
 var delayedClock = millisClock.flatMap(function (time) {
-    return DelayedObservable(time, 500);
+    return vistula.DelayedObservable(time, 500);
 });
 
 var constant = millisClock.flatMap(function (time) {
@@ -27,7 +27,7 @@ secondsClock.forEach(function (time) {
     document.getElementById("secondsClock").textContent = JSON.stringify(time);
 });
 
-Zip([millisClock, secondsClock]).forEach(function (zip) {
+vistula.Zip([millisClock, secondsClock]).forEach(function (zip) {
     document.getElementById("zip").textContent = JSON.stringify(zip);
 });
 

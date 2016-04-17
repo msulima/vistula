@@ -4,11 +4,13 @@
   "description": "* Dictionaries * Functions * Conditions * Loops * Assignments * Lists",
   "main": "index.js",
   "scripts": {
-    "test": "mocha src/test/javascript"
+    "test": "mocha src/test/javascript",
+    "browserify": "browserify src/main/javascript/module.js --s vistula -o target/vistula.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "browserify": "^13.0.0",
     "chai": "^3.5.0",
     "mocha": "^2.4.5"
   }

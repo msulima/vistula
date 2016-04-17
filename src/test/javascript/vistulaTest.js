@@ -1,10 +1,9 @@
 'use strict';
 
-let vistula = require('../../main/javascript/vistula.rx.js');
-let vistulaUtil = require('../../main/javascript/vistula-util.rx.js');
+let vistula = require('../../main/javascript/observable');
+let vistulaUtil = require('../../main/javascript/util');
 
 let Probe = require('./probe').Probe;
-let assert = require('chai').assert;
 
 
 describe('Observable', function () {

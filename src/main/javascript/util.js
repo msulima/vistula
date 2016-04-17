@@ -1,6 +1,6 @@
 'use strict';
 
-var ObservableImpl = require('./vistula.rx.js').ObservableImpl;
+var ObservableImpl = require('./observable').ObservableImpl;
 
 function Zip(observables) {
     var observable = new ObservableImpl();
