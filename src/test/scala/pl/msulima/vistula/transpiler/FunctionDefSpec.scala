@@ -13,13 +13,13 @@ class FunctionDefSpec extends Specification {
         |  Y - 1
       """.stripMargin
 
-    program.toScanned.map(Transpiler.apply).head must_==
+    program.toTranspiled.head must_==
       """function a(X) {
-        |  var Y = X.map(function (X) {
-        |    return X + 2;
+        |  var Y = Zip([X]).map(function ($args) {
+        |    return $args[0] + 2;
         |  });
-        |  return Y.map(function (Y) {
-        |    return Y - 1;
+        |  return Zip([Y]).map(function ($args) {
+        |    return $args[0] - 1;
         |  });
         |}""".stripMargin
   }

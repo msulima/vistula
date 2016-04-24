@@ -14,16 +14,15 @@ class IfSpec extends Specification {
         |  3
       """.stripMargin
 
-    program.toScanned.map(Transpiler.apply).head must_==
-      """var __ifCondition = X.map(function (X) {
-        |  return X < 3;
-        |});
-        |return __ifCondition.flatMap(function (__ifCondition) {
-        |  if (__ifCondition) {
+    program.toTranspiled.head must_==
+      """Zip([X]).map(function ($args) {
+        |  return $args[0] < 3;
+        |}).flatMap(function ($ifCondition) {
+        |  if ($ifCondition) {
         |    return X;
         |  } else {
         |    return ConstantObservable(3);
         |  }
-        |});""".stripMargin
+        |})""".stripMargin
   }
 }

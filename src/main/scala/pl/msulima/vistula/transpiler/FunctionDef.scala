@@ -1,14 +1,17 @@
 package pl.msulima.vistula.transpiler
 
-import pl.msulima.vistula.scanner.{ResultFunction, ScanResult}
+import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.util.Indent
 
 object FunctionDef {
 
-  def apply: PartialFunction[ScanResult, String] = {
-    case ResultFunction(name, arguments, body) =>
-      s"""function ${name.name}(${arguments.map(_.name).mkString(", ")}) {
-          |${Indent.leftPad(Transpiler(body))}
+  def apply: PartialFunction[Ast.stmt, String] = {
+    case Ast.stmt.FunctionDef(name, arguments, body, _) =>
+      val argumentIds = arguments.args.map({
+        case Ast.expr.Name(id, Ast.expr_context.Param) => id
+      })
+      s"""function ${name.name}(${argumentIds.map(_.name).mkString(", ")}) {
+          |${Indent.leftPad(Transpiler.returnLast(body))}
           |}""".stripMargin
   }
 }

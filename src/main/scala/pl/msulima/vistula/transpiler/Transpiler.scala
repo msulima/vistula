@@ -1,14 +1,19 @@
 package pl.msulima.vistula.transpiler
 
-import pl.msulima.vistula.scanner.ScanResult
+import pl.msulima.vistula.parser.Ast
 
 object Transpiler {
 
-  def apply(program: Seq[ScanResult]): Seq[String] = {
+  def returnLast(program: Seq[Ast.stmt]): String = {
+    val lines = apply(program.init) :+ s"return ${Transpiler(program.last)};"
+    lines.mkString("\n")
+  }
+
+  def apply(program: Seq[Ast.stmt]): Seq[String] = {
     program.map(apply)
   }
 
-  def apply: PartialFunction[ScanResult, String] = {
+  def apply: PartialFunction[Ast.stmt, String] = {
     Expression.apply.orElse(FunctionDef.apply).orElse(If.apply)
   }
 }

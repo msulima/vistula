@@ -1,35 +1,28 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.scanner.{FlatVariable, ResultVariable, ScanResult}
 
 object Expression {
 
-  def apply: PartialFunction[ScanResult, String] = {
-    case ResultVariable(variables) =>
-      variables.map(parseFlatVariable).mkString("\n")
+  def apply: PartialFunction[Ast.stmt, String] = {
+    case Ast.stmt.Assign(Ast.expr.Name(Ast.identifier(name), Ast.expr_context.Load) +: _, value) =>
+      s"var $name = ${Transpiler(Ast.stmt.Expr(value))};"
+    case Ast.stmt.Expr(value) =>
+      val fragment = parseExpression(value)
+      if (fragment.dependencies.isEmpty) {
+        s"${fragment.code}"
+      } else {
+        s"""Zip([${Transpiler(fragment.dependencies).mkString(",")}]).map(function ($$args) {
+            |  return ${fragment.code};
+            |})""".stripMargin
+      }
   }
 
-  private lazy val parseFlatVariable: PartialFunction[FlatVariable, String] = {
-    case FlatVariable(target, value: Ast.expr.Call, dependsOn) =>
-      s"${toTarget(target)} ${parseExpression(value)};"
-    case FlatVariable(target, Ast.expr.Name(variable, Ast.expr_context.Load), Nil) =>
-      s"${toTarget(target)} ${variable.name};"
-    case FlatVariable(target, value, Nil) =>
-      s"${toTarget(target)} ConstantObservable(${parseExpression(value)});"
-    case FlatVariable(target, value, dependsOn) =>
-      s"${toTarget(target)} ${Rx.map(dependsOn.map(_.name.name), s"return ${parseExpression(value)};")};"
-  }
+  private lazy val parseExpression: PartialFunction[Ast.expr, Fragment] = {
+    case Ast.expr.Num(x) => Fragment(s"ConstantObservable(${x.toString})")
+    case Ast.expr.Str(x) => Fragment(s"""ConstantObservable("$x")""")
 
-  private def toTarget(id: Option[Ast.identifier]) = id match {
-    case Some(Ast.identifier(name)) => s"var $name ="
-    case None => "return"
-  }
-
-  private lazy val parseExpression: PartialFunction[Ast.expr, String] = {
-    case Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) => x
-    case Ast.expr.Num(x) => x.toString
-    case Ast.expr.Str(x) => "\"" + x + "\""
+    case Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) => Fragment(x)
     case Ast.expr.BinOp(x, op, y) =>
       val operator = op match {
         case Ast.operator.Add => "+"
@@ -38,7 +31,11 @@ object Expression {
         case Ast.operator.Div => "/"
         case Ast.operator.Mod => "%"
       }
-      s"${parseExpression(x)} $operator ${parseExpression(y)}"
+
+      Fragment(Seq(x, y)) {
+        case left :: right :: Nil =>
+          s"$left $operator $right"
+      }
     case Ast.expr.Compare(x, op +: _, y +: _) =>
       val operator = op match {
         case Ast.cmpop.Lt => "<"
@@ -48,8 +45,14 @@ object Expression {
         case Ast.cmpop.Eq => "=="
         case Ast.cmpop.NotEq => "!="
       }
-      s"${parseExpression(x)} $operator ${parseExpression(y)}"
-    case Ast.expr.Call(func, args, _, _, _) =>
-      s"${parseExpression(func)}(${args.map(parseExpression).mkString(", ")})"
+
+      Fragment(Seq(x, y)) {
+        case left :: right :: Nil =>
+          s"$left $operator $right"
+      }
+    case Ast.expr.Call(Ast.expr.Name(Ast.identifier(func), Ast.expr_context.Load), args, _, _, _) =>
+      val x: Seq[String] = args.map(arg => Transpiler(Ast.stmt.Expr(arg)))
+
+      Fragment(s"$func(${x.mkString(", ")})")
   }
 }
