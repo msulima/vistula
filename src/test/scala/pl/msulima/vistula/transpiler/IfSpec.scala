@@ -15,8 +15,8 @@ class IfSpec extends Specification {
       """.stripMargin
 
     program.toTranspiled.head must_==
-      """Zip([X]).map(function ($args) {
-        |  return $args[0] < 3;
+      """X.map(function ($arg) {
+        |  return $arg < 3;
         |}).flatMap(function ($ifCondition) {
         |  if ($ifCondition) {
         |    return X;

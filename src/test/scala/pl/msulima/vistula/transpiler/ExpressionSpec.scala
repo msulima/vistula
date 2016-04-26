@@ -3,7 +3,7 @@ package pl.msulima.vistula.transpiler
 import org.specs2.mutable.Specification
 import pl.msulima.vistula.testutil.ToProgram
 
-class JustExpressionSpec extends Specification {
+class ExpressionSpec extends Specification {
 
   "transpiles simple statement" in {
     val program =
@@ -23,8 +23,8 @@ class JustExpressionSpec extends Specification {
       """.stripMargin
 
     program.toTranspiled must_== Seq(
-      """var X = Zip([Y]).map(function ($args) {
-        |  return $args[0] + 3;
+      """var X = Y.map(function ($arg) {
+        |  return $arg + 3;
         |});""".stripMargin
     )
   }
@@ -47,10 +47,10 @@ class JustExpressionSpec extends Specification {
       """.stripMargin
 
     program.toTranspiled.head must_==
-      """var X = Zip([Zip([Y]).map(function ($args) {
-        |  return $args[0] + 3;
-        |}),a(Zip([Z]).map(function ($args) {
-        |  return $args[0] + 1;
+      """var X = Zip([Y.map(function ($arg) {
+        |  return $arg + 3;
+        |}),a(Z.map(function ($arg) {
+        |  return $arg + 1;
         |}), ConstantObservable(3))]).map(function ($args) {
         |  return $args[0] - $args[1];
         |});""".stripMargin

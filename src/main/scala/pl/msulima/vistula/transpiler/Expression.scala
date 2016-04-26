@@ -11,6 +11,10 @@ object Expression {
       val fragment = parseExpression(value)
       if (fragment.dependencies.isEmpty) {
         s"${fragment.code}"
+      } else if (fragment.dependencies.size == 1) {
+        s"""${Transpiler(fragment.dependencies.head)}.map(function ($$arg) {
+           |  return ${fragment.code};
+           |})""".stripMargin
       } else {
         s"""Zip([${Transpiler(fragment.dependencies).mkString(",")}]).map(function ($$args) {
             |  return ${fragment.code};
