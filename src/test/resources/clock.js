@@ -19,10 +19,10 @@ var start = ConstantObservable(new Date().getTime());
 
 /*-----*/
 function oddTime(clock) {
-    return Zip([Zip([clock]).map(function ($args) {
-        return $args[0] % 2;
-    })]).map(function ($args) {
-        return $args[0] == 0;
+    return clock.map(function ($arg) {
+        return $arg % 2;
+    }).map(function ($arg) {
+        return $arg == 0;
     }).flatMap(function ($ifCondition) {
         if ($ifCondition) {
             return clock;
@@ -39,22 +39,22 @@ function realTimeElapsed(elapsed) {
 var timeElapsed = Zip([clock, start]).map(function ($args) {
     return $args[0] - $args[1];
 });
-var labelText = Zip([Zip([Zip([Zip([Zip([Zip([Zip([Zip([Zip([clock]).map(function ($args) {
-    return "It is: " + $args[0];
-})]).map(function ($args) {
-    return $args[0] + ", elapsed from entering page: ";
+var labelText = Zip([Zip([Zip([Zip([clock.map(function ($arg) {
+    return "It is: " + $arg;
+}).map(function ($arg) {
+    return $arg + ", elapsed from entering page: ";
 }), timeElapsed]).map(function ($args) {
     return $args[0] + $args[1];
-})]).map(function ($args) {
-    return $args[0] + " in ";
+}).map(function ($arg) {
+    return $arg + " in ";
 }), ticks]).map(function ($args) {
     return $args[0] + $args[1];
-})]).map(function ($args) {
-    return $args[0] + " real: ";
+}).map(function ($arg) {
+    return $arg + " real: ";
 }), realTimeElapsed(start)]).map(function ($args) {
     return $args[0] + $args[1];
-})]).map(function ($args) {
-    return $args[0] + " is odd: ";
+}).map(function ($arg) {
+    return $arg + " is odd: ";
 }), oddTime(clock)]).map(function ($args) {
     return $args[0] + $args[1];
 });
