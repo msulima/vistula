@@ -21,7 +21,7 @@ class IfSpec extends Specification {
         |  if ($ifCondition) {
         |    return X;
         |  } else {
-        |    return ConstantObservable(3);
+        |    return vistula.constantObservable(3);
         |  }
         |})""".stripMargin
   }

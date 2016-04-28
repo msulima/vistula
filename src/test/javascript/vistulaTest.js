@@ -55,16 +55,16 @@ describe('Observable', function () {
         probe.expect([3]);
     });
 
-    it('reduce', function () {
+    it('aggregate', function () {
         // given
         let Source = new vistula.ObservableImpl();
-        var Initial = vistulaUtil.ConstantObservable(1);
+        var Initial = vistulaUtil.constantObservable(1);
 
         let Obs = vistulaUtil.aggregate(Initial, Source, ($acc, $source) => {
             //noinspection UnnecessaryLocalVariableJS
-            let Obs = vistulaUtil.ConstantObservable($acc);
-            let Source = vistulaUtil.ConstantObservable($source);
-            return vistulaUtil.Zip([Obs, Source]).map((value) => {
+            let Obs = vistulaUtil.constantObservable($acc);
+            let Source = vistulaUtil.constantObservable($source);
+            return vistulaUtil.zip([Obs, Source]).map((value) => {
                 return value[0] + value[1];
             });
         });

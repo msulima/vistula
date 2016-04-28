@@ -2,7 +2,7 @@
 
 var ObservableImpl = require('./observable').ObservableImpl;
 
-function Zip(observables) {
+function zip(observables) {
     var observable = new ObservableImpl();
 
     var results = observables.map(function () {
@@ -36,13 +36,13 @@ function Zip(observables) {
     return observable;
 }
 
-function ConstantObservable(value) {
+function constantObservable(value) {
     var observable = new ObservableImpl();
     observable.onNext(value);
     return observable;
 }
 
-function DelayedObservable(value, delay) {
+function delayedObservable(value, delay) {
     var observable = new ObservableImpl();
     setTimeout(function () {
         observable.onNext(value);
@@ -72,8 +72,8 @@ function aggregate(Initial, Source, createSource) {
 }
 
 module.exports = {
-    Zip: Zip,
-    DelayedObservable: DelayedObservable,
-    ConstantObservable: ConstantObservable,
+    zip: zip,
+    delayedObservable: delayedObservable,
+    constantObservable: constantObservable,
     aggregate: aggregate
 };

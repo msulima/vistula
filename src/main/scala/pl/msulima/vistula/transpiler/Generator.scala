@@ -26,9 +26,9 @@ object Generator {
   def apply: PartialFunction[Ast.expr, Fragment] = {
     case Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)) =>
       Fragment(
-        s"""aggregate(${Transpiler(initial)}, ${source.name}, ($$acc, $$source) => {
-            |  let ${acc.name} = ConstantObservable($$acc);
-            |  let ${source.name} = ConstantObservable($$source);
+        s"""vistula.aggregate(${Transpiler(initial)}, ${source.name}, ($$acc, $$source) => {
+            |  let ${acc.name} = vistula.constantObservable($$acc);
+            |  let ${source.name} = vistula.constantObservable($$source);
             |${Indent.leftPad("return " + Transpiler(body) + ";")}
             |})""".stripMargin, Seq())
   }

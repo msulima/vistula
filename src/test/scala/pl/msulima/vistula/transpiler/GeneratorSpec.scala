@@ -12,10 +12,10 @@ class GeneratorSpec extends Specification {
       """.stripMargin
 
     program.toTranspiled.head must_==
-      """var W = aggregate(X, Z, ($acc, $source) => {
-        |  let Y = ConstantObservable($acc);
-        |  let Z = ConstantObservable($source);
-        |  return Zip([Y, Z]).map(function ($args) {
+      """var W = vistula.aggregate(X, Z, ($acc, $source) => {
+        |  let Y = vistula.constantObservable($acc);
+        |  let Z = vistula.constantObservable($source);
+        |  return vistula.zip([Y, Z]).map(function ($args) {
         |    return $args[0] + $args[1];
         |  });
         |});""".stripMargin

@@ -19,25 +19,29 @@ var constant = millisClock.flatMap(function (time) {
     return justOne;
 });
 
-millisClock.forEach(function (time) {
-    document.getElementById("millisClock").textContent = JSON.stringify(time);
+var differential = vistula.aggregate(vistula.ConstantObservable(0), timer, ($acc, timer) => {
+    console.log($acc, timer);
+    let $Acc = vistula.ConstantObservable($acc);
+    let Timer = vistula.ConstantObservable(timer);
+
+    return vistula.Zip([$Acc, Timer]).map(($zip) => {
+        return $zip[0] + 1;
+    });
 });
 
-secondsClock.forEach(function (time) {
-    document.getElementById("secondsClock").textContent = JSON.stringify(time);
-});
+function display(Obs, element) {
+    Obs.forEach(function (value) {
+        document.getElementById(element).textContent = JSON.stringify(value);
+    });
+}
 
-vistula.Zip([millisClock, secondsClock]).forEach(function (zip) {
-    document.getElementById("zip").textContent = JSON.stringify(zip);
-});
+display(millisClock, "millisClock");
+display(secondsClock, "secondsClock");
+display(vistula.Zip([millisClock, secondsClock]), "zip");
+display(delayedClock, "delayedClock");
+display(constant, "constant");
+display(differential, "differential");
 
-delayedClock.forEach(function (time) {
-    document.getElementById("delayedClock").textContent = JSON.stringify(time);
-});
-
-constant.forEach(function (time) {
-    document.getElementById("constant").textContent = JSON.stringify(time);
-});
 
 //
 //var third = secondClock.flatMap(function (time) {

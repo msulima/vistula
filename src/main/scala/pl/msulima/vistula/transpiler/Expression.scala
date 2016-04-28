@@ -16,15 +16,15 @@ object Expression {
            |  return ${fragment.code};
            |})""".stripMargin
       } else {
-        s"""Zip([${Transpiler(fragment.dependencies).mkString(", ")}]).map(function ($$args) {
+        s"""vistula.zip([${Transpiler(fragment.dependencies).mkString(", ")}]).map(function ($$args) {
             |  return ${fragment.code};
             |})""".stripMargin
       }
   }
 
   private lazy val parseExpression: PartialFunction[Ast.expr, Fragment] = {
-    case Ast.expr.Num(x) => Fragment(s"ConstantObservable(${x.toString})")
-    case Ast.expr.Str(x) => Fragment(s"""ConstantObservable("$x")""")
+    case Ast.expr.Num(x) => Fragment(s"vistula.constantObservable(${x.toString})")
+    case Ast.expr.Str(x) => Fragment(s"""vistula.constantObservable("$x")""")
 
     case Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) => Fragment(x)
     case Ast.expr.BinOp(x, op, y) =>
