@@ -49,7 +49,7 @@ class ExpressionSpec extends Specification {
     program.toTranspiled.head must_==
       """var X = Zip([Y.map(function ($arg) {
         |  return $arg + 3;
-        |}),a(Z.map(function ($arg) {
+        |}), a(Z.map(function ($arg) {
         |  return $arg + 1;
         |}), ConstantObservable(3))]).map(function ($args) {
         |  return $args[0] - $args[1];

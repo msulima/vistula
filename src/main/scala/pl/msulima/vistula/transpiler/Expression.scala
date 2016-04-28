@@ -8,7 +8,7 @@ object Expression {
     case Ast.stmt.Assign(Ast.expr.Name(Ast.identifier(name), Ast.expr_context.Load) +: _, value) =>
       s"var $name = ${Transpiler(Ast.stmt.Expr(value))};"
     case Ast.stmt.Expr(value) =>
-      val fragment = parseExpression(value)
+      val fragment = parseExpression.orElse(Generator.apply)(value)
       if (fragment.dependencies.isEmpty) {
         s"${fragment.code}"
       } else if (fragment.dependencies.size == 1) {
@@ -16,7 +16,7 @@ object Expression {
            |  return ${fragment.code};
            |})""".stripMargin
       } else {
-        s"""Zip([${Transpiler(fragment.dependencies).mkString(",")}]).map(function ($$args) {
+        s"""Zip([${Transpiler(fragment.dependencies).mkString(", ")}]).map(function ($$args) {
             |  return ${fragment.code};
             |})""".stripMargin
       }

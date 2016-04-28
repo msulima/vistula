@@ -1,6 +1,7 @@
 var ObservableImpl = vistula.ObservableImpl;
 var Zip = vistula.Zip;
 var ConstantObservable = vistula.ConstantObservable;
+var aggregate = vistula.aggregate;
 
 var timer = new ObservableImpl();
 setInterval(timer.onNext.bind(timer), 1000);
@@ -9,15 +10,16 @@ var clock = timer.map(function () {
     return new Date().getTime();
 });
 
-var ticks_acc = 0;
-var ticks = clock.map(function () {
-    ticks_acc = ticks_acc + 1;
-    return ticks_acc;
-});
-
 var start = ConstantObservable(new Date().getTime());
 
 /*-----*/
+var ticks = aggregate(ConstantObservable(0), clock, ($acc, $source) => {
+    let ticks = ConstantObservable($acc);
+    let clock = ConstantObservable($source);
+    return ticks.map(function ($arg) {
+        return $arg + 1;
+    });
+});
 function oddTime(clock) {
     return clock.map(function ($arg) {
         return $arg % 2;

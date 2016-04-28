@@ -1,3 +1,5 @@
+ticks = (0 or ticks + 1 for ticks in clock)
+
 def oddTime(clock):
   if clock % 2 == 0:
     clock
