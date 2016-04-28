@@ -7,6 +7,19 @@ var clock = timer.map(function () {
 
 var start = vistula.constantObservable(new Date().getTime());
 
+var cursorX = new vistula.ObservableImpl();
+var cursorY = new vistula.ObservableImpl();
+
+document.addEventListener("mousemove", function (event) {
+    cursorX.onNext(event.screenX);
+    cursorY.onNext(event.screenY);
+});
+
+var cursor = vistula.constantObservable({
+    x: cursorX,
+    y: cursorY
+});
+
 /*-----*/
 var ticks = vistula.aggregate(vistula.constantObservable(0), clock, ($acc, $source) => {
     let ticks = vistula.constantObservable($acc);
@@ -55,8 +68,33 @@ var labelText = vistula.zip([vistula.zip([vistula.zip([vistula.zip([clock.map(fu
 }), oddTime(clock)]).map(function ($args) {
     return $args[0] + $args[1];
 });
+var area = vistula.zip([vistula.zip([cursor.flatMap(function ($arg) {
+    return $arg.x;
+}).map(function ($arg) {
+    return $arg + " * ";
+}), cursor.flatMap(function ($arg) {
+    return $arg.y;
+})]).map(function ($args) {
+    return $args[0] + $args[1];
+}).map(function ($arg) {
+    return $arg + " = ";
+}), vistula.zip([cursor.flatMap(function ($arg) {
+    return $arg.x;
+}), cursor.flatMap(function ($arg) {
+    return $arg.y;
+})]).map(function ($args) {
+    return $args[0] * $args[1];
+})]).map(function ($args) {
+    return $args[0] + $args[1];
+}).map(function ($arg) {
+    return $arg + " px^2";
+});
 /*-----*/
 
 labelText.forEach(function (text) {
-    document.getElementById("text").textContent = text;
+    document.getElementById("labelText").textContent = text;
+});
+
+area.forEach(function (text) {
+    document.getElementById("area").textContent = text;
 });

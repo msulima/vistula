@@ -12,3 +12,5 @@ def realTimeElapsed(elapsed):
 timeElapsed = clock - start
 
 labelText = "It is: " + clock + ", elapsed from entering page: " + timeElapsed + " in " + ticks + " real: " + realTimeElapsed(start) + " is odd: " + oddTime(clock)
+
+area = cursor.x + " * " + cursor.y + " = " + cursor.x * cursor.y + " px^2"
