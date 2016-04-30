@@ -1,7 +1,7 @@
 var timer = new vistula.ObservableImpl();
 setInterval(timer.onNext.bind(timer), 1000);
 
-var justOne = vistula.ConstantObservable(1);
+var justOne = vistula.constantObservable(1);
 
 var millisClock = timer.map(function () {
     return new Date().getTime();
@@ -12,19 +12,19 @@ var secondsClock = millisClock.map(function (time) {
 });
 
 var delayedClock = millisClock.flatMap(function (time) {
-    return vistula.DelayedObservable(time, 500);
+    return vistula.delayedObservable(time, 500);
 });
 
 var constant = millisClock.flatMap(function (time) {
     return justOne;
 });
 
-var differential = vistula.aggregate(vistula.ConstantObservable(0), timer, ($acc, timer) => {
+var differential = vistula.aggregate(vistula.constantObservable(0), timer, ($acc, timer) => {
     console.log($acc, timer);
-    let $Acc = vistula.ConstantObservable($acc);
-    let Timer = vistula.ConstantObservable(timer);
+    let $Acc = vistula.constantObservable($acc);
+    let Timer = vistula.constantObservable(timer);
 
-    return vistula.Zip([$Acc, Timer]).map(($zip) => {
+    return vistula.zip([$Acc, Timer]).map(($zip) => {
         return $zip[0] + 1;
     });
 });
@@ -35,12 +35,35 @@ function display(Obs, element) {
     });
 }
 
+
+var cursorX = new vistula.ObservableImpl();
+var cursorY = new vistula.ObservableImpl();
+
+document.addEventListener("mousemove", function (event) {
+    cursorX.onNext(event.screenX);
+    cursorY.onNext(event.screenY);
+});
+
+var cursor = vistula.constantObservable({
+    x: cursorX,
+    y: cursorY
+});
+
+var area = vistula.zip([cursor.flatMap(($arg) => {
+    return $arg.x;
+}), cursor.flatMap(($arg) => {
+    return $arg.y;
+})]).map(($args) => {
+    return $args[0] * $args[1];
+});
+
 display(millisClock, "millisClock");
 display(secondsClock, "secondsClock");
-display(vistula.Zip([millisClock, secondsClock]), "zip");
+display(vistula.zip([millisClock, secondsClock]), "zip");
 display(delayedClock, "delayedClock");
 display(constant, "constant");
 display(differential, "differential");
+display(area, "area");
 
 
 //

@@ -1,3 +1,7 @@
+'''# javascript
+let start = vistula.constantObservable(new Date().getTime());
+'''
+
 ticks = (0 or ticks + 1 for ticks in clock)
 
 def oddTime(clock):
@@ -13,4 +17,11 @@ timeElapsed = clock - start
 
 labelText = "It is: " + clock + ", elapsed from entering page: " + timeElapsed + " in " + ticks + " real: " + realTimeElapsed(start) + " is odd: " + oddTime(clock)
 
-area = cursor.x + " * " + cursor.y + " = " + cursor.x * cursor.y + " px^2"
+area = cursor.x + " * " + cursor.y + " = " + cursor.x * cursor.y + " px^2";
+
+'''# html
+<div>
+<p>{{ labelText }}</p>
+<p>{{ area }}</p>
+</div>
+'''

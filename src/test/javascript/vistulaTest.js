@@ -6,9 +6,9 @@ let vistulaUtil = require('../../main/javascript/util');
 let Probe = require('./probe').Probe;
 
 
-describe('Observable', function () {
+describe("Observable", function () {
 
-    it('return last value', function () {
+    it("return last value", function () {
         // given
         let Obs = new vistula.ObservableImpl();
         let probe = new Probe(Obs);
@@ -20,7 +20,7 @@ describe('Observable', function () {
         probe.expect([1]);
     });
 
-    it('map', function () {
+    it("map", function () {
         // given
         let Obs = new vistula.ObservableImpl();
 
@@ -35,7 +35,7 @@ describe('Observable', function () {
         probe.expect([10]);
     });
 
-    it('flatMap', function () {
+    it("flatMap", function () {
         // given
         let Obs = new vistula.ObservableImpl();
         let nestedObservable = new vistula.ObservableImpl();
@@ -55,7 +55,7 @@ describe('Observable', function () {
         probe.expect([3]);
     });
 
-    it('aggregate', function () {
+    it("aggregate", function () {
         // given
         let Source = new vistula.ObservableImpl();
         var Initial = vistulaUtil.constantObservable(1);
