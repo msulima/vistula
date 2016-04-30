@@ -24,7 +24,7 @@ class ExpressionSpec extends Specification {
 
     program.toTranspiled must_== Seq(
       """var X = Y.map(function ($arg) {
-        |  return $arg + 3;
+        |    return $arg + 3;
         |});""".stripMargin
     )
   }
@@ -48,11 +48,11 @@ class ExpressionSpec extends Specification {
 
     program.toTranspiled.head must_==
       """var X = vistula.zip([Y.map(function ($arg) {
-        |  return $arg + 3;
+        |    return $arg + 3;
         |}), a(Z.map(function ($arg) {
-        |  return $arg + 1;
+        |    return $arg + 1;
         |}), vistula.constantObservable(3))]).map(function ($args) {
-        |  return $args[0] - $args[1];
+        |    return $args[0] - $args[1];
         |});""".stripMargin
   }
 }

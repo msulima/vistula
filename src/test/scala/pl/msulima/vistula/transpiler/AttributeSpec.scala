@@ -13,11 +13,11 @@ class AttributeSpec extends Specification {
 
     program.toTranspiled.head must_==
       """vistula.zip([W.flatMap(function ($arg) {
-        |  return $arg.X;
+        |    return $arg.X;
         |}), Y.flatMap(function ($arg) {
-        |  return $arg.Z;
+        |    return $arg.Z;
         |})]).map(function ($args) {
-        |  return $args[0] + $args[1];
+        |    return $args[0] + $args[1];
         |})""".stripMargin
   }
 }

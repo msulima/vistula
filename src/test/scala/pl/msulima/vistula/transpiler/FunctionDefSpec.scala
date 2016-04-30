@@ -15,12 +15,12 @@ class FunctionDefSpec extends Specification {
 
     program.toTranspiled.head must_==
       """function a(X) {
-        |  var Y = X.map(function ($arg) {
-        |    return $arg + 2;
-        |  });
-        |  return Y.map(function ($arg) {
-        |    return $arg - 1;
-        |  });
+        |    var Y = X.map(function ($arg) {
+        |        return $arg + 2;
+        |    });
+        |    return Y.map(function ($arg) {
+        |        return $arg - 1;
+        |    });
         |}""".stripMargin
   }
 }

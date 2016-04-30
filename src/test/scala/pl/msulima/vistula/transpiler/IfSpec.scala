@@ -16,13 +16,13 @@ class IfSpec extends Specification {
 
     program.toTranspiled.head must_==
       """X.map(function ($arg) {
-        |  return $arg < 3;
+        |    return $arg < 3;
         |}).flatMap(function ($ifCondition) {
-        |  if ($ifCondition) {
-        |    return X;
-        |  } else {
-        |    return vistula.constantObservable(3);
-        |  }
+        |    if ($ifCondition) {
+        |        return X;
+        |    } else {
+        |        return vistula.constantObservable(3);
+        |    }
         |})""".stripMargin
   }
 }

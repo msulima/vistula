@@ -2,6 +2,7 @@ package pl.msulima.vistula.html
 
 import fastparse.all._
 import org.specs2.mutable.Specification
+import pl.msulima.vistula.testutil.readFile
 
 
 class TranspilerSpec extends Specification {
@@ -11,17 +12,6 @@ class TranspilerSpec extends Specification {
   }
 
   "transpile" in {
-    Transpiler(TestData.SampleHtml) must_==
-      """vistula.dom.createElement(document.createElement("span"), [
-        |  document.createTextNode("hello\n    is it "),
-        |  vistula.dom.textObservable(lionel),
-        |  document.createTextNode("?\n    "),
-        |  vistula.dom.createElement(document.createElement("strong"), [
-        |    document.createTextNode("you lookin'")
-        |  ])
-        |]);
-        |vistula.dom.createElement(document.createElement("p"), [
-        |  document.createTextNode("for?")
-        |]);""".stripMargin
+    Transpiler(TestData.SampleHtml) must_== readFile("/pl/msulima/vistula/html/sample.js")
   }
 }

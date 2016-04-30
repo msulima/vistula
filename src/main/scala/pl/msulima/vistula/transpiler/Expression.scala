@@ -2,6 +2,7 @@ package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.html.{Transpiler => HtmlTranspiler}
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.util.Indent
 
 object Expression {
 
@@ -17,11 +18,11 @@ object Expression {
         s"${fragment.code}"
       } else if (fragment.dependencies.size == 1) {
         s"""${Transpiler(fragment.dependencies.head)}.map(function ($$arg) {
-           |  return ${fragment.code};
+           |${Indent.leftPad("return " + fragment.code)};
            |})""".stripMargin
       } else {
         s"""vistula.zip([${Transpiler(fragment.dependencies).mkString(", ")}]).map(function ($$args) {
-            |  return ${fragment.code};
+            |${Indent.leftPad("return " + fragment.code)};
             |})""".stripMargin
       }
   }

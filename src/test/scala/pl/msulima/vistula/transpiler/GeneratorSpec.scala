@@ -13,11 +13,11 @@ class GeneratorSpec extends Specification {
 
     program.toTranspiled.head must_==
       """var W = vistula.aggregate(X, Z, ($acc, $source) => {
-        |  let Y = vistula.constantObservable($acc);
-        |  let Z = vistula.constantObservable($source);
-        |  return vistula.zip([Y, Z]).map(function ($args) {
-        |    return $args[0] + $args[1];
-        |  });
+        |    let Y = vistula.constantObservable($acc);
+        |    let Z = vistula.constantObservable($source);
+        |    return vistula.zip([Y, Z]).map(function ($args) {
+        |        return $args[0] + $args[1];
+        |    });
         |});""".stripMargin
   }
 }
