@@ -30,17 +30,11 @@ var ticks = vistula.aggregate(vistula.constantObservable(0), clock, ($acc, $sour
     });
 });
 function oddTime(clock) {
-    return clock.map(function ($arg) {
+    return vistula.ifStatement(clock.map(function ($arg) {
         return $arg % 2;
     }).map(function ($arg) {
         return $arg == 0;
-    }).flatMap(function ($ifCondition) {
-        if ($ifCondition) {
-            return clock;
-        } else {
-            return vistula.constantObservable("no");
-        }
-    });
+    }), clock, vistula.constantObservable("no"));
 }
 function realTimeElapsed(elapsed) {
     return vistula.zip([clock, elapsed]).map(function ($args) {

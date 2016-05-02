@@ -9,20 +9,20 @@ class IfSpec extends Specification {
     val program =
       """
         |if X < 3:
-        |  X
+        |  Y = X + 3
+        |  Y
         |else:
         |  3
       """.stripMargin
 
     program.toTranspiled.head must_==
-      """X.map(function ($arg) {
+      """vistula.ifStatement(X.map(function ($arg) {
         |    return $arg < 3;
-        |}).flatMap(function ($ifCondition) {
-        |    if ($ifCondition) {
-        |        return X;
-        |    } else {
-        |        return vistula.constantObservable(3);
-        |    }
-        |})""".stripMargin
+        |}), vistula.wrap(function () {
+        |    var Y = X.map(function ($arg) {
+        |        return $arg + 3;
+        |    });
+        |    return Y;
+        |}), vistula.constantObservable(3))""".stripMargin
   }
 }

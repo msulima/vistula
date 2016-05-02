@@ -77,4 +77,23 @@ describe("Observable", function () {
         // then
         probe.expect([1, 11, 111]);
     });
+
+    it("if", function () {
+        // given
+        let Left = vistulaUtil.constantObservable(0);
+        let Right = vistulaUtil.constantObservable(1);
+        let Condition = new vistula.ObservableImpl();
+
+        let Obs = vistulaUtil.ifStatement(Condition, Left, Right);
+        let probe = new Probe(Obs);
+
+        // when
+        Condition.onNext(true);
+        Condition.onNext(true);
+        Condition.onNext(false);
+        Condition.onNext(true);
+
+        // then
+        probe.expect([0, 0, 1, 0]);
+    });
 });

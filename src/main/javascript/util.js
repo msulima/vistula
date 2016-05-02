@@ -71,8 +71,12 @@ function aggregate(Initial, Source, createSource) {
     return $Obs;
 }
 
+function wrap(Obs) {
+    return Obs();
+}
+
 function ifStatement(Condition, OnTrue, OnFalse) {
-    Condition.flatMap(function ($condition) {
+    return Condition.flatMap(function ($condition) {
         return $condition ? OnTrue : OnFalse;
     });
 }
@@ -82,5 +86,6 @@ module.exports = {
     delayedObservable: delayedObservable,
     constantObservable: constantObservable,
     aggregate: aggregate,
-    ifStatement: ifStatement
+    ifStatement: ifStatement,
+    wrap: wrap
 };
