@@ -72,13 +72,13 @@ var areaField = vistula.zip([cursor.flatMap(function ($arg) {
 });
 var main = vistula.zipAndFlatten([
     vistula.dom.createElement(document.createElement("div"), [
-        vistula.dom.textNode("\n"),
+        vistula.dom.textNode("\n  "),
         vistula.dom.createElement(document.createElement("p"), [
             vistula.dom.textObservable(labelText)
         ]),
-        vistula.dom.textNode("\n"),
+        vistula.dom.textNode("\n  "),
         vistula.dom.createElement(document.createElement("p"), [
-            vistula.dom.textNode("\n"),
+            vistula.dom.textNode("\n  "),
             vistula.dom.ifStatement(areaField.map(function ($arg) {
                 return $arg < 160000;
             }), [
@@ -86,7 +86,7 @@ var main = vistula.zipAndFlatten([
                 vistula.dom.createElement(document.createElement("strong"), [
                     vistula.dom.textNode("too small")
                 ]),
-                vistula.dom.textNode(".\n")
+                vistula.dom.textNode(".\n  ")
             ], [
                 vistula.dom.textNode("Area is "),
                 vistula.dom.textObservable(cursor.flatMap(function ($arg) {
@@ -98,9 +98,15 @@ var main = vistula.zipAndFlatten([
                 })),
                 vistula.dom.textNode(" = "),
                 vistula.dom.textObservable(areaField),
-                vistula.dom.textNode(" px^2\n")
+                vistula.dom.textNode(" px^2\n  ")
             ]),
-            vistula.dom.textNode("\n")
+            vistula.dom.textNode("\n  ")
+        ]),
+        vistula.dom.textNode("\n  "),
+        vistula.dom.createElement(document.createElement("div"), [
+            vistula.dom.textNode("\n    "),
+            vistula.dom.textObservable(ajaxGet(vistula.constantObservable("http://jsonplaceholder.typicode.com/posts"))),
+            vistula.dom.textNode("\n  ")
         ]),
         vistula.dom.textNode("\n")
     ]),
@@ -115,5 +121,23 @@ function appendChild(Target, Observables) {
         $args[1].forEach(function (obs) {
             target.appendChild(obs);
         });
+    });
+}
+
+function ajaxGet(Url) {
+    var obs = new vistula.ObservableImpl();
+
+    return Url.flatMap(function (url) {
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            var DONE = this.DONE || 4;
+            if (this.readyState === DONE) {
+                obs.onNext(this.responseText)
+            }
+        };
+        request.open('GET', url, true);
+        request.send(null);
+
+        return obs;
     });
 }

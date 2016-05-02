@@ -1,6 +1,6 @@
 * Dictionaries
 * Functions
-* Conditions
 * Loops
-* Assignments
 * Lists
+* AJAX
+* Error handling

@@ -21,14 +21,17 @@ areaField = cursor.x * cursor.y
 
 main = '''# html
 <div>
-<p>{{ labelText }}</p>
-<p>
-{% if areaField < 160000 %}
-  Sorry, area is <strong>too small</strong>.
-{% else %}
-  Area is {{ cursor.x }} * {{ cursor.y }} = {{ areaField }} px^2
-{% endif %}
-</p>
+  <p>{{ labelText }}</p>
+  <p>
+  {% if areaField < 160000 %}
+    Sorry, area is <strong>too small</strong>.
+  {% else %}
+    Area is {{ cursor.x }} * {{ cursor.y }} = {{ areaField }} px^2
+  {% endif %}
+  </p>
+  <div>
+    {{ ajaxGet("http://jsonplaceholder.typicode.com/posts") }}
+  </div>
 </div>
 '''
 
