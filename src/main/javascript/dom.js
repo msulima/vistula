@@ -1,20 +1,11 @@
 'use strict';
 
-var ObservableImpl = require('./observable').ObservableImpl;
 var util = require("./util");
 
 function ifStatement(Condition, FragTrue, FragFalse) {
-    let proxy = new ObservableImpl();
-    let lastValue = null;
+    return util.distinctUntilChanged(Condition).flatMap(function ($condition) {
+        let $fragments = $condition ? FragTrue : FragFalse;
 
-    Condition.forEach(function ($condition) {
-        if (lastValue != $condition) {
-            lastValue = $condition;
-            proxy.onNext($condition ? FragTrue : FragFalse);
-        }
-    });
-
-    return proxy.flatMap(function ($fragments) {
         return util.zip($fragments).map(function ($arrays) {
             return [].concat.apply([], $arrays);
         });
@@ -31,6 +22,20 @@ function textObservable(Obs) {
         span.textContent = $arg;
     });
     return util.constantObservable([span]);
+}
+
+function createElement(parent, childNodes) {
+    let currentChildren = [];
+    childNodes.forEach(function (ChildNode, idx) {
+        currentChildren.push([]);
+
+        ChildNode.forEach(function ($args) {
+            updateChildren(parent, currentChildren[idx], $args);
+            currentChildren[idx] = $args;
+        });
+    });
+
+    return util.constantObservable([parent]);
 }
 
 function updateChildren(parent, currentChildren, nextChildren) {
@@ -50,20 +55,6 @@ function updateChildren(parent, currentChildren, nextChildren) {
             parent.removeChild(currentChildren[i]);
         }
     }
-}
-
-function createElement(parent, childNodes) {
-    let currentChildren = [];
-    childNodes.forEach(function (ChildNode, idx) {
-        currentChildren.push([]);
-
-        ChildNode.forEach(function ($args) {
-            updateChildren(parent, currentChildren[idx], $args);
-            currentChildren[idx] = $args;
-        });
-    });
-
-    return util.constantObservable([parent]);
 }
 
 module.exports = {

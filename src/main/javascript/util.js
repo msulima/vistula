@@ -71,6 +71,24 @@ function aggregate(Initial, Source, createSource) {
     return $Obs;
 }
 
+function distinctUntilChanged(Obs) {
+    let proxy = new ObservableImpl();
+    let hasValue = false;
+    let lastValue = null;
+
+    Obs.forEach(function ($arg) {
+        let changed = !hasValue || (hasValue && lastValue != $arg);
+        hasValue = true;
+
+        if (changed) {
+            lastValue = $arg;
+            proxy.onNext($arg);
+        }
+    });
+
+    return proxy;
+}
+
 function wrap(Obs) {
     return Obs();
 }
@@ -87,5 +105,6 @@ module.exports = {
     constantObservable: constantObservable,
     aggregate: aggregate,
     ifStatement: ifStatement,
-    wrap: wrap
+    wrap: wrap,
+    distinctUntilChanged: distinctUntilChanged
 };
