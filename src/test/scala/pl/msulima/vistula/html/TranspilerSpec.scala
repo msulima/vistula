@@ -8,10 +8,14 @@ import pl.msulima.vistula.testutil.readFile
 class TranspilerSpec extends Specification {
 
   def parse(code: String) = {
-    (Parser.document ~ End).parse(code).get.value
+    (Statements.document ~ End).parse(code).get.value
   }
 
   "transpile" in {
-    Transpiler(TestData.SampleHtml) must_== readFile("/pl/msulima/vistula/html/sample.js")
+    Transpiler(readFile("/pl/msulima/vistula/html/sample.html")) must_== readFile("/pl/msulima/vistula/html/sample.js")
+  }
+
+  "transpile if" in {
+    Transpiler(readFile("/pl/msulima/vistula/html/if.html")) must_== readFile("/pl/msulima/vistula/html/if.js")
   }
 }

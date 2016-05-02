@@ -21,7 +21,7 @@ object TestData {
 class ParserSpec extends Specification {
 
   private def parse(code: String) = {
-    (Parser.document ~ End).parse(code).get.value
+    (Statements.document ~ End).parse(code).get.value
   }
 
   "parse" in {

@@ -17,11 +17,18 @@ timeElapsed = clock - start
 
 labelText = "It is: " + clock + ", elapsed from entering page: " + timeElapsed + " in " + ticks + " real: " + realTimeElapsed(start) + " is odd: " + oddTime(clock)
 
-area = cursor.x + " * " + cursor.y + " = " + cursor.x * cursor.y + " px^2";
+areaField = cursor.x * cursor.y
+areaLabel = cursor.x + " * " + cursor.y + " = " + areaField + " px^2";
 
 '''# html
 <div>
 <p>{{ labelText }}</p>
-<p>{{ area }}</p>
+<p>
+{% if areaField < 160000 %}
+  Sorry, area is <strong>too small</strong>.
+{% else %}
+  Area is {{ areaLabel }}
+{% endif %}
+</p>
 </div>
 '''

@@ -8,4 +8,6 @@ case class TextNode(textContent: String) extends Node
 
 case class ObservableNode(expr: Ast.identifier) extends Node
 
+case class IfNode(test: Ast.expr, body: Seq[Node], elseBlock: Seq[Node]) extends Node
+
 case class Element(tagName: String, childNodes: Seq[Node]) extends Node

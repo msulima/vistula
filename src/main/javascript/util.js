@@ -68,12 +68,19 @@ function aggregate(Initial, Source, createSource) {
         });
     });
 
-    return $Obs
+    return $Obs;
+}
+
+function ifStatement(Condition, OnTrue, OnFalse) {
+    Condition.flatMap(function ($condition) {
+        return $condition ? OnTrue : OnFalse;
+    });
 }
 
 module.exports = {
     zip: zip,
     delayedObservable: delayedObservable,
     constantObservable: constantObservable,
-    aggregate: aggregate
+    aggregate: aggregate,
+    ifStatement: ifStatement
 };

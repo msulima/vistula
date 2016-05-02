@@ -1,12 +1,14 @@
 package pl.msulima.vistula.html
 
 import fastparse.all._
-import pl.msulima.vistula.util.Indent
+import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler}
+import pl.msulima.vistula.util.{Indent, ToArray}
 
 object Transpiler {
 
   def apply(program: String): String = {
-    apply((Parser.document ~ End).parse(program).get.value).mkString("", ";\n", ";")
+    apply((Statements.document ~ End).parse(program).get.value).mkString("", ";\n", ";")
   }
 
   def apply(program: Seq[Node]): Seq[String] = {
@@ -20,8 +22,10 @@ object Transpiler {
           |])""".stripMargin;
     case ObservableNode(identifier) =>
       s"vistula.dom.textObservable(${identifier.name})";
+    case IfNode(expr, body, elseBody) =>
+      s"vistula.dom.ifStatement(${VistulaTranspiler(Ast.stmt.Expr(expr))}, ${ToArray(apply(body))}, ${ToArray(apply(elseBody))})";
     case TextNode(text) =>
-      s"""document.createTextNode(${escape(text)})""";
+      s"""vistula.dom.textNode(${escape(text)})""";
   }
 
   private def escape(text: String) =s""""${text.replaceAll("\n", """\\\n""")}""""

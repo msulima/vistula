@@ -69,7 +69,14 @@ var labelText = vistula.zip([vistula.zip([vistula.zip([vistula.zip([clock.map(fu
 }), oddTime(clock)]).map(function ($args) {
     return $args[0] + $args[1];
 });
-var area = vistula.zip([vistula.zip([cursor.flatMap(function ($arg) {
+var areaField = vistula.zip([cursor.flatMap(function ($arg) {
+    return $arg.x;
+}), cursor.flatMap(function ($arg) {
+    return $arg.y;
+})]).map(function ($args) {
+    return $args[0] * $args[1];
+});
+var areaLabel = vistula.zip([vistula.zip([cursor.flatMap(function ($arg) {
     return $arg.x;
 }).map(function ($arg) {
     return $arg + " * ";
@@ -79,13 +86,7 @@ var area = vistula.zip([vistula.zip([cursor.flatMap(function ($arg) {
     return $args[0] + $args[1];
 }).map(function ($arg) {
     return $arg + " = ";
-}), vistula.zip([cursor.flatMap(function ($arg) {
-    return $arg.x;
-}), cursor.flatMap(function ($arg) {
-    return $arg.y;
-})]).map(function ($args) {
-    return $args[0] * $args[1];
-})]).map(function ($args) {
+}), areaField]).map(function ($args) {
     return $args[0] + $args[1];
 }).map(function ($arg) {
     return $arg + " px^2";
@@ -95,9 +96,15 @@ var x = vistula.dom.createElement(document.createElement("div"), [
         vistula.dom.textObservable(labelText)
     ]),
     vistula.dom.createElement(document.createElement("p"), [
-        vistula.dom.textObservable(area)
+        vistula.dom.ifStatement(areaField.map(function ($arg) {
+            return $arg < 160000;
+        }), [vistula.dom.textNode("Sorry, area is "), vistula.dom.createElement(document.createElement("strong"), [
+            vistula.dom.textNode("too small")
+        ]), vistula.dom.textNode(".\n")], [vistula.dom.textNode("Area is "), vistula.dom.textObservable(areaLabel)])
     ])
 ]);
 /*-----*/
 
-document.getElementById("main").appendChild(x);
+x.forEach(function (x) {
+    document.getElementById("main").appendChild(x[0]);
+});
