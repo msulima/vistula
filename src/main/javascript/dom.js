@@ -33,11 +33,22 @@ function textObservable(Obs) {
     return util.constantObservable([span]);
 }
 
-function findPositionToInsert(nodes, idx) {
-    if (idx == nodes.length - 1 || nodes[idx].length == 0) {
-        return null;
+function updateChildren(parent, currentChildren, nextChildren) {
+    var currentLength = currentChildren.length;
+    var nextLength = nextChildren.length;
+
+    for (var i = 0; i < Math.min(currentLength, nextLength); i++) {
+        parent.replaceChild(nextChildren[i], currentChildren[i]);
+    }
+
+    if (currentLength < nextLength) {
+        for (i = currentLength; i < nextLength; i++) {
+            parent.appendChild(nextChildren[i]);
+        }
     } else {
-        return nodes[idx][0];
+        for (i = nextLength; i < currentLength; i++) {
+            parent.removeChild(currentChildren[i]);
+        }
     }
 }
 
@@ -47,22 +58,11 @@ function createElement(parent, childNodes) {
         currentChildren.push([]);
 
         ChildNode.forEach(function ($args) {
-            currentChildren[idx].forEach(function (child) {
-                parent.removeChild(child);
-            });
+            updateChildren(parent, currentChildren[idx], $args);
             currentChildren[idx] = $args;
-
-            let positionToInsert = findPositionToInsert(currentChildren, idx);
-
-            $args.forEach(function ($arg) {
-                if (positionToInsert == null) {
-                    parent.appendChild($arg);
-                } else {
-                    parent.insertBefore($arg, positionToInsert);
-                }
-            });
         });
     });
+
     return util.constantObservable([parent]);
 }
 
