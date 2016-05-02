@@ -16,7 +16,7 @@ object Template {
   }
 
   def apply(program: String): String = {
-    apply((Statements.document ~ End).parse(program).get.value).mkString("", ";\n", ";")
+    s"vistula.zipAndFlatten(${ToArray(apply((Statements.document ~ End).parse(program).get.value))})"
   }
 
   private def apply(program: Seq[Node]): Seq[String] = {

@@ -2,6 +2,12 @@
 
 var ObservableImpl = require('./observable').ObservableImpl;
 
+function zipAndFlatten(observables) {
+    return zip(observables).map(function ($arrays) {
+        return [].concat.apply([], $arrays);
+    });
+}
+
 function zip(observables) {
     var observable = new ObservableImpl();
 
@@ -100,11 +106,12 @@ function ifStatement(Condition, OnTrue, OnFalse) {
 }
 
 module.exports = {
-    zip: zip,
-    delayedObservable: delayedObservable,
-    constantObservable: constantObservable,
     aggregate: aggregate,
+    constantObservable: constantObservable,
+    delayedObservable: delayedObservable,
+    distinctUntilChanged: distinctUntilChanged,
     ifStatement: ifStatement,
     wrap: wrap,
-    distinctUntilChanged: distinctUntilChanged
+    zip: zip,
+    zipAndFlatten: zipAndFlatten
 };

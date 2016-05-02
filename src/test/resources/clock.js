@@ -85,16 +85,25 @@ var areaLabel = vistula.zip([vistula.zip([cursor.flatMap(function ($arg) {
 }).map(function ($arg) {
     return $arg + " px^2";
 });
-var main = vistula.dom.createElement(document.createElement("div"), [
-    vistula.dom.createElement(document.createElement("p"), [
-        vistula.dom.textObservable(labelText)
-    ]),
-    vistula.dom.createElement(document.createElement("p"), [
-        vistula.dom.ifStatement(areaField.map(function ($arg) {
-            return $arg < 160000;
-        }), [vistula.dom.textNode("Sorry, area is "), vistula.dom.createElement(document.createElement("strong"), [
-            vistula.dom.textNode("too small")
-        ]), vistula.dom.textNode(".\n")], [vistula.dom.textNode("Area is "), vistula.dom.textObservable(areaLabel)])
+var main = vistula.zipAndFlatten([
+    vistula.dom.createElement(document.createElement("div"), [
+        vistula.dom.createElement(document.createElement("p"), [
+            vistula.dom.textObservable(labelText)
+        ]),
+        vistula.dom.createElement(document.createElement("p"), [
+            vistula.dom.ifStatement(areaField.map(function ($arg) {
+                return $arg < 160000;
+            }), [
+                vistula.dom.textNode("Sorry, area is "),
+                vistula.dom.createElement(document.createElement("strong"), [
+                    vistula.dom.textNode("too small")
+                ]),
+                vistula.dom.textNode(".\n")
+            ], [
+                vistula.dom.textNode("Area is "),
+                vistula.dom.textObservable(areaLabel)
+            ])
+        ])
     ])
 ]);
 appendChild(vistula.constantObservable("main"), main);
