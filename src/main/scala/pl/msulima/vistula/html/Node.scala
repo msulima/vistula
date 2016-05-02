@@ -6,7 +6,7 @@ sealed trait Node
 
 case class TextNode(textContent: String) extends Node
 
-case class ObservableNode(expr: Ast.identifier) extends Node
+case class ObservableNode(expr: Ast.expr) extends Node
 
 case class IfNode(test: Ast.expr, body: Seq[Node], elseBlock: Seq[Node]) extends Node
 

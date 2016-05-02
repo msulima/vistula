@@ -70,27 +70,15 @@ var areaField = vistula.zip([cursor.flatMap(function ($arg) {
 })]).map(function ($args) {
     return $args[0] * $args[1];
 });
-var areaLabel = vistula.zip([vistula.zip([cursor.flatMap(function ($arg) {
-    return $arg.x;
-}).map(function ($arg) {
-    return $arg + " * ";
-}), cursor.flatMap(function ($arg) {
-    return $arg.y;
-})]).map(function ($args) {
-    return $args[0] + $args[1];
-}).map(function ($arg) {
-    return $arg + " = ";
-}), areaField]).map(function ($args) {
-    return $args[0] + $args[1];
-}).map(function ($arg) {
-    return $arg + " px^2";
-});
 var main = vistula.zipAndFlatten([
     vistula.dom.createElement(document.createElement("div"), [
+        vistula.dom.textNode("\n"),
         vistula.dom.createElement(document.createElement("p"), [
             vistula.dom.textObservable(labelText)
         ]),
+        vistula.dom.textNode("\n"),
         vistula.dom.createElement(document.createElement("p"), [
+            vistula.dom.textNode("\n"),
             vistula.dom.ifStatement(areaField.map(function ($arg) {
                 return $arg < 160000;
             }), [
@@ -101,12 +89,24 @@ var main = vistula.zipAndFlatten([
                 vistula.dom.textNode(".\n")
             ], [
                 vistula.dom.textNode("Area is "),
-                vistula.dom.textObservable(areaLabel)
-            ])
-        ])
-    ])
+                vistula.dom.textObservable(cursor.flatMap(function ($arg) {
+                    return $arg.x;
+                })),
+                vistula.dom.textNode(" * "),
+                vistula.dom.textObservable(cursor.flatMap(function ($arg) {
+                    return $arg.y;
+                })),
+                vistula.dom.textNode(" = "),
+                vistula.dom.textObservable(areaField),
+                vistula.dom.textNode(" px^2\n")
+            ]),
+            vistula.dom.textNode("\n")
+        ]),
+        vistula.dom.textNode("\n")
+    ]),
+    vistula.dom.textNode("\n")
 ]);
-appendChild(vistula.constantObservable("main"), main);
+appendChild(vistula.constantObservable("main"), main)
 /*-----*/
 
 function appendChild(Target, Observables) {

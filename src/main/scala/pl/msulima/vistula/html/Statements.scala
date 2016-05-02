@@ -6,9 +6,6 @@ import pl.msulima.vistula.parser.Expressions
 
 object Statements {
 
-  val variable =
-    Lexical.inline(Lexical.identifier).map(ObservableNode)
-
   val ifStatement: Parser[IfNode] = {
     val ifStart = Lexical.block(Lexical.kw("if") ~ Lexical.space ~ Expressions.comparison)
 
@@ -19,15 +16,18 @@ object Statements {
     P(ifStart ~ document ~ elseBlock ~ document ~ endIf).map(IfNode.tupled)
   }
 
+  val variable =
+    Lexical.inline(Lexical.expression).map(ObservableNode)
+
   val textNode: P[TextNode] =
     P(strChars.rep(min = 1).!).map(TextNode)
 
   val element: P[Element] =
-    P(multilineSpace ~ openTag ~/ node.rep(min = 0) ~ closeTag).map(Element.tupled)
+    P(openTag ~/ node.rep(min = 0) ~ closeTag).map(Element.tupled)
 
   val node: P[Node] =
-    P(multilineSpace ~ (textNode | element | ifStatement | variable) ~ multilineSpace)
+    P(element | ifStatement | variable | textNode)
 
   val document: P[Seq[Node]] =
-    P(node.rep)
+    P(multilineSpace ~ node.rep ~ multilineSpace)
 }

@@ -31,7 +31,7 @@ object Lexical {
 
   def kw(s: String) = pl.msulima.vistula.parser.Lexical.kw(s)
 
-  val identifier = pl.msulima.vistula.parser.Lexical.identifier
+  val expression = pl.msulima.vistula.parser.Expressions.expr
 
   def inline[T](p: => Parser[T]): Parser[T] = {
     P("{{" ~ space ~ p ~ space ~ "}}")

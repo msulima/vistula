@@ -3,7 +3,8 @@ vistula.zipAndFlatten([
         return $arg < 3;
     }), [
         vistula.dom.textNode("It's "),
-        vistula.dom.textObservable(Y)
+        vistula.dom.textObservable(Y),
+        vistula.dom.textNode("\n")
     ], [
         vistula.dom.textNode("3\n")
     ])

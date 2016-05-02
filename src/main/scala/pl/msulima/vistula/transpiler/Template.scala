@@ -29,7 +29,7 @@ object Template {
           |${Indent.leftPad(childNodes.map(apply).mkString(",\n"))}
           |])""".stripMargin;
     case ObservableNode(identifier) =>
-      s"vistula.dom.textObservable(${identifier.name})";
+      s"vistula.dom.textObservable(${VistulaTranspiler(Ast.stmt.Expr(identifier))})";
     case IfNode(expr, body, elseBody) =>
       s"vistula.dom.ifStatement(${VistulaTranspiler(Ast.stmt.Expr(expr))}, ${ToArray(apply(body))}, ${ToArray(apply(elseBody))})";
     case TextNode(text) =>
