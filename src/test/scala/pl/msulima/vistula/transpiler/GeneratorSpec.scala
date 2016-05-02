@@ -11,11 +11,14 @@ class GeneratorSpec extends Specification {
         |W = (X or Y + Z for Y in Z)
       """.stripMargin
 
-    program.toTranspiled.head must_==
+    program.toJavaScript must_==
       """var W = vistula.aggregate(X, Z, ($acc, $source) => {
         |    let Y = vistula.constantObservable($acc);
         |    let Z = vistula.constantObservable($source);
-        |    return vistula.zip([Y, Z]).map(function ($args) {
+        |    return vistula.zip([
+        |        Y,
+        |        Z
+        |    ]).map(function ($args) {
         |        return $args[0] + $args[1];
         |    });
         |});""".stripMargin

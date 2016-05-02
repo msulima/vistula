@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.util.Indent
+import pl.msulima.vistula.util.{Indent, ToArray}
 
 object Expression {
 
@@ -15,11 +15,11 @@ object Expression {
       if (fragment.dependencies.isEmpty) {
         s"${fragment.code}"
       } else if (fragment.dependencies.size == 1) {
-        s"""${Transpiler(fragment.dependencies.head)}.map(function ($$arg) {
+        s"""${Transpiler(fragment.dependencies.head)}.${fragment.mapper}(function ($$arg) {
            |${Indent.leftPad("return " + fragment.code)};
            |})""".stripMargin
       } else {
-        s"""vistula.zip([${Transpiler(fragment.dependencies).mkString(", ")}]).map(function ($$args) {
+        s"""vistula.zip(${ToArray(Transpiler(fragment.dependencies))}).${fragment.mapper}(function ($$args) {
             |${Indent.leftPad("return " + fragment.code)};
             |})""".stripMargin
       }
@@ -45,7 +45,7 @@ object Expression {
         case Ast.operator.Mod => "%"
       }
 
-      Fragment(Seq(x, y)) {
+      Fragment(Seq(x, y), useFlatMap = false) {
         case left :: right :: Nil =>
           s"$left $operator $right"
       }
@@ -59,13 +59,20 @@ object Expression {
         case Ast.cmpop.NotEq => "!="
       }
 
-      Fragment(Seq(x, y)) {
+      Fragment(Seq(x, y), useFlatMap = false) {
         case left :: right :: Nil =>
           s"$left $operator $right"
       }
     case Ast.expr.Call(Ast.expr.Name(Ast.identifier(func), Ast.expr_context.Load), args, _, _, _) =>
       val x: Seq[String] = args.map(arg => Transpiler(Ast.stmt.Expr(arg)))
 
-      Fragment(s"$func(${x.mkString(", ")})")
+      Fragment(s"$func(${x.mkString(", ")})", useFlatMap = true)
+    case Ast.expr.Call(func, args, _, _, _) =>
+      val x: Seq[String] = args.map(arg => Transpiler(Ast.stmt.Expr(arg)))
+
+      Fragment(Seq(func), useFlatMap = true) {
+        case f :: Nil =>
+          s"$f(${x.mkString(", ")})"
+      }
   }
 }

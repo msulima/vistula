@@ -105,12 +105,28 @@ function ifStatement(Condition, OnTrue, OnFalse) {
     });
 }
 
+function objectToObservable(obj) {
+    let target = {};
+
+    Object.keys(obj).forEach(function (key) {
+        var value = obj[key];
+        if (typeof value == "object") {
+            target[key] = objectToObservable(value);
+        } else {
+            target[key] = constantObservable(value)
+        }
+    });
+
+    return constantObservable(target);
+}
+
 module.exports = {
     aggregate: aggregate,
     constantObservable: constantObservable,
     delayedObservable: delayedObservable,
     distinctUntilChanged: distinctUntilChanged,
     ifStatement: ifStatement,
+    objectToObservable: objectToObservable,
     wrap: wrap,
     zip: zip,
     zipAndFlatten: zipAndFlatten

@@ -96,4 +96,32 @@ describe("Observable", function () {
         // then
         probe.expect([0, 0, 1, 0]);
     });
+
+    it("objectToObservable", function () {
+        // given
+        let obj = {
+            "A": {
+                "B": 1
+            },
+            "C": 2
+        };
+
+        let Obs = vistulaUtil.objectToObservable(obj);
+
+        // when
+        let Flat = Obs.flatMap((obj) => {
+            return obj.C;
+        });
+        let Nested = Obs.flatMap((obj) => {
+            return obj.A.flatMap((a) => {
+                return a.B;
+            })
+        });
+        let flatProbe = new Probe(Flat);
+        let nestedProbe = new Probe(Nested);
+
+        // then
+        flatProbe.expect([2]);
+        nestedProbe.expect([1]);
+    });
 });

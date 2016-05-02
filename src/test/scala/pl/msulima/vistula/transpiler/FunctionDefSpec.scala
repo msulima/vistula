@@ -13,7 +13,7 @@ class FunctionDefSpec extends Specification {
         |  Y - 1
       """.stripMargin
 
-    program.toTranspiled.head must_==
+    program.toJavaScript must_==
       """function a(X) {
         |    var Y = X.map(function ($arg) {
         |        return $arg + 2;

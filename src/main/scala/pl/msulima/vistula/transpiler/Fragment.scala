@@ -4,17 +4,26 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.expr
 
 
-case class Fragment(code: String, dependencies: Seq[Ast.stmt] = Seq())
+case class Fragment(code: String, dependencies: Seq[Ast.stmt] = Seq(), useFlatMap: Boolean = false) {
+
+  def mapper = {
+    if (useFlatMap) {
+      "flatMap"
+    } else {
+      "map"
+    }
+  }
+}
 
 object Fragment {
 
-  def apply(expressions: Seq[Ast.expr])(f: List[String] => String): Fragment = {
+  def apply(expressions: Seq[Ast.expr], useFlatMap: Boolean)(f: List[String] => String): Fragment = {
     val operands = Operands(expressions)
 
     val code = f(operands.map(_._2).toList)
     val dependsOn = operands.flatMap(_._1)
 
-    Fragment(code, dependsOn.map(Ast.stmt.Expr))
+    Fragment(code, dependsOn.map(Ast.stmt.Expr), useFlatMap)
   }
 }
 

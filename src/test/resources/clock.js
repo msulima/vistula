@@ -18,6 +18,14 @@ var cursor = vistula.constantObservable({
     y: cursorY
 });
 
+let stdlib = vistula.objectToObservable({
+    dom: {
+        appendChild: appendChild
+    },
+    net: {
+        ajaxGet: ajaxGet
+    }
+});
 
 /*-----*/
 let start = vistula.constantObservable(new Date().getTime());
@@ -37,37 +45,58 @@ function oddTime(clock) {
     }), clock, vistula.constantObservable("no"));
 }
 function realTimeElapsed(elapsed) {
-    return vistula.zip([clock, elapsed]).map(function ($args) {
+    return vistula.zip([
+        clock,
+        elapsed
+    ]).map(function ($args) {
         return $args[0] - $args[1];
     });
 }
-var timeElapsed = vistula.zip([clock, start]).map(function ($args) {
+var timeElapsed = vistula.zip([
+    clock,
+    start
+]).map(function ($args) {
     return $args[0] - $args[1];
 });
-var labelText = vistula.zip([vistula.zip([vistula.zip([vistula.zip([clock.map(function ($arg) {
-    return "It is: " + $arg;
-}).map(function ($arg) {
-    return $arg + ", elapsed from entering page: ";
-}), timeElapsed]).map(function ($args) {
-    return $args[0] + $args[1];
-}).map(function ($arg) {
-    return $arg + " in ";
-}), ticks]).map(function ($args) {
-    return $args[0] + $args[1];
-}).map(function ($arg) {
-    return $arg + " real: ";
-}), realTimeElapsed(start)]).map(function ($args) {
-    return $args[0] + $args[1];
-}).map(function ($arg) {
-    return $arg + " is odd: ";
-}), oddTime(clock)]).map(function ($args) {
+var labelText = vistula.zip([
+    vistula.zip([
+        vistula.zip([
+            vistula.zip([
+                clock.map(function ($arg) {
+                    return "It is: " + $arg;
+                }).map(function ($arg) {
+                    return $arg + ", elapsed from entering page: ";
+                }),
+                timeElapsed
+            ]).map(function ($args) {
+                return $args[0] + $args[1];
+            }).map(function ($arg) {
+                return $arg + " in ";
+            }),
+            ticks
+        ]).map(function ($args) {
+            return $args[0] + $args[1];
+        }).map(function ($arg) {
+            return $arg + " real: ";
+        }),
+        realTimeElapsed(start)
+    ]).map(function ($args) {
+        return $args[0] + $args[1];
+    }).map(function ($arg) {
+        return $arg + " is odd: ";
+    }),
+    oddTime(clock)
+]).map(function ($args) {
     return $args[0] + $args[1];
 });
-var areaField = vistula.zip([cursor.flatMap(function ($arg) {
-    return $arg.x;
-}), cursor.flatMap(function ($arg) {
-    return $arg.y;
-})]).map(function ($args) {
+var areaField = vistula.zip([
+    cursor.flatMap(function ($arg) {
+        return $arg.x;
+    }),
+    cursor.flatMap(function ($arg) {
+        return $arg.y;
+    })
+]).map(function ($args) {
     return $args[0] * $args[1];
 });
 var main = vistula.zipAndFlatten([
@@ -105,18 +134,30 @@ var main = vistula.zipAndFlatten([
         vistula.dom.textNode("\n  "),
         vistula.dom.createElement(document.createElement("div"), [
             vistula.dom.textNode("\n    "),
-            vistula.dom.textObservable(ajaxGet(vistula.constantObservable("http://jsonplaceholder.typicode.com/posts"))),
+            vistula.dom.textObservable(stdlib.flatMap(function ($arg) {
+                return $arg.net;
+            }).flatMap(function ($arg) {
+                return $arg.ajaxGet;
+            }).flatMap(function ($arg) {
+                return $arg(vistula.constantObservable("http://uinames.com/api/?amount=3"));
+            })),
             vistula.dom.textNode("\n  ")
         ]),
         vistula.dom.textNode("\n")
     ]),
     vistula.dom.textNode("\n")
 ]);
-appendChild(vistula.constantObservable("main"), main)
+stdlib.flatMap(function ($arg) {
+    return $arg.dom;
+}).flatMap(function ($arg) {
+    return $arg.appendChild;
+}).flatMap(function ($arg) {
+    return $arg(vistula.constantObservable("main"), main);
+})
 /*-----*/
 
 function appendChild(Target, Observables) {
-    vistula.zip([Target, Observables]).map(function ($args) {
+    return vistula.zip([Target, Observables]).map(function ($args) {
         var target = document.getElementById($args[0]);
         $args[1].forEach(function (obs) {
             target.appendChild(obs);

@@ -15,7 +15,7 @@ class IfSpec extends Specification {
         |  3
       """.stripMargin
 
-    program.toTranspiled.head must_==
+    program.toJavaScript must_==
       """vistula.ifStatement(X.map(function ($arg) {
         |    return $arg < 3;
         |}), vistula.wrap(function () {

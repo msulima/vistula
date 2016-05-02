@@ -1,23 +1,15 @@
 package pl.msulima.vistula.transpiler
 
 import org.specs2.mutable.Specification
-import pl.msulima.vistula.testutil.ToProgram
+import pl.msulima.vistula.testutil._
 
 class AttributeSpec extends Specification {
 
   "transpiles attribute access" in {
-    val program =
-      """
-        |W.X + Y.Z
-      """.stripMargin
+    readFile("/pl/msulima/vistula/transpiler/attribute.vst").toJavaScript must_== readFile("/pl/msulima/vistula/transpiler/attribute.js")
+  }
 
-    program.toTranspiled.head must_==
-      """vistula.zip([W.flatMap(function ($arg) {
-        |    return $arg.X;
-        |}), Y.flatMap(function ($arg) {
-        |    return $arg.Z;
-        |})]).map(function ($args) {
-        |    return $args[0] + $args[1];
-        |})""".stripMargin
+  "transpiles method calls" in {
+    readFile("/pl/msulima/vistula/transpiler/method.vst").toJavaScript must_== readFile("/pl/msulima/vistula/transpiler/method.js")
   }
 }

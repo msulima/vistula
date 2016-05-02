@@ -30,9 +30,9 @@ main = '''# html
   {% endif %}
   </p>
   <div>
-    {{ ajaxGet("http://jsonplaceholder.typicode.com/posts") }}
+    {{ stdlib.net.ajaxGet("http://uinames.com/api/?amount=3") }}
   </div>
 </div>
 '''
 
-appendChild("main", main)
+stdlib.dom.appendChild("main", main)

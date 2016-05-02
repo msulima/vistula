@@ -32,6 +32,10 @@ package object testutil {
     def toTranspiled = {
       (Statements.file_input ~ End).parse(code).get.value.map(Transpiler.apply)
     }
+
+    def toJavaScript = {
+      Vistula.toJavaScript(code)
+    }
   }
 
 }
