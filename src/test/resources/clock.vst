@@ -20,7 +20,7 @@ labelText = "It is: " + clock + ", elapsed from entering page: " + timeElapsed +
 areaField = cursor.x * cursor.y
 areaLabel = cursor.x + " * " + cursor.y + " = " + areaField + " px^2";
 
-'''# html
+main = '''# html
 <div>
 <p>{{ labelText }}</p>
 <p>
@@ -32,3 +32,5 @@ areaLabel = cursor.x + " * " + cursor.y + " = " + areaField + " px^2";
 </p>
 </div>
 '''
+
+appendChild("main", main)

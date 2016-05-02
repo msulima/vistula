@@ -1,21 +1,29 @@
-package pl.msulima.vistula.html
+package pl.msulima.vistula.transpiler
 
 import fastparse.all._
+import pl.msulima.vistula.html.{TextNode, _}
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler}
 import pl.msulima.vistula.util.{Indent, ToArray}
 
-object Transpiler {
+object Template {
+
+  private val MagicInlineHtmlPrefix = "# html\n"
+
+  val parseExpression: PartialFunction[Ast.expr, Fragment] = {
+    case Ast.expr.Str(x) if x.startsWith(MagicInlineHtmlPrefix) =>
+      Fragment(Template(x.stripPrefix(MagicInlineHtmlPrefix)))
+  }
 
   def apply(program: String): String = {
     apply((Statements.document ~ End).parse(program).get.value).mkString("", ";\n", ";")
   }
 
-  def apply(program: Seq[Node]): Seq[String] = {
+  private def apply(program: Seq[Node]): Seq[String] = {
     program.map(apply)
   }
 
-  def apply: PartialFunction[Node, String] = {
+  private def apply: PartialFunction[Node, String] = {
     case Element(tagName, childNodes) =>
       s"""vistula.dom.createElement(document.createElement("$tagName"), [
           |${Indent.leftPad(childNodes.map(apply).mkString(",\n"))}

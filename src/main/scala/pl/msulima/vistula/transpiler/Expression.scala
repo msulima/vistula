@@ -1,19 +1,17 @@
 package pl.msulima.vistula.transpiler
 
-import pl.msulima.vistula.html.{Transpiler => HtmlTranspiler}
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.util.Indent
 
 object Expression {
 
-  private val MagicInlineHtmlPrefix = "# html\n"
   private val MagicInlineJavascriptPrefix = "# javascript\n"
 
   def apply: PartialFunction[Ast.stmt, String] = {
     case Ast.stmt.Assign(Ast.expr.Name(Ast.identifier(name), Ast.expr_context.Load) +: _, value) =>
       s"var $name = ${Transpiler(Ast.stmt.Expr(value))};"
     case Ast.stmt.Expr(value) =>
-      val fragment = parseExpression.orElse(Generator.apply).orElse(Attribute.apply)(value)
+      val fragment = parseExpression(value)
       if (fragment.dependencies.isEmpty) {
         s"${fragment.code}"
       } else if (fragment.dependencies.size == 1) {
@@ -28,9 +26,11 @@ object Expression {
   }
 
   private lazy val parseExpression: PartialFunction[Ast.expr, Fragment] = {
+    Generator.apply.orElse(Attribute.apply).orElse(Template.parseExpression).orElse(parseSimpleExpression)
+  }
+
+  private lazy val parseSimpleExpression: PartialFunction[Ast.expr, Fragment] = {
     case Ast.expr.Num(x) => Fragment(s"vistula.constantObservable(${x.toString})")
-    case Ast.expr.Str(x) if x.startsWith(MagicInlineHtmlPrefix) =>
-      Fragment(HtmlTranspiler(x.stripPrefix(MagicInlineHtmlPrefix)))
     case Ast.expr.Str(x) if x.startsWith(MagicInlineJavascriptPrefix) =>
       Fragment(x.stripPrefix(MagicInlineJavascriptPrefix))
     case Ast.expr.Str(x) => Fragment(s"""vistula.constantObservable("$x")""")

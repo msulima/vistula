@@ -85,7 +85,7 @@ var areaLabel = vistula.zip([vistula.zip([cursor.flatMap(function ($arg) {
 }).map(function ($arg) {
     return $arg + " px^2";
 });
-var x = vistula.dom.createElement(document.createElement("div"), [
+var main = vistula.dom.createElement(document.createElement("div"), [
     vistula.dom.createElement(document.createElement("p"), [
         vistula.dom.textObservable(labelText)
     ]),
@@ -97,8 +97,14 @@ var x = vistula.dom.createElement(document.createElement("div"), [
         ]), vistula.dom.textNode(".\n")], [vistula.dom.textNode("Area is "), vistula.dom.textObservable(areaLabel)])
     ])
 ]);
+appendChild(vistula.constantObservable("main"), main);
 /*-----*/
 
-x.forEach(function (x) {
-    document.getElementById("main").appendChild(x[0]);
-});
+function appendChild(Target, Observables) {
+    vistula.zip([Target, Observables]).map(function ($args) {
+        var target = document.getElementById($args[0]);
+        $args[1].forEach(function (obs) {
+            target.appendChild(obs);
+        });
+    });
+}
