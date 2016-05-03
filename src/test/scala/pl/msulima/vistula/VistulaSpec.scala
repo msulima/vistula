@@ -1,7 +1,11 @@
 package pl.msulima.vistula
 
+import java.io.File
+import java.nio.file.Files
+
 import org.specs2.mutable.Specification
 
+import scala.collection.JavaConverters._
 import scala.io.Source
 
 class VistulaSpec extends Specification {
@@ -10,7 +14,7 @@ class VistulaSpec extends Specification {
     """
       |X = 42
       |W = X + 3 + a(b(Y), Z)
-      |""".stripMargin
+      | """.stripMargin
 
   "extract dependencies" in {
     val script = Vistula.toJavaScript(HelloWorld)
@@ -20,9 +24,8 @@ class VistulaSpec extends Specification {
 
   "transpiles clock" in {
     val script = Vistula.toJavaScript(Source.fromInputStream(getClass.getResourceAsStream("/clock.vst")).mkString)
-    println("/*-----*/")
-    println(script)
-    println("/*-----*/")
+
+    Files.write(new File("target/clock.js").toPath, script.split("\n").toSeq.asJava)
     script must not(beEmpty)
   }
 }
