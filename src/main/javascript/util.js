@@ -105,16 +105,27 @@ function ifStatement(Condition, OnTrue, OnFalse) {
     });
 }
 
+function toObservable(value) {
+    if (Array.isArray(value)) {
+        return arrayToObservable(value);
+    } else if (typeof value == "object") {
+        return objectToObservable(value);
+    } else {
+        return constantObservable(value)
+    }
+}
+
+function arrayToObservable(obj) {
+    return constantObservable(obj.map(function (x) {
+        return toObservable(x);
+    }));
+}
+
 function objectToObservable(obj) {
     let target = {};
 
     Object.keys(obj).forEach(function (key) {
-        var value = obj[key];
-        if (typeof value == "object") {
-            target[key] = objectToObservable(value);
-        } else {
-            target[key] = constantObservable(value)
-        }
+        target[key] = toObservable(obj[key]);
     });
 
     return constantObservable(target);
@@ -126,7 +137,7 @@ module.exports = {
     delayedObservable: delayedObservable,
     distinctUntilChanged: distinctUntilChanged,
     ifStatement: ifStatement,
-    objectToObservable: objectToObservable,
+    toObservable: toObservable,
     wrap: wrap,
     zip: zip,
     zipAndFlatten: zipAndFlatten

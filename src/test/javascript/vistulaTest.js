@@ -97,16 +97,19 @@ describe("Observable", function () {
         probe.expect([0, 0, 1, 0]);
     });
 
-    it("objectToObservable", function () {
+    it("toObservable", function () {
         // given
         let obj = {
             "A": {
                 "B": 1
             },
-            "C": 2
+            "C": 2,
+            "D": [
+                3
+            ]
         };
 
-        let Obs = vistulaUtil.objectToObservable(obj);
+        let Obs = vistulaUtil.toObservable(obj);
 
         // when
         let Flat = Obs.rxFlatMap((obj) => {
@@ -117,11 +120,25 @@ describe("Observable", function () {
                 return a.B;
             })
         });
+        let IsList = Obs.rxFlatMap((obj) => {
+            return obj.D.rxMap((list) => {
+                return Array.isArray(list);
+            });
+        });
+        let List = Obs.rxFlatMap((obj) => {
+            return obj.D.rxFlatMap((list) => {
+                return list[0];
+            });
+        });
         let flatProbe = new Probe(Flat);
         let nestedProbe = new Probe(Nested);
+        let isListProbe = new Probe(IsList);
+        let listProbe = new Probe(List);
 
         // then
         flatProbe.expect([2]);
         nestedProbe.expect([1]);
+        isListProbe.expect([true]);
+        listProbe.expect([3]);
     });
 });

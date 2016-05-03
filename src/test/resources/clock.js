@@ -18,7 +18,7 @@ var cursor = vistula.constantObservable({
     y: cursorY
 });
 
-let stdlib = vistula.objectToObservable({
+let stdlib = vistula.toObservable({
     dom: {
         appendChild: appendChild
     },
@@ -141,10 +141,14 @@ var main = vistula.zipAndFlatten([
             }).rxFlatMap(function ($arg) {
                 return $arg(vistula.constantObservable("http://uinames.com/api/?amount=3"));
             }).rxFlatMap(function ($arg) {
-                return vistula.zipAndFlatten($arg.map(function (name) {
+                return vistula.zipAndFlatten($arg.map(function (person) {
                     return vistula.zipAndFlatten([
                         vistula.dom.createElement(document.createElement("li"), [
-                            vistula.dom.textObservable(name.rxFlatMap(function ($arg) {
+                            vistula.dom.textObservable(person.rxFlatMap(function ($arg) {
+                                return $arg.name;
+                            })),
+                            vistula.dom.textNode(" from "),
+                            vistula.dom.textObservable(person.rxFlatMap(function ($arg) {
                                 return $arg.region;
                             }))
                         ]),
@@ -184,7 +188,8 @@ function ajaxGet(Url) {
         request.onreadystatechange = function () {
             var DONE = this.DONE || 4;
             if (this.readyState === DONE) {
-                obs.rxPush(JSON.parse(this.responseText).map(vistula.objectToObservable));
+                var value = vistula.toObservable(JSON.parse(this.responseText));
+                value.rxForEach(obs.rxPush.bind(obs));
             }
         };
         request.open('GET', url, true);

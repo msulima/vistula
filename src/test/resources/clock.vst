@@ -30,8 +30,8 @@ main = '''# html
   {% endif %}
   </p>
   <ul>
-    {% for name in stdlib.net.ajaxGet("http://uinames.com/api/?amount=3") %}
-      <li>{{ name.region }}</li>
+    {% for person in stdlib.net.ajaxGet("http://uinames.com/api/?amount=3") %}
+      <li>{{ person.name }} from {{ person.region }}</li>
     {% endfor %}
   </ul>
 </div>
