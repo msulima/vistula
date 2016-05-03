@@ -55,6 +55,19 @@ describe("Observable", function () {
         probe.expect([3]);
     });
 
+    it("zip empty list", function () {
+        // given
+        let Source = new vistula.ObservableImpl();
+        var Initial = vistulaUtil.constantObservable(1);
+
+        let Obs = vistulaUtil.zip([]);
+        let probe = new Probe(Obs);
+
+        // when
+        // then
+        probe.expect([[]]);
+    });
+
     it("aggregate", function () {
         // given
         let Source = new vistula.ObservableImpl();

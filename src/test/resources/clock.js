@@ -27,6 +27,12 @@ let stdlib = vistula.toObservable({
     }
 });
 
+let clickIdx = 0;
+let submitTasks = new vistula.ObservableImpl();
+document.getElementById("click").addEventListener("click", function () {
+    submitTasks.rxPush(vistula.constantObservable(clickIdx++));
+});
+
 /*-----*/
 let start = vistula.constantObservable(new Date().getTime());
 ;
@@ -99,6 +105,14 @@ var areaField = vistula.zip([
 ]).rxMap(function ($args) {
     return $args[0] * $args[1];
 });
+var todos = vistula.aggregate(vistula.constantObservable([
+    vistula.constantObservable(1),
+    vistula.constantObservable(2)
+]), submitTasks, ($acc, $source) => {
+    let todos = vistula.constantObservable($acc);
+    let submitTasks = vistula.constantObservable($source);
+    return array_push(todos, submitTasks);
+});
 var main = vistula.zipAndFlatten([
     vistula.dom.createElement(document.createElement("div"), [
         vistula.dom.textNode("\n  "),
@@ -129,6 +143,21 @@ var main = vistula.zipAndFlatten([
                 vistula.dom.textObservable(areaField),
                 vistula.dom.textNode(" px^2\n  ")
             ]),
+            vistula.dom.textNode("\n  ")
+        ]),
+        vistula.dom.textNode("\n  "),
+        vistula.dom.createElement(document.createElement("ul"), [
+            vistula.dom.textNode("\n    "),
+            todos.rxFlatMap(function ($arg) {
+                return vistula.zipAndFlatten($arg.map(function (todo) {
+                    return vistula.zipAndFlatten([
+                        vistula.dom.createElement(document.createElement("li"), [
+                            vistula.dom.textObservable(todo)
+                        ]),
+                        vistula.dom.textNode("\n    ")
+                    ]);
+                }))
+            }),
             vistula.dom.textNode("\n  ")
         ]),
         vistula.dom.textNode("\n  "),
@@ -170,6 +199,17 @@ stdlib.rxFlatMap(function ($arg) {
     return $arg(vistula.constantObservable("main"), main);
 });
 /*-----*/
+
+function arrayPush(Dest, Elem) {
+    return vistula.zip([Dest, Elem]).rxMap(function ($args) {
+        if ($args[0].length == 3) {
+            return [];
+        }
+        var copy = [].concat($args[0]);
+        copy.push($args[1]);
+        return copy;
+    });
+}
 
 function appendChild(Target, Observables) {
     return vistula.zip([Target, Observables]).rxMap(function ($args) {

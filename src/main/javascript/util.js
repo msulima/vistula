@@ -12,6 +12,10 @@ function zipAndFlatten(observables) {
 function zip(observables) {
     var observable = new ObservableImpl();
 
+    if (observables.length == 0) {
+        return constantObservable([]);
+    }
+
     var results = observables.map(function () {
         return {
             hasValue: false,

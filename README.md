@@ -1,2 +1,3 @@
 * Dictionaries
 * Error handling
+* Classes
