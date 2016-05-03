@@ -6,7 +6,7 @@ function Probe(observable) {
     let observed = [];
     this.observed = observed;
 
-    observable.forEach((value) => {
+    observable.rxForEach((value) => {
         observed.push(value);
     });
 }

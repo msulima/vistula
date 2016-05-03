@@ -8,9 +8,9 @@ case class Fragment(code: String, dependencies: Seq[Ast.stmt] = Seq(), useFlatMa
 
   def mapper = {
     if (useFlatMap) {
-      "flatMap"
+      "rxFlatMap"
     } else {
-      "map"
+      "rxMap"
     }
   }
 }

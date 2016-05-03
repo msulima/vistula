@@ -3,10 +3,10 @@
 var util = require("./util");
 
 function ifStatement(Condition, FragTrue, FragFalse) {
-    return util.distinctUntilChanged(Condition).flatMap(function ($condition) {
+    return util.distinctUntilChanged(Condition).rxFlatMap(function ($condition) {
         let $fragments = $condition ? FragTrue : FragFalse;
 
-        return util.zip($fragments).map(function ($arrays) {
+        return util.zip($fragments).rxMap(function ($arrays) {
             return [].concat.apply([], $arrays);
         });
     });
@@ -18,7 +18,7 @@ function textNode(text) {
 
 function textObservable(Obs) {
     let span = document.createElement("span");
-    Obs.forEach(function ($arg) {
+    Obs.rxForEach(function ($arg) {
         span.textContent = $arg;
     });
     return util.constantObservable([span]);
@@ -29,7 +29,7 @@ function createElement(parent, childNodes) {
     childNodes.forEach(function (ChildNode, idx) {
         currentChildren.push([]);
 
-        ChildNode.forEach(function ($args) {
+        ChildNode.rxForEach(function ($args) {
             updateChildren(parent, currentChildren[idx], $args);
             currentChildren[idx] = $args;
         });

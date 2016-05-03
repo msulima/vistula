@@ -18,7 +18,7 @@ class GeneratorSpec extends Specification {
         |    return vistula.zip([
         |        Y,
         |        Z
-        |    ]).map(function ($args) {
+        |    ]).rxMap(function ($args) {
         |        return $args[0] + $args[1];
         |    });
         |});""".stripMargin

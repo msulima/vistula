@@ -1,7 +1,7 @@
-W.flatMap(function ($arg) {
+W.rxFlatMap(function ($arg) {
     return $arg.X;
-}).flatMap(function ($arg) {
+}).rxFlatMap(function ($arg) {
     return $arg.Y;
-}).flatMap(function ($arg) {
+}).rxFlatMap(function ($arg) {
     return $arg(Z);
 });

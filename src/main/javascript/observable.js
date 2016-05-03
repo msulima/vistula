@@ -6,7 +6,7 @@ var ObservableImpl = function () {
     this.observers = [];
 };
 
-ObservableImpl.prototype.forEach = function (callback) {
+ObservableImpl.prototype.rxForEach = function (callback) {
     this.observers.push(callback);
 
     if (this.hasValue) {
@@ -14,7 +14,7 @@ ObservableImpl.prototype.forEach = function (callback) {
     }
 };
 
-ObservableImpl.prototype.onNext = function (value) {
+ObservableImpl.prototype.rxPush = function (value) {
     this.hasValue = true;
     this.lastValue = value;
     var _this = this;
@@ -30,27 +30,27 @@ ObservableImpl.prototype.unsubscribe = function (callback) {
     });
 };
 
-ObservableImpl.prototype.map = function (callback) {
+ObservableImpl.prototype.rxMap = function (callback) {
     var observable = new ObservableImpl();
 
-    this.forEach(function (value) {
-        observable.onNext(callback(value));
+    this.rxForEach(function (value) {
+        observable.rxPush(callback(value));
     });
 
     return observable;
 };
 
-ObservableImpl.prototype.flatMap = function (callback) {
+ObservableImpl.prototype.rxFlatMap = function (callback) {
     var proxy = new ObservableImpl();
     var currentObservable = null;
 
-    this.forEach(function (next) {
+    this.rxForEach(function (next) {
         var nestedObservable = callback(next);
         currentObservable = nestedObservable;
 
-        nestedObservable.forEach(function (value, unsubscribeCallback) {
+        nestedObservable.rxForEach(function (value, unsubscribeCallback) {
             if (nestedObservable == currentObservable) {
-                proxy.onNext(value);
+                proxy.rxPush(value);
             } else {
                 unsubscribeCallback();
             }

@@ -16,10 +16,10 @@ class IfSpec extends Specification {
       """.stripMargin
 
     program.toJavaScript must_==
-      """vistula.ifStatement(X.map(function ($arg) {
+      """vistula.ifStatement(X.rxMap(function ($arg) {
         |    return $arg < 3;
         |}), vistula.wrap(function () {
-        |    var Y = X.map(function ($arg) {
+        |    var Y = X.rxMap(function ($arg) {
         |        return $arg + 3;
         |    });
         |    return Y;

@@ -14,7 +14,7 @@ describe("Observable", function () {
         let probe = new Probe(Obs);
 
         // when
-        Obs.onNext(1);
+        Obs.rxPush(1);
 
         // then
         probe.expect([1]);
@@ -24,13 +24,13 @@ describe("Observable", function () {
         // given
         let Obs = new vistula.ObservableImpl();
 
-        let Mapped = Obs.map((value) => {
+        let Mapped = Obs.rxMap((value) => {
             return value * 10;
         });
         let probe = new Probe(Mapped);
 
         // when
-        Obs.onNext(1);
+        Obs.rxPush(1);
 
         probe.expect([10]);
     });
@@ -40,16 +40,16 @@ describe("Observable", function () {
         let Obs = new vistula.ObservableImpl();
         let nestedObservable = new vistula.ObservableImpl();
 
-        let Mapped = Obs.flatMap((value) => {
-            return nestedObservable.map((nested) => {
+        let Mapped = Obs.rxFlatMap((value) => {
+            return nestedObservable.rxMap((nested) => {
                 return value + nested;
             });
         });
         let probe = new Probe(Mapped);
 
         // when
-        Obs.onNext(1);
-        nestedObservable.onNext(2);
+        Obs.rxPush(1);
+        nestedObservable.rxPush(2);
 
         // then
         probe.expect([3]);
@@ -64,15 +64,15 @@ describe("Observable", function () {
             //noinspection UnnecessaryLocalVariableJS
             let Obs = vistulaUtil.constantObservable($acc);
             let Source = vistulaUtil.constantObservable($source);
-            return vistulaUtil.zip([Obs, Source]).map((value) => {
+            return vistulaUtil.zip([Obs, Source]).rxMap((value) => {
                 return value[0] + value[1];
             });
         });
         let probe = new Probe(Obs);
 
         // when
-        Source.onNext(10);
-        Source.onNext(100);
+        Source.rxPush(10);
+        Source.rxPush(100);
 
         // then
         probe.expect([1, 11, 111]);
@@ -88,10 +88,10 @@ describe("Observable", function () {
         let probe = new Probe(Obs);
 
         // when
-        Condition.onNext(true);
-        Condition.onNext(true);
-        Condition.onNext(false);
-        Condition.onNext(true);
+        Condition.rxPush(true);
+        Condition.rxPush(true);
+        Condition.rxPush(false);
+        Condition.rxPush(true);
 
         // then
         probe.expect([0, 0, 1, 0]);
@@ -109,11 +109,11 @@ describe("Observable", function () {
         let Obs = vistulaUtil.objectToObservable(obj);
 
         // when
-        let Flat = Obs.flatMap((obj) => {
+        let Flat = Obs.rxFlatMap((obj) => {
             return obj.C;
         });
-        let Nested = Obs.flatMap((obj) => {
-            return obj.A.flatMap((a) => {
+        let Nested = Obs.rxFlatMap((obj) => {
+            return obj.A.rxFlatMap((a) => {
                 return a.B;
             })
         });

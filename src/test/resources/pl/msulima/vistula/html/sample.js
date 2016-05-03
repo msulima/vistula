@@ -1,7 +1,7 @@
 vistula.zipAndFlatten([
     vistula.dom.createElement(document.createElement("span"), [
         vistula.dom.textNode("\n    hello\n    is it "),
-        vistula.dom.textObservable(Lionel.map(function ($arg) {
+        vistula.dom.textObservable(Lionel.rxMap(function ($arg) {
             return $arg + "?";
         })),
         vistula.dom.textNode("\n    "),
