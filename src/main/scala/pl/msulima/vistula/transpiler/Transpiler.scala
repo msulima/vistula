@@ -25,6 +25,6 @@ object Transpiler {
   }
 
   def apply: PartialFunction[Ast.stmt, String] = {
-    Expression.apply.orElse(FunctionDef.apply).orElse(If.apply)
+    Expression.apply.orElse(FunctionDef.apply).orElse(If.apply).orElse(Loop.apply)
   }
 }

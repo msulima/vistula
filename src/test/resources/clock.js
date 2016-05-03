@@ -132,15 +132,26 @@ var main = vistula.zipAndFlatten([
             vistula.dom.textNode("\n  ")
         ]),
         vistula.dom.textNode("\n  "),
-        vistula.dom.createElement(document.createElement("div"), [
+        vistula.dom.createElement(document.createElement("ul"), [
             vistula.dom.textNode("\n    "),
-            vistula.dom.textObservable(stdlib.rxFlatMap(function ($arg) {
+            stdlib.rxFlatMap(function ($arg) {
                 return $arg.net;
             }).rxFlatMap(function ($arg) {
                 return $arg.ajaxGet;
             }).rxFlatMap(function ($arg) {
                 return $arg(vistula.constantObservable("http://uinames.com/api/?amount=3"));
-            })),
+            }).rxFlatMap(function ($arg) {
+                return vistula.zipAndFlatten($arg.map(function (name) {
+                    return vistula.zipAndFlatten([
+                        vistula.dom.createElement(document.createElement("li"), [
+                            vistula.dom.textObservable(name.rxFlatMap(function ($arg) {
+                                return $arg.region;
+                            }))
+                        ]),
+                        vistula.dom.textNode("\n    ")
+                    ]);
+                }))
+            }),
             vistula.dom.textNode("\n  ")
         ]),
         vistula.dom.textNode("\n")
@@ -173,7 +184,7 @@ function ajaxGet(Url) {
         request.onreadystatechange = function () {
             var DONE = this.DONE || 4;
             if (this.readyState === DONE) {
-                obs.rxPush(this.responseText)
+                obs.rxPush(JSON.parse(this.responseText).map(vistula.objectToObservable));
             }
         };
         request.open('GET', url, true);

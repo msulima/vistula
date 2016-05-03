@@ -26,14 +26,12 @@ object Expression {
   }
 
   private lazy val parseExpression: PartialFunction[Ast.expr, Fragment] = {
-    Generator.apply.orElse(Attribute.apply).orElse(Template.parseExpression).orElse(parseSimpleExpression)
+    Generator.apply.orElse(Attribute.apply).orElse(Template.parseExpression).orElse(parseSimpleExpression).orElse(Primitives.apply)
   }
 
   private lazy val parseSimpleExpression: PartialFunction[Ast.expr, Fragment] = {
-    case Ast.expr.Num(x) => Fragment(s"vistula.constantObservable(${x.toString})")
     case Ast.expr.Str(x) if x.startsWith(MagicInlineJavascriptPrefix) =>
       Fragment(x.stripPrefix(MagicInlineJavascriptPrefix))
-    case Ast.expr.Str(x) => Fragment(s"""vistula.constantObservable("$x")""")
 
     case Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) => Fragment(x)
     case Ast.expr.BinOp(x, op, y) =>

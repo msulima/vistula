@@ -29,9 +29,11 @@ main = '''# html
     Area is {{ cursor.x }} * {{ cursor.y }} = {{ areaField }} px^2
   {% endif %}
   </p>
-  <div>
-    {{ stdlib.net.ajaxGet("http://uinames.com/api/?amount=3") }}
-  </div>
+  <ul>
+    {% for name in stdlib.net.ajaxGet("http://uinames.com/api/?amount=3") %}
+      <li>{{ name.region }}</li>
+    {% endfor %}
+  </ul>
 </div>
 '''
 
