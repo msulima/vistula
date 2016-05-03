@@ -21,6 +21,6 @@ class FunctionDefSpec extends Specification {
         |    return Y.map(function ($arg) {
         |        return $arg - 1;
         |    });
-        |}""".stripMargin
+        |};""".stripMargin
   }
 }

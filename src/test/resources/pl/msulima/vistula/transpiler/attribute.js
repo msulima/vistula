@@ -9,4 +9,4 @@ vistula.zip([
     })
 ]).map(function ($args) {
     return $args[0] + $args[1];
-})
+});

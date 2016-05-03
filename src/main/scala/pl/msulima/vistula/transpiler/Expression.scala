@@ -9,7 +9,7 @@ object Expression {
 
   def apply: PartialFunction[Ast.stmt, String] = {
     case Ast.stmt.Assign(Ast.expr.Name(Ast.identifier(name), Ast.expr_context.Load) +: _, value) =>
-      s"var $name = ${Transpiler(Ast.stmt.Expr(value))};"
+      s"var $name = ${Transpiler(Ast.stmt.Expr(value))}"
     case Ast.stmt.Expr(value) =>
       val fragment = parseExpression(value)
       if (fragment.dependencies.isEmpty) {

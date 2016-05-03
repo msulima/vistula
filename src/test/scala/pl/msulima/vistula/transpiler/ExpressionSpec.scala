@@ -25,7 +25,7 @@ class ExpressionSpec extends Specification {
     program.toTranspiled must_== Seq(
       """var X = Y.map(function ($arg) {
         |    return $arg + 3;
-        |});""".stripMargin
+        |})""".stripMargin
     )
   }
 
@@ -36,7 +36,7 @@ class ExpressionSpec extends Specification {
       """.stripMargin
 
     program.toTranspiled must_== Seq(
-      """var X = a(Y, vistula.constantObservable(3));""".stripMargin
+      """var X = a(Y, vistula.constantObservable(3))""".stripMargin
     )
   }
 

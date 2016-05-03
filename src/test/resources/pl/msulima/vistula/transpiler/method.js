@@ -4,4 +4,4 @@ W.flatMap(function ($arg) {
     return $arg.Y;
 }).flatMap(function ($arg) {
     return $arg(Z);
-})
+});

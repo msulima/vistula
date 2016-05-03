@@ -23,6 +23,6 @@ class IfSpec extends Specification {
         |        return $arg + 3;
         |    });
         |    return Y;
-        |}), vistula.constantObservable(3))""".stripMargin
+        |}), vistula.constantObservable(3));""".stripMargin
   }
 }

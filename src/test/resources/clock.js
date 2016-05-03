@@ -29,7 +29,7 @@ let stdlib = vistula.objectToObservable({
 
 /*-----*/
 let start = vistula.constantObservable(new Date().getTime());
-
+;
 var ticks = vistula.aggregate(vistula.constantObservable(0), clock, ($acc, $source) => {
     let ticks = vistula.constantObservable($acc);
     let clock = vistula.constantObservable($source);
@@ -43,7 +43,7 @@ function oddTime(clock) {
     }).map(function ($arg) {
         return $arg == 0;
     }), clock, vistula.constantObservable("no"));
-}
+};
 function realTimeElapsed(elapsed) {
     return vistula.zip([
         clock,
@@ -51,7 +51,7 @@ function realTimeElapsed(elapsed) {
     ]).map(function ($args) {
         return $args[0] - $args[1];
     });
-}
+};
 var timeElapsed = vistula.zip([
     clock,
     start
@@ -153,7 +153,7 @@ stdlib.flatMap(function ($arg) {
     return $arg.appendChild;
 }).flatMap(function ($arg) {
     return $arg(vistula.constantObservable("main"), main);
-})
+});
 /*-----*/
 
 function appendChild(Target, Observables) {

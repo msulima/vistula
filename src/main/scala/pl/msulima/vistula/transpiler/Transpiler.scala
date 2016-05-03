@@ -16,8 +16,8 @@ object Transpiler {
   }
 
   def returnLast(program: Seq[Ast.stmt]): String = {
-    val lines = apply(program.init) :+ s"return ${Transpiler(program.last)};"
-    lines.mkString("\n")
+    val lines = apply(program.init) :+ s"return ${Transpiler(program.last)}"
+    lines.mkString("", ";\n", ";\n")
   }
 
   def apply(program: Seq[Ast.stmt]): Seq[String] = {
