@@ -41,6 +41,13 @@ ObservableImpl.prototype.rxMap = function (callback) {
 };
 
 ObservableImpl.prototype.rxFlatMap = function (callback) {
+    // TODO hacky as fuck
+    if (this.constant) {
+        var nestedObservable = callback(this.lastValue);
+        if (nestedObservable.constant) {
+            return nestedObservable;
+        }
+    }
     var proxy = new ObservableImpl();
     var currentObservable = null;
 

@@ -27,13 +27,22 @@ function textObservable(Obs) {
 function createElement(tag, attributes, childNodes) {
     let parent = document.createElement(tag);
 
-    attributes.forEach(function (attribute) {
-        attribute[1].rxForEach(function (value) {
-            parent.setAttribute(attribute[0], value);
-            if (tag == "input" && parent.type == "checkbox" && attribute[0] == "checked") {
+    attributes.forEach(function (attributeAndValue) {
+        let attribute = attributeAndValue[0];
+        let Value = attributeAndValue[1];
+
+        Value.rxForEach(function (value) {
+            parent.setAttribute(attribute, value);
+            if (isCheckbox(parent, attribute)) {
                 parent.checked = value;
             }
         });
+
+        if (isCheckbox(parent, attribute)) {
+            parent.addEventListener("change", function (ev) {
+                Value.rxPush(ev.target.checked);
+            });
+        }
     });
 
     let currentChildren = [];
@@ -47,6 +56,11 @@ function createElement(tag, attributes, childNodes) {
     });
 
     return util.constantObservable([parent]);
+}
+
+function isCheckbox(parent, attribute) {
+    // TODO what if type is not set yet?
+    return parent.nodeName === "INPUT" && parent.type === "checkbox" && attribute === "checked";
 }
 
 function updateChildren(parent, currentChildren, nextChildren) {

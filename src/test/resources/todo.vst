@@ -27,6 +27,19 @@ app = '''# html
       </li>
     {% endfor %}
   </ul>
+  <ul>
+    {% for todo in todos %}
+      <li>
+        <input type="checkbox" checked="{{ todo.completed }}"/>
+        {% if todo.completed %}
+          √
+        {% else %}
+          x
+        {% endif %}
+        {{ todo.title }}
+      </li>
+    {% endfor %}
+  </ul>
   <button id="completeAll">Complete all</button>
 </div>
 '''
