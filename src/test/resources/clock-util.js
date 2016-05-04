@@ -17,9 +17,3 @@ var cursor = vistula.constantObservable({
     x: cursorX,
     y: cursorY
 });
-
-let clickIdx = 0;
-let submitTasks = new vistula.ObservableImpl();
-document.getElementById("click").addEventListener("click", function () {
-    submitTasks.rxPush(vistula.constantObservable(clickIdx++));
-});

@@ -9,12 +9,15 @@ let stdlib = vistula.toObservable({
 
 function arrayPush(Dest, Elem) {
     return vistula.zip([Dest, Elem]).rxMap(function ($args) {
-        if ($args[0].length == 3) {
-            return [];
-        }
         var copy = [].concat($args[0]);
         copy.push($args[1]);
         return copy;
+    });
+}
+
+function arraySize(Dest) {
+    return Dest.rxMap(function ($args) {
+        return $args.length;
     });
 }
 

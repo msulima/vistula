@@ -1,5 +1,5 @@
 '''# javascript
-let boxInput = new vistula.ObservableImpl();
+let submitTasks = new vistula.ObservableImpl();
 '''
 
 sample = {
@@ -7,14 +7,12 @@ sample = {
   "completed": false
 }
 
-# todos = ([1, 2] or arrayPush(todos, submitTasks) for todos in submitTasks)
-todos = [sample]
+todos = ([sample] or arrayPush(todos, submitTasks) for todos in submitTasks)
 
 app = '''# html
 <form id="task" method="POST">
   <input name="title" placeholder="What needs to be done?"/>
 </form>
-<h3>{{ boxInput }}</h3>
 <div>
   <ul>
     {% for todo in todos %}
@@ -34,9 +32,6 @@ app = '''# html
 stdlib.dom.appendChild("app", app)
 
 '''# javascript
-document.getElementById("task").elements["title"].addEventListener("input", function (ev) {
-  boxInput.rxPush(ev.target.value);
-});
 document.getElementById("task").addEventListener("submit", function (ev) {
   ev.preventDefault();
   let elements = ev.srcElement.elements;
@@ -44,6 +39,8 @@ document.getElementById("task").addEventListener("submit", function (ev) {
   Object.keys(elements).forEach(function (key) {
     formValue[elements[key].name] = elements[key].value;
   });
-  boxInput.rxPush(formValue.title);
+  formValue["completed"] = false;
+
+  submitTasks.rxPush(vistula.toObservable(formValue));
 });
 '''

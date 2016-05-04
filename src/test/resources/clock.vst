@@ -19,8 +19,6 @@ labelText = "It is: " + clock + ", elapsed from entering page: " + timeElapsed +
 
 areaField = cursor.x * cursor.y
 
-todos = ([1, 2] or arrayPush(todos, submitTasks) for todos in submitTasks)
-
 main = '''# html
 <div>
   <p>{{ labelText }}</p>
@@ -31,11 +29,6 @@ main = '''# html
     Area is {{ cursor.x }} * {{ cursor.y }} = {{ areaField }} px^2
   {% endif %}
   </p>
-  <ul>
-    {% for todo in todos %}
-      <li>{{ todo }}</li>
-    {% endfor %}
-  </ul>
   <ul>
     {% for person in stdlib.net.ajaxGet("http://uinames.com/api/?amount=3") %}
       <li>{{ person.name }} from {{ person.region }}</li>
