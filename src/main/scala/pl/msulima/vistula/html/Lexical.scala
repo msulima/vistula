@@ -17,16 +17,11 @@ object Lexical {
   val multilineSpace = P(CharsWhile(" \n\r".contains(_: Char)).?)
   val space = P(CharIn(" ").?)
 
-  private val letter = {
-    val lowercase = P(CharIn('a' to 'z'))
-    val uppercase = P(CharIn('A' to 'Z'))
-    P(lowercase | uppercase)
-  }
+  private val stringLiteral = pl.msulima.vistula.parser.Lexical.shortstring
 
-  val stringLiteral = pl.msulima.vistula.parser.Lexical.shortstring
+  val identifier = pl.msulima.vistula.parser.Lexical.identifier
 
-  val tagName =
-    P(letter.rep(min = 0))
+  private val tagName = identifier.map(_.name)
 
   val attribute =
     P(tagName.! ~ "=" ~ stringLiteral.!)
@@ -41,13 +36,11 @@ object Lexical {
     P("<" ~ tagBody ~ ">")
 
   val closeTag =
-    P("</" ~ tagName ~ ">")
+    P("</" ~ tagName ~ ">").map(_ => ())
 
   def kw(s: String) = pl.msulima.vistula.parser.Lexical.kw(s)
 
   val expression = pl.msulima.vistula.parser.Expressions.expr
-
-  val identifier = pl.msulima.vistula.parser.Lexical.identifier
 
   def inline[T](p: => Parser[T]): Parser[T] = {
     P("{{" ~ space ~ p ~ space ~ "}}")

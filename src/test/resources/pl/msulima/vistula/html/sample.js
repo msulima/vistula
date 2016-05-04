@@ -11,7 +11,7 @@ vistula.zipAndFlatten([
         vistula.dom.textNode("\n")
     ]),
     vistula.dom.textNode("\n"),
-    vistula.dom.createElement("p", [], [
+    vistula.dom.createElement("h3", [], [
         vistula.dom.textNode("for?")
     ])
 ])

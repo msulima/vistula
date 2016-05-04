@@ -1,3 +1,7 @@
+'''# javascript
+let boxInput = new vistula.ObservableImpl();
+'''
+
 sample = {
   "title": "Finish TodoMVC",
   "completed": false
@@ -7,9 +11,10 @@ sample = {
 todos = [sample]
 
 app = '''# html
-<form id="task">
+<form id="task" method="POST">
   <input name="title" placeholder="What needs to be done?"/>
 </form>
+<h3>{{ boxInput }}</h3>
 <div>
   <ul>
     {% for todo in todos %}
@@ -27,3 +32,18 @@ app = '''# html
 '''
 
 stdlib.dom.appendChild("app", app)
+
+'''# javascript
+document.getElementById("task").elements["title"].addEventListener("input", function (ev) {
+  boxInput.rxPush(ev.target.value);
+});
+document.getElementById("task").addEventListener("submit", function (ev) {
+  ev.preventDefault();
+  let elements = ev.srcElement.elements;
+  let formValue = {};
+  Object.keys(elements).forEach(function (key) {
+    formValue[elements[key].name] = elements[key].value;
+  });
+  boxInput.rxPush(formValue.title);
+});
+'''
