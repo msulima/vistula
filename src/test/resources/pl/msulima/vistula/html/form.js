@@ -1,7 +1,9 @@
 vistula.zipAndFlatten([
-    vistula.dom.createElement("form", [["id", "task"]], [
+    vistula.dom.createElement("form", [["id", vistula.constantObservable("formId")]], [
         vistula.dom.textNode("\n    "),
-        vistula.dom.createElement("input", [["name", "title"], ["placeholder", "What needs to be done?"]], []),
+        vistula.dom.createElement("input", [["name", vistula.constantObservable("title")], ["placeholder", vistula.constantObservable("Some text")], ["value", X.rxFlatMap(function ($arg) {
+            return $arg.Z;
+        })]], []),
         vistula.dom.textNode("\n")
     ])
 ])

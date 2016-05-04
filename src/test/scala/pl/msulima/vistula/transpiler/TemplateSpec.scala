@@ -6,7 +6,7 @@ import pl.msulima.vistula.testutil.readFile
 
 class TemplateSpec extends Specification {
 
-  def test(file: String) = {
+  private def test(file: String) = {
     file in {
       Template(readFile(s"/pl/msulima/vistula/html/$file.html")) must_== readFile(s"/pl/msulima/vistula/html/$file.js")
     }

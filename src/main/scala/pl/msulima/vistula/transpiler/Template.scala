@@ -51,7 +51,7 @@ object Template {
   private def attributes(tag: Tag) = {
     ToArray.toCompact(tag.attributes.map({
       case (key, value) =>
-        s""""$key"""" -> value
+        s""""$key"""" -> VistulaTranspiler(Ast.stmt.Expr(value))
     }))
   }
 }

@@ -48,7 +48,9 @@ function zip(observables) {
 }
 
 function constantObservable(value) {
-    return new ConstantObservable(value);
+    var observable = new ObservableImpl();
+    observable.rxPush(value);
+    return observable;
 }
 
 function delayedObservable(value, delay) {

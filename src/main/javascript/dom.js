@@ -28,7 +28,12 @@ function createElement(tag, attributes, childNodes) {
     let parent = document.createElement(tag);
 
     attributes.forEach(function (attribute) {
-        parent.setAttribute(attribute[0], attribute[1]);
+        attribute[1].rxForEach(function (value) {
+            parent.setAttribute(attribute[0], value);
+            if (tag == "input" && parent.type == "checkbox" && attribute[0] == "checked") {
+                parent.checked = value;
+            }
+        });
     });
 
     let currentChildren = [];

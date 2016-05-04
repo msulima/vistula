@@ -17,6 +17,7 @@ app = '''# html
   <ul>
     {% for todo in todos %}
       <li>
+        <input type="checkbox" checked="{{ todo.completed }}"/>
         {% if todo.completed %}
           √
         {% else %}
@@ -26,12 +27,24 @@ app = '''# html
       </li>
     {% endfor %}
   </ul>
+  <button id="completeAll">Complete all</button>
 </div>
 '''
 
 stdlib.dom.appendChild("app", app)
 
 '''# javascript
+document.getElementById("completeAll").addEventListener("click", function (ev) {
+  todos.rxForEach(function (todos, unsubscribe) {
+    unsubscribe();
+    todos.forEach(function (Todo, unsubscribe) {
+      Todo.rxForEach(function (todo, unsubscribe) {
+        unsubscribe();
+        todo.completed.rxPush(true);
+      });
+    });
+  });
+});
 document.getElementById("task").addEventListener("submit", function (ev) {
   ev.preventDefault();
   let elements = ev.srcElement.elements;

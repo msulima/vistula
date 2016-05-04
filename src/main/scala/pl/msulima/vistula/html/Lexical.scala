@@ -1,6 +1,7 @@
 package pl.msulima.vistula.html
 
 import fastparse.all._
+import pl.msulima.vistula.parser.Ast
 
 object Lexical {
 
@@ -19,12 +20,20 @@ object Lexical {
 
   private val stringLiteral = pl.msulima.vistula.parser.Lexical.shortstring
 
+  val expression = pl.msulima.vistula.parser.Expressions.expr
+
   val identifier = pl.msulima.vistula.parser.Lexical.identifier
 
   private val tagName = identifier.map(_.name)
 
-  val attribute =
-    P(tagName.! ~ "=" ~ stringLiteral.!)
+  private val attributeExpression =
+    P("\"" ~ inline(expression) ~ "\"")
+
+  private val attributeValue =
+    P(attributeExpression | stringLiteral.map(Ast.expr.Str))
+
+  private val attribute =
+    P(tagName.! ~ "=" ~ attributeValue)
 
   private val tagBody =
     P(tagName.! ~ space ~ attribute.rep(min = 0, sep = " ") ~ space).map(Tag.tupled)
@@ -39,8 +48,6 @@ object Lexical {
     P("</" ~ tagName ~ ">").map(_ => ())
 
   def kw(s: String) = pl.msulima.vistula.parser.Lexical.kw(s)
-
-  val expression = pl.msulima.vistula.parser.Expressions.expr
 
   def inline[T](p: => Parser[T]): Parser[T] = {
     P("{{" ~ space ~ p ~ space ~ "}}")
