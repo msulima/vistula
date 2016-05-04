@@ -5,8 +5,6 @@ import pl.msulima.vistula.util.{Indent, ToArray}
 
 object Expression {
 
-  private val MagicInlineJavascriptPrefix = "# javascript\n"
-
   def apply: PartialFunction[Ast.stmt, String] = {
     case Ast.stmt.Assign(Ast.expr.Name(Ast.identifier(name), Ast.expr_context.Load) +: _, value) =>
       s"var $name = ${Transpiler(Ast.stmt.Expr(value))}"
@@ -26,13 +24,10 @@ object Expression {
   }
 
   private lazy val parseExpression: PartialFunction[Ast.expr, Fragment] = {
-    Generator.apply.orElse(Attribute.apply).orElse(Template.parseExpression).orElse(parseSimpleExpression).orElse(Primitives.apply)
+    Generator.apply.orElse(Attribute.apply).orElse(Template.parseExpression).orElse(Primitives.apply).orElse(parseSimpleExpression)
   }
 
   private lazy val parseSimpleExpression: PartialFunction[Ast.expr, Fragment] = {
-    case Ast.expr.Str(x) if x.startsWith(MagicInlineJavascriptPrefix) =>
-      Fragment(x.stripPrefix(MagicInlineJavascriptPrefix))
-
     case Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) => Fragment(x)
     case Ast.expr.BinOp(x, op, y) =>
       val operator = op match {

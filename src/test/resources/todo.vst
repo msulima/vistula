@@ -1,0 +1,26 @@
+sample = {
+  "title": "Finish TodoMVC",
+  "completed": false
+}
+
+# todos = ([1, 2] or arrayPush(todos, submitTasks) for todos in submitTasks)
+todos = [sample]
+
+app = '''# html
+<div>
+  <ul>
+    {% for todo in todos %}
+      <li>
+        {% if todo.completed %}
+          √
+        {% else %}
+          x
+        {% endif %}
+        {{ todo.title }}
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+'''
+
+stdlib.dom.appendChild("app", app)

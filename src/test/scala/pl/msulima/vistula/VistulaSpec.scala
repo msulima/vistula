@@ -28,4 +28,11 @@ class VistulaSpec extends Specification {
     Files.write(new File("target/clock.js").toPath, script.split("\n").toSeq.asJava)
     script must not(beEmpty)
   }
+
+  "transpiles todo" in {
+    val script = Vistula.toJavaScript(Source.fromInputStream(getClass.getResourceAsStream("/todo.vst")).mkString)
+
+    Files.write(new File("target/todo.js").toPath, script.split("\n").toSeq.asJava)
+    script must not(beEmpty)
+  }
 }
