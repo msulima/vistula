@@ -1,5 +1,21 @@
 '''# javascript
 let submitTasks = new vistula.ObservableImpl();
+
+function capitalize(Title) {
+  return Title.rxMap(function (title) {
+    return title.toLocaleUpperCase();
+  });
+}
+
+function capitalizeTitle(Todo) {
+  return Todo.rxFlatMap(function (todo) {
+      return vistula.constantObservable({
+        "completed": vistula.constantObservable(true),
+        "title": capitalize(todo.title)
+      })
+  });
+}
+
 '''
 
 sample = {
@@ -17,13 +33,12 @@ app = '''# html
   <ul>
     {% for todo in todos %}
       <li>
-        <input type="checkbox" checked="{{ todo.completed }}"/>
         {% if todo.completed %}
           √
         {% else %}
           x
         {% endif %}
-        {{ todo.title }}
+        {{ todo.title }} / {{ capitalize(todo.title) }} / {{ capitalizeTitle(todo).title }}
       </li>
     {% endfor %}
   </ul>
@@ -36,7 +51,7 @@ app = '''# html
         {% else %}
           x
         {% endif %}
-        {{ todo.title }}
+        <input type="text" value="{{ todo.title }}"/>
       </li>
     {% endfor %}
   </ul>

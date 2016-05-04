@@ -35,12 +35,18 @@ function createElement(tag, attributes, childNodes) {
             parent.setAttribute(attribute, value);
             if (isCheckbox(parent, attribute)) {
                 parent.checked = value;
+            } else if (isText(parent, attribute)) {
+                parent.value = value;
             }
         });
 
         if (isCheckbox(parent, attribute)) {
             parent.addEventListener("change", function (ev) {
                 Value.rxPush(ev.target.checked);
+            });
+        } else if (isText(parent, attribute)) {
+            parent.addEventListener("change", function (ev) {
+                Value.rxPush(ev.target.value);
             });
         }
     });
@@ -61,6 +67,11 @@ function createElement(tag, attributes, childNodes) {
 function isCheckbox(parent, attribute) {
     // TODO what if type is not set yet?
     return parent.nodeName === "INPUT" && parent.type === "checkbox" && attribute === "checked";
+}
+
+function isText(parent, attribute) {
+    // TODO what if type is not set yet?
+    return parent.nodeName === "INPUT" && parent.type === "text" && attribute === "value";
 }
 
 function updateChildren(parent, currentChildren, nextChildren) {
