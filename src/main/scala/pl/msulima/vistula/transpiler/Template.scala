@@ -24,10 +24,9 @@ object Template {
   }
 
   private def apply: PartialFunction[Node, String] = {
-    case Element(tagName, childNodes) =>
-      s"""vistula.dom.createElement(document.createElement("$tagName"), [
-          |${Indent.leftPad(childNodes.map(apply).mkString(",\n"))}
-          |])""".stripMargin;
+    case Element(tag, childNodes) =>
+      val body = ToArray(childNodes.map(apply))
+      s"""vistula.dom.createElement("${tag.name}", ${attributes(tag)}, $body)""".stripMargin;
     case ObservableNode(identifier) =>
       s"vistula.dom.textObservable(${VistulaTranspiler(Ast.stmt.Expr(identifier))})";
     case IfNode(expr, body, elseBody) =>
@@ -48,4 +47,11 @@ object Template {
   }
 
   private def escape(text: String) =s""""${text.replaceAll("\n", """\\\n""")}""""
+
+  private def attributes(tag: Tag) = {
+    ToArray.toCompact(tag.attributes.map({
+      case (key, value) =>
+        s""""$key"""" -> value
+    }))
+  }
 }

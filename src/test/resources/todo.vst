@@ -7,6 +7,9 @@ sample = {
 todos = [sample]
 
 app = '''# html
+<form id="task">
+  <input name="title" placeholder="What needs to be done?"/>
+</form>
 <div>
   <ul>
     {% for todo in todos %}

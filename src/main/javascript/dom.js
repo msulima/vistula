@@ -24,7 +24,13 @@ function textObservable(Obs) {
     return util.constantObservable([span]);
 }
 
-function createElement(parent, childNodes) {
+function createElement(tag, attributes, childNodes) {
+    let parent = document.createElement(tag);
+
+    attributes.forEach(function (attribute) {
+        parent.setAttribute(attribute[0], attribute[1]);
+    });
+
     let currentChildren = [];
     childNodes.forEach(function (ChildNode, idx) {
         currentChildren.push([]);

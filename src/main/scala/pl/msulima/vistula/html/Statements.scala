@@ -34,11 +34,14 @@ object Statements {
   val textNode: P[TextNode] =
     P(strChars.rep(min = 1).!).map(TextNode)
 
+  val selfClosingElement: P[Element] =
+    P(selfClosingTag).map(x => Element(x, Seq()))
+
   val element: P[Element] =
     P(openTag ~/ node.rep(min = 0) ~ closeTag).map(Element.tupled)
 
   val node: P[Node] =
-    P(element | forStatement | ifStatement | variable | textNode)
+    P(element | selfClosingElement | forStatement | ifStatement | variable | textNode)
 
   val document: P[Seq[Node]] =
     P(multilineSpace ~ node.rep ~ multilineSpace)

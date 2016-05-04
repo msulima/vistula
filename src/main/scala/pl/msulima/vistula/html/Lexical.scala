@@ -23,11 +23,25 @@ object Lexical {
     P(lowercase | uppercase)
   }
 
+  val stringLiteral = pl.msulima.vistula.parser.Lexical.shortstring
+
+  val tagName =
+    P(letter.rep(min = 0))
+
+  val attribute =
+    P(tagName.! ~ "=" ~ stringLiteral.!)
+
+  private val tagBody =
+    P(tagName.! ~ space ~ attribute.rep(min = 0, sep = " ") ~ space).map(Tag.tupled)
+
+  val selfClosingTag =
+    P("<" ~ tagBody ~ "/>")
+
   val openTag =
-    P("<" ~ letter.rep.! ~ ">")
+    P("<" ~ tagBody ~ ">")
 
   val closeTag =
-    P("</" ~ letter.rep ~ ">")
+    P("</" ~ tagName ~ ">")
 
   def kw(s: String) = pl.msulima.vistula.parser.Lexical.kw(s)
 
