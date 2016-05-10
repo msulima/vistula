@@ -10,18 +10,19 @@ ObservableImpl.prototype.rxForEach = function (callback) {
     this.observers.push(callback);
 
     if (this.hasValue) {
-        callback(this.lastValue, this.unsubscribe.bind(this, callback));
+        this._rxCall(callback);
     }
 };
 
 ObservableImpl.prototype.rxPush = function (value) {
     this.hasValue = true;
     this.lastValue = value;
-    var _this = this;
 
-    this.observers.map(function (callback) {
-        callback(value, _this.unsubscribe.bind(_this, callback));
-    });
+    this.observers.map(this._rxCall, this);
+};
+
+ObservableImpl.prototype._rxCall = function (callback) {
+    callback(this.lastValue, this.unsubscribe.bind(this, callback));
 };
 
 ObservableImpl.prototype.rxSet = function (value) {

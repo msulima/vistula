@@ -1,7 +1,6 @@
 'use strict';
 
 var ObservableImpl = require('./observable').ObservableImpl;
-var ConstantObservable = require('./constantObservable').ConstantObservable;
 
 function zipAndFlatten(observables) {
     return zip(observables).rxMap(function ($arrays) {
