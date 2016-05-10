@@ -24,6 +24,14 @@ ObservableImpl.prototype.rxPush = function (value) {
     });
 };
 
+ObservableImpl.prototype.rxSet = function (value) {
+    if (this.constant) {
+        this.rxPush(value);
+    } else {
+        throw "Cannot set value";
+    }
+};
+
 ObservableImpl.prototype.unsubscribe = function (callback) {
     this.observers = this.observers.filter(function (observer) {
         return observer != callback;

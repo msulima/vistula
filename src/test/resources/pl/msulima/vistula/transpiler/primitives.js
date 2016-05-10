@@ -3,6 +3,7 @@ vistula.constantObservable([
     vistula.constantObservable("A\"B"),
     vistula.constantObservable({
         "C": vistula.constantObservable("D"),
-        "E": vistula.constantObservable(false)
+        "E": vistula.constantObservable(false),
+        "F": vistula.constantObservable(2 + 2)
     })
 ]);

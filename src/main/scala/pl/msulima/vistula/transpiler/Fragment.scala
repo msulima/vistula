@@ -20,8 +20,14 @@ object Fragment {
   def apply(expressions: Seq[Ast.expr], useFlatMap: Boolean)(f: List[String] => String): Fragment = {
     val operands = Operands(expressions)
 
-    val code = f(operands.map(_._2).toList)
+    val cleanCode = f(operands.map(_._2).toList)
     val dependsOn = operands.flatMap(_._1)
+
+    val code = if (dependsOn.isEmpty) {
+      s"vistula.constantObservable($cleanCode)"
+    } else {
+      cleanCode
+    }
 
     Fragment(code, dependsOn.map(Ast.stmt.Expr), useFlatMap)
   }
@@ -30,6 +36,7 @@ object Fragment {
 object Operands {
 
   def apply(expressions: Seq[Ast.expr]): Seq[(Option[expr], String)] = {
+    // TODO: too hacky
     val xs = expressions.map({
       case Ast.expr.Str(x) => Left("\"" + x + "\"")
       case Ast.expr.Num(x) => Left(x.toString)

@@ -5,15 +5,24 @@ import pl.msulima.vistula.testutil.ToProgram
 
 class ExpressionSpec extends Specification {
 
-  "transpiles simple statement" in {
+  "transpiles identity statement" in {
     val program =
       """
         |X
       """.stripMargin
 
-    program.toTranspiled must_== Seq(
-      "X"
-    )
+    program.toJavaScript must_==
+      "X;"
+  }
+
+  "transpiles simple statement" in {
+    val program =
+      """
+        |2 + 2
+      """.stripMargin
+
+    program.toJavaScript must_==
+      "vistula.constantObservable(2 + 2);"
   }
 
   "transpiles assignment" in {
@@ -22,11 +31,10 @@ class ExpressionSpec extends Specification {
         |X = Y + 3
       """.stripMargin
 
-    program.toTranspiled must_== Seq(
+    program.toJavaScript must_==
       """var X = Y.rxMap(function ($arg) {
         |    return $arg + 3;
-        |})""".stripMargin
-    )
+        |});""".stripMargin
   }
 
   "transpiles function call" in {
@@ -35,9 +43,8 @@ class ExpressionSpec extends Specification {
         |X = a(Y, 3)
       """.stripMargin
 
-    program.toTranspiled must_== Seq(
-      """var X = a(Y, vistula.constantObservable(3))""".stripMargin
-    )
+    program.toJavaScript must_==
+      """var X = a(Y, vistula.constantObservable(3));""".stripMargin
   }
 
   "transpiles complex assignment" in {
