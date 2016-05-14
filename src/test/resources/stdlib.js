@@ -8,9 +8,9 @@ let stdlib = vistula.toObservable({
 });
 
 function arrayPush(Dest, Elem) {
-    return vistula.zip([Dest, Elem]).rxMap(function ($args) {
-        var copy = [].concat($args[0]);
-        copy.push($args[1]);
+    return Dest.rxMap(dest => {
+        var copy = [].concat(dest);
+        copy.push(Elem);
         return copy;
     });
 }

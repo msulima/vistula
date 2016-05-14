@@ -12,7 +12,7 @@ function Probe(observable) {
 }
 
 Probe.prototype.expect = function (values) {
-    expect(values).to.deep.equal(this.observed);
+    expect(this.observed).to.deep.equal(values);
 };
 
 module.exports = {

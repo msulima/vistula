@@ -60,6 +60,9 @@ ObservableImpl.prototype.rxFlatMap = function (transformation) {
 
     this.rxForEach(next => {
         let nestedObservable = transformation(next);
+        if (nestedObservable.isProxy) {
+            nestedObservable = nestedObservable.proxyFor;
+        }
 
         if (previousObservable != null && unsubscribeFromPreviousObservable != null) {
             unsubscribeFromPreviousObservable();
@@ -67,11 +70,10 @@ ObservableImpl.prototype.rxFlatMap = function (transformation) {
         }
         previousObservable = nestedObservable;
 
+        proxy.isProxy = nestedObservable.isConstant;
         if (nestedObservable.isConstant) {
-            proxy.isProxy = true;
             proxy.proxyFor = nestedObservable;
         } else {
-            proxy.isProxy = false;
             proxy.proxyFor = null;
         }
 

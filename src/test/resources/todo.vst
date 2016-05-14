@@ -23,7 +23,7 @@ sample = {
   "completed": false
 }
 
-todos = ([sample] or arrayPush(todos, submitTasks) for todos in submitTasks)
+todos = ([sample] or arrayPush(todos, { "title": submitTasks.title, "completed": false }) for todos in submitTasks)
 
 app = '''# html
 <form id="task" method="POST">
@@ -78,10 +78,9 @@ document.getElementById("task").addEventListener("submit", function (ev) {
   let elements = ev.srcElement.elements;
   let formValue = {};
   Object.keys(elements).forEach(function (key) {
-    formValue[elements[key].name] = elements[key].value;
+    formValue[elements[key].name] = vistula.toObservable(elements[key].value);
   });
-  formValue["completed"] = false;
 
-  submitTasks.rxPush(vistula.toObservable(formValue));
+  submitTasks.rxPush(formValue);
 });
 '''
