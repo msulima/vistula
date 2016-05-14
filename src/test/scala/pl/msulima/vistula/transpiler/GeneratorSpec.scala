@@ -12,15 +12,13 @@ class GeneratorSpec extends Specification {
       """.stripMargin
 
     program.toJavaScript must_==
-      """var W = vistula.aggregate(X, Z, ($acc, $source) => {
-        |    let Y = vistula.constantObservable($acc);
-        |    let Z = vistula.constantObservable($source);
+      """const W = vistula.aggregate(X, Z, ($acc, $source) => {
+        |    const Y = vistula.constantObservable($acc);
+        |    const Z = vistula.constantObservable($source);
         |    return vistula.zip([
         |        Y,
         |        Z
-        |    ]).rxMap(function ($args) {
-        |        return $args[0] + $args[1];
-        |    });
+        |    ]).rxMap($args => ($args[0] + $args[1]));
         |});""".stripMargin
   }
 }

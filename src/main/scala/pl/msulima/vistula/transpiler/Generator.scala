@@ -27,8 +27,8 @@ object Generator {
     case Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)) =>
       Fragment(
         s"""vistula.aggregate(${Transpiler(initial)}, ${source.name}, ($$acc, $$source) => {
-            |    let ${acc.name} = vistula.constantObservable($$acc);
-            |    let ${source.name} = vistula.constantObservable($$source);
+            |    const ${acc.name} = vistula.constantObservable($$acc);
+            |    const ${source.name} = vistula.constantObservable($$source);
             |${Indent.leftPad("return " + Transpiler(body) + ";")}
             |})""".stripMargin, Seq())
   }

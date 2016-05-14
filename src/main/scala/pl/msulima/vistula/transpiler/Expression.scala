@@ -1,25 +1,21 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.util.{Indent, ToArray}
+import pl.msulima.vistula.util.ToArray
 
 object Expression {
 
   def apply: PartialFunction[Ast.stmt, String] = {
     case Ast.stmt.AssignStmt(Ast.identifier(name), value) =>
-      s"var $name = ${Transpiler(value)}"
+      s"const $name = ${Transpiler(value)}"
     case Ast.stmt.Expr(value) =>
       val fragment = parseExpression(value)
       if (fragment.dependencies.isEmpty) {
         s"${fragment.code}"
       } else if (fragment.dependencies.size == 1) {
-        s"""${Transpiler(fragment.dependencies.head)}.${fragment.mapper}(function ($$arg) {
-           |${Indent.leftPad("return " + fragment.code)};
-           |})""".stripMargin
+        s"""${Transpiler(fragment.dependencies.head)}.${fragment.mapper}($$arg => (${fragment.code}))""".stripMargin
       } else {
-        s"""vistula.zip(${ToArray(Transpiler(fragment.dependencies))}).${fragment.mapper}(function ($$args) {
-            |${Indent.leftPad("return " + fragment.code)};
-            |})""".stripMargin
+        s"""vistula.zip(${ToArray(Transpiler(fragment.dependencies))}).${fragment.mapper}($$args => (${fragment.code}))""".stripMargin
       }
   }
 

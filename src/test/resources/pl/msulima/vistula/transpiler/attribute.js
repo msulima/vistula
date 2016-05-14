@@ -1,12 +1,4 @@
 vistula.zip([
-    Q.rxFlatMap(function ($arg) {
-        return $arg.W;
-    }),
-    X.rxFlatMap(function ($arg) {
-        return $arg.Y;
-    }).rxFlatMap(function ($arg) {
-        return $arg.Z;
-    })
-]).rxMap(function ($args) {
-    return $args[0] + $args[1];
-});
+    Q.rxFlatMap($arg => ($arg.W)),
+    X.rxFlatMap($arg => ($arg.Y)).rxFlatMap($arg => ($arg.Z))
+]).rxMap($args => ($args[0] + $args[1]));

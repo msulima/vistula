@@ -1,7 +1,3 @@
-var Y = XS.rxFlatMap(function ($arg) {
-    return vistula.zip($arg.map(function (X) {
-        return X.rxMap(function ($arg) {
-            return $arg + 2;
-        });
-    }))
-});
+const Y = XS.rxFlatMap($arg => (vistula.zip($arg.map(X => {
+    return X.rxMap($arg => ($arg + 2));
+}))));

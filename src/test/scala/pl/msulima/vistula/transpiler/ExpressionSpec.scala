@@ -32,9 +32,7 @@ class ExpressionSpec extends Specification {
       """.stripMargin
 
     program.toJavaScript must_==
-      """var X = Y.rxMap(function ($arg) {
-        |    return $arg + 3;
-        |});""".stripMargin
+      """const X = Y.rxMap($arg => ($arg + 3));""".stripMargin
   }
 
   "transpiles function call" in {
@@ -44,7 +42,7 @@ class ExpressionSpec extends Specification {
       """.stripMargin
 
     program.toJavaScript must_==
-      """var X = a(Y, vistula.constantObservable(3));""".stripMargin
+      """const X = a(Y, vistula.constantObservable(3));""".stripMargin
   }
 
   "transpiles complex assignment" in {
@@ -54,15 +52,9 @@ class ExpressionSpec extends Specification {
       """.stripMargin
 
     program.toJavaScript must_==
-      """var X = vistula.zip([
-        |    Y.rxMap(function ($arg) {
-        |        return $arg + 3;
-        |    }),
-        |    a(Z.rxMap(function ($arg) {
-        |        return $arg + 1;
-        |    }), vistula.constantObservable(3))
-        |]).rxMap(function ($args) {
-        |    return $args[0] - $args[1];
-        |});""".stripMargin
+      """const X = vistula.zip([
+        |    Y.rxMap($arg => ($arg + 3)),
+        |    a(Z.rxMap($arg => ($arg + 1)), vistula.constantObservable(3))
+        |]).rxMap($args => ($args[0] - $args[1]));""".stripMargin
   }
 }

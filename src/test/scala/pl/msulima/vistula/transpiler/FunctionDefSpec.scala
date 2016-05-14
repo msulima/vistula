@@ -15,12 +15,8 @@ class FunctionDefSpec extends Specification {
 
     program.toJavaScript must_==
       """function a(X) {
-        |    var Y = X.rxMap(function ($arg) {
-        |        return $arg + 2;
-        |    });
-        |    return Y.rxMap(function ($arg) {
-        |        return $arg - 1;
-        |    });
+        |    const Y = X.rxMap($arg => ($arg + 2));
+        |    return Y.rxMap($arg => ($arg - 1));
         |};""".stripMargin
   }
 }

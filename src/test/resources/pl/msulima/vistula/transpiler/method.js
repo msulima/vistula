@@ -1,7 +1,1 @@
-W.rxFlatMap(function ($arg) {
-    return $arg.X;
-}).rxFlatMap(function ($arg) {
-    return $arg.Y;
-}).rxFlatMap(function ($arg) {
-    return $arg(Z);
-});
+W.rxFlatMap($arg => ($arg.X)).rxFlatMap($arg => ($arg.Y)).rxFlatMap($arg => ($arg(Z)));

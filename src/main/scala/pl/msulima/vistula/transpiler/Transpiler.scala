@@ -9,7 +9,7 @@ object Transpiler {
     if (program.size == 1) {
       apply(program.head)
     } else {
-      s"""vistula.wrap(function () {
+      s"""vistula.wrap(() => {
           |${Indent.leftPad(returnLast(program))}
           |})""".stripMargin
     }
