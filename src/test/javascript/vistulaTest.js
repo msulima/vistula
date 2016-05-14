@@ -68,6 +68,18 @@ describe("Observable", function () {
         probe.expect([[]]);
     });
 
+    it("zipAndFlatten", function () {
+        // given
+        let Obs = vistulaUtil.zipAndFlatten([
+            vistulaUtil.constantObservable([1]),
+            vistulaUtil.constantObservable([2, 3])
+        ]);
+        let probe = new Probe(Obs);
+
+        // when & then
+        probe.expect([[1, 2, 3]]);
+    });
+
     it("aggregate", function () {
         // given
         let Source = new vistula.ObservableImpl();

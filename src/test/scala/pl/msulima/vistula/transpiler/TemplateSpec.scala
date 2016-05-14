@@ -8,7 +8,7 @@ class TemplateSpec extends Specification {
 
   private def test(file: String) = {
     file in {
-      Template(readFile(s"/pl/msulima/vistula/html/$file.html")) must_== readFile(s"/pl/msulima/vistula/html/$file.js")
+      Template(readFile(s"/pl/msulima/vistula/html/$file.vst.html")) must_== readFile(s"/pl/msulima/vistula/html/$file.js")
     }
   }
 

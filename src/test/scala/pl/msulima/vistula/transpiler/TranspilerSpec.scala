@@ -15,4 +15,5 @@ class TranspilerSpec extends Specification {
   test("attribute")
   test("method")
   test("loop")
+  test("templates")
 }

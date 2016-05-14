@@ -6,17 +6,33 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler}
 import pl.msulima.vistula.util.{Indent, ToArray}
 
+import scala.io.Source
+
 object Template {
 
   private val MagicInlineHtmlPrefix = "# html\n"
+  private val MagicClasspathHtmlRegex = "^# html:(.+?)".r
 
   val parseExpression: PartialFunction[Ast.expr, Fragment] = {
+    case Ast.expr.Str(MagicClasspathHtmlRegex(sourceFile)) =>
+      val stream = getClass.getResourceAsStream(sourceFile)
+      require(stream != null, s"$sourceFile not found")
+      val source = Source.fromInputStream(stream)
+      val lines = source.getLines().toList
+      source.close()
+
+      Fragment(Template(lines.mkString("\n")))
     case Ast.expr.Str(x) if x.startsWith(MagicInlineHtmlPrefix) =>
       Fragment(Template(x.stripPrefix(MagicInlineHtmlPrefix)))
   }
 
   def apply(program: String): String = {
-    s"vistula.zipAndFlatten(${ToArray(apply((Statements.document ~ End).parse(program).get.value))})"
+    val nodes = apply((Statements.document ~ End).parse(program).get.value)
+    if (nodes.size == 1) {
+      nodes.head
+    } else {
+      s"vistula.zipAndFlatten(${ToArray(nodes)})"
+    }
   }
 
   private def apply(program: Seq[Node]): Seq[String] = {
