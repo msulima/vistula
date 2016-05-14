@@ -10,9 +10,9 @@ object Loop {
       val iter = Transpiler(Ast.stmt.Expr(iterExpr))
 
       val map =
-        s"""return $$arg.map(function ($name) {
+        s"""return vistula.zip($$arg.map(function ($name) {
             |${Indent.leftPad(Transpiler.returnLast(body))}
-            |})""".stripMargin
+            |}))""".stripMargin
 
       s"""$iter.rxFlatMap(function ($$arg) {
          |${Indent.leftPad(map)}

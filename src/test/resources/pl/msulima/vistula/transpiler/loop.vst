@@ -1,2 +1,2 @@
-for X in XS:
+Y = for X in XS:
     X + 2

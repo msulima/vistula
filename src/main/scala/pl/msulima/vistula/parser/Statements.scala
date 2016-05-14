@@ -57,7 +57,9 @@ class Statements(indent: Int) {
   }
   val parameters: P[Ast.arguments] = P("(" ~ varargslist ~ ")")
 
-  val stmt: P[Seq[Ast.stmt]] = P(compound_stmt.map(Seq(_)) | simple_stmt)
+  val stmt: P[Seq[Ast.stmt]] = P(assign_stmt.map(Seq(_)) | compound_stmt.map(Seq(_)) | simple_stmt)
+
+  val assign_stmt: P[Ast.stmt] = P(Lexical.identifier ~ "=" ~ (small_stmt | compound_stmt)).map(Ast.stmt.AssignStmt.tupled)
 
   val simple_stmt: P[Seq[Ast.stmt]] = P(small_stmt.rep(1, sep = ";") ~ ";".?)
   val small_stmt: P[Ast.stmt] = P(

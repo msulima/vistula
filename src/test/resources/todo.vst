@@ -35,18 +35,30 @@ def classForIsCompleted(todo):
 
 stdlib.dom.appendChild("todoapp", app)
 
+completed = for todo in todos:
+  todo.completed
+
 '''# javascript
+let AllCompleted = completed.rxMap(completed => {
+    return !completed.every(x => x);
+});
+
 document.getElementById("completeAll").addEventListener("click", function (ev) {
-  todos.rxForEach((todos, unsubscribe) => {
+  AllCompleted.rxForEach((allCompleted, unsubscribe) => {
     unsubscribe();
-    todos.forEach((Todo, unsubscribe) => {
-      Todo.rxForEach((todo, unsubscribe) => {
-        unsubscribe();
-        todo.completed.rxPush(true);
+    todos.rxForEach((todos, unsubscribe) => {
+      unsubscribe();
+      todos.forEach((Todo, unsubscribe) => {
+        Todo.rxForEach((todo, unsubscribe) => {
+          unsubscribe();
+          console.log(allCompleted);
+          todo.completed.rxPush(allCompleted);
+        });
       });
     });
   });
 });
+
 document.getElementById("task").addEventListener("submit", function (ev) {
   ev.preventDefault();
   let elements = ev.srcElement.elements;
