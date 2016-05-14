@@ -36,10 +36,16 @@ object Lexical {
     P(attributeExpression | stringLiteral.map(Ast.expr.Str))
 
   private val attribute =
-    P(tagName.! ~ ("=" ~ attributeValue).?).map(Attribute.tupled)
+    P(tagName.! ~ "=" ~ attributeValue).map(AttributeValue.tupled)
+
+  private val attributeMarker =
+    P(tagName).map(AttributeMarker)
+
+  private val event =
+    P("(" ~ tagName.! ~ ")=" ~ attributeExpression).map(AttributeEvent.tupled)
 
   private val tagBody =
-    P(tagName.! ~ space ~ attribute.rep(min = 0, sep = " ") ~ space).map(Tag.tupled)
+    P(tagName.! ~ space ~ (attribute | attributeMarker | event).rep(min = 0, sep = " ") ~ space).map(Tag.tupled)
 
   val selfClosingTag =
     P("<" ~ tagBody ~ "/>")

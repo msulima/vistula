@@ -20,10 +20,15 @@ function capitalizeTitle(Todo) {
 
 sample = {
   "title": "Finish TodoMVC",
-  "completed": false
+  "completed": false,
+  "editing": false
 }
 
-todos = ([sample] or arrayPush(todos, { "title": submitTasks.title, "completed": false }) for todos in submitTasks)
+todos = ([sample] or arrayPush(todos, {
+  "title": submitTasks.title,
+  "completed": false,
+  "editing": false
+}) for todos in submitTasks)
 
 app = '''# html:/todo.vst.html'''
 
@@ -33,12 +38,33 @@ def classForIsCompleted(todo):
   else:
     "view"
 
+def classForIsEditing(todo):
+  if todo.editing:
+    "editing"
+  else:
+    ""
+
 stdlib.dom.appendChild("todoapp", app)
 
 completed = for todo in todos:
   todo.completed
 
 '''# javascript
+function editTodo(Todo) {
+  Todo.rxForEach((todo, unsubscribe) => {
+    unsubscribe();
+    todo.editing.rxPush(true);
+  });
+};
+
+function finishEditingTodo(Todo) {
+  console.log("wtf");
+  Todo.rxForEach((todo, unsubscribe) => {
+    unsubscribe();
+    todo.editing.rxPush(false);
+  });
+};
+
 let AllCompleted = completed.rxMap(completed => {
     return !completed.every(x => x);
 });
@@ -65,6 +91,9 @@ document.getElementById("task").addEventListener("submit", function (ev) {
   let formValue = {};
   Object.keys(elements).forEach(function (key) {
     formValue[elements[key].name] = vistula.toObservable(elements[key].value);
+  });
+  Object.keys(elements).forEach(function (key) {
+    elements[key].value = "";
   });
 
   submitTasks.rxPush(formValue);

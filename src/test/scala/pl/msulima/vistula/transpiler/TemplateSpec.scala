@@ -16,4 +16,5 @@ class TemplateSpec extends Specification {
   test("if")
   test("loop")
   test("form")
+  test("event")
 }

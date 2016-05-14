@@ -4,6 +4,8 @@ import pl.msulima.vistula.parser.Ast
 
 sealed trait Node
 
+sealed trait Attribute
+
 case class TextNode(textContent: String) extends Node
 
 case class ObservableNode(expr: Ast.expr) extends Node
@@ -12,7 +14,11 @@ case class IfNode(test: Ast.expr, body: Seq[Node], elseBlock: Seq[Node]) extends
 
 case class ForNode(identifier: Ast.identifier, expression: Ast.expr, body: Seq[Node]) extends Node
 
-case class Attribute(name: String, value: Option[Ast.expr])
+case class AttributeMarker(name: String) extends Attribute
+
+case class AttributeValue(name: String, value: Ast.expr) extends Attribute
+
+case class AttributeEvent(name: String, value: Ast.expr) extends Attribute
 
 case class Tag(name: String, attributes: Seq[Attribute]) extends Node
 

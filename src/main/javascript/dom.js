@@ -29,29 +29,12 @@ function createElement(tag, attributes, childNodes) {
 
     attributes.forEach(attributeAndValue => {
         let attribute = attributeAndValue[0];
-        let Value = attributeAndValue[1];
+        let argument = attributeAndValue[1];
 
-        Value.rxForEach(value => {
-            if (value == null) {
-                parent[attribute] = true;
-            } else {
-                parent.setAttribute(attribute, value);
-                if (isCheckbox(parent, attribute)) {
-                    parent.checked = value;
-                } else if (isText(parent, attribute)) {
-                    parent.value = value;
-                }
-            }
-        });
-
-        if (isCheckbox(parent, attribute)) {
-            parent.addEventListener("change", ev => {
-                Value.rxPush(ev.target.checked);
-            });
-        } else if (isText(parent, attribute)) {
-            parent.addEventListener("change", ev => {
-                Value.rxPush(ev.target.value);
-            });
+        if (isEvent(attribute)) {
+            setEvent(parent, attribute, argument);
+        } else {
+            setAttribute(parent, attribute, argument);
         }
     });
 
@@ -66,6 +49,41 @@ function createElement(tag, attributes, childNodes) {
     });
 
     return util.constantObservable([parent]);
+}
+
+function isEvent(attribute) {
+    return attribute.startsWith("(");
+}
+
+function setEvent(parent, attribute, callback) {
+    const eventName = attribute.substring(1, attribute.length - 1);
+
+    parent.addEventListener(eventName, callback);
+}
+
+function setAttribute(parent, attribute, Value) {
+    Value.rxForEach(value => {
+        if (value == null) {
+            parent[attribute] = true;
+        } else {
+            parent.setAttribute(attribute, value);
+            if (isCheckbox(parent, attribute)) {
+                parent.checked = value;
+            } else if (isText(parent, attribute)) {
+                parent.value = value;
+            }
+        }
+    });
+
+    if (isCheckbox(parent, attribute)) {
+        parent.addEventListener("change", ev => {
+            Value.rxPush(ev.target.checked);
+        });
+    } else if (isText(parent, attribute)) {
+        parent.addEventListener("change", ev => {
+            Value.rxPush(ev.target.value);
+        });
+    }
 }
 
 function isCheckbox(parent, attribute) {

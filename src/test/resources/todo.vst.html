@@ -9,13 +9,13 @@
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">
         {% for todo in todos %}
-        <li class="{{ classForIsCompleted(todo) }}">
+        <li class="{{ classForIsCompleted(todo) + ' ' + classForIsEditing(todo) }}">
             <div class="view">
                 <input class="toggle" type="checkbox" checked="{{ todo.completed }}"/>
-                <label>{{ todo.title }}</label>
+                <label (dblclick)="{{ editTodo(todo) }}">{{ todo.title }}</label>
                 <button class="destroy"></button>
             </div>
-            <input class="edit" value="Create a TodoMVC template"/>
+            <input class="edit" type="text" value="{{ todo.title }}" (blur)="{{ finishEditingTodo(todo) }}"/>
         </li>
         {% endfor %}
     </ul>
