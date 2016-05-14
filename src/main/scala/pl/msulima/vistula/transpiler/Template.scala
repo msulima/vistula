@@ -65,16 +65,16 @@ object Template {
   private def escape(text: String) =s""""${text.replaceAll("\n", """\\\n""")}""""
 
   private def attributes(tag: html.Tag) = {
-    ToArray.toCompact(tag.attributes.map({
+    ToArray(tag.attributes.map({
       case html.AttributeValue(key, value) =>
-        s""""$key"""" -> VistulaTranspiler(Ast.stmt.Expr(value))
+        s"""["$key", ${VistulaTranspiler(Ast.stmt.Expr(value))}]"""
       case html.AttributeMarker(key) =>
-        s""""$key"""" -> VistulaTranspiler(Ast.stmt.Expr(Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load)))
+        s"""["$key", ${VistulaTranspiler(Ast.stmt.Expr(Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load)))}]"""
       case html.AttributeEvent(key, value) =>
         val arguments = Ast.arguments(Seq(Ast.expr.Name(Ast.identifier("ev"), Ast.expr_context.Param)), None, None, Seq())
         val function = Ast.stmt.FunctionDef(Ast.identifier(""), arguments, Seq(Ast.stmt.Expr(value)), Seq())
 
-        s""""($key)"""" -> VistulaTranspiler(function)
+        s"""["($key)", ${VistulaTranspiler(function)}]"""
     }))
   }
 }

@@ -1,3 +1,5 @@
-vistula.dom.createElement("span", [["(click)", function (ev) {
-    return hello(ev);
-}]], [])
+vistula.dom.createElement("span", [
+    ["(click)", function (ev) {
+        return hello(ev);
+    }]
+], [])
