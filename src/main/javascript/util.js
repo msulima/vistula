@@ -3,7 +3,7 @@
 var ObservableImpl = require('./observable').ObservableImpl;
 
 function zipAndFlatten(observables) {
-    return zip(observables).rxMap(function ($arrays) {
+    return zip(observables).rxMap($arrays => {
         return [].concat.apply([], $arrays);
     });
 }
@@ -15,15 +15,15 @@ function zip(observables) {
         return constantObservable([]);
     }
 
-    var results = observables.map(function () {
+    var results = observables.map(() => {
         return {
             hasValue: false,
             lastValue: null
         };
     });
 
-    observables.forEach(function (observable, i) {
-        observable.rxForEach(function (next) {
+    observables.forEach((observable, i) => {
+        observable.rxForEach(next => {
             var state = results[i];
             state.hasValue = true;
             state.lastValue = next;
@@ -32,12 +32,12 @@ function zip(observables) {
     });
 
     function rxPush() {
-        var allSet = results.every(function (result) {
+        var allSet = results.every(result => {
             return result.hasValue;
         });
 
         if (allSet) {
-            observable.rxPush(results.map(function (result) {
+            observable.rxPush(results.map(result => {
                 return result.lastValue;
             }));
         }
@@ -55,7 +55,7 @@ function constantObservable(value) {
 
 function delayedObservable(value, delay) {
     var observable = new ObservableImpl();
-    setTimeout(function () {
+    setTimeout(() => {
         observable.rxPush(value);
     }, delay);
     return observable;
@@ -69,11 +69,11 @@ function aggregate(Initial, Source, createSource) {
         let $acc = initial;
         $Obs.rxPush($acc);
 
-        let $Following = Source.rxFlatMap((source) => {
+        let $Following = Source.rxFlatMap(source => {
             return createSource($acc, source);
         });
 
-        $Following.rxForEach((following) => {
+        $Following.rxForEach(following => {
             $acc = following;
             $Obs.rxPush(following);
         });
@@ -87,7 +87,7 @@ function distinctUntilChanged(Obs) {
     let hasValue = false;
     let lastValue = null;
 
-    Obs.rxForEach(function ($arg) {
+    Obs.rxForEach($arg => {
         let changed = !hasValue || (hasValue && lastValue != $arg);
         hasValue = true;
 
@@ -105,7 +105,7 @@ function wrap(Obs) {
 }
 
 function ifStatement(Condition, OnTrue, OnFalse) {
-    return Condition.rxFlatMap(function ($condition) {
+    return Condition.rxFlatMap($condition => {
         return $condition ? OnTrue : OnFalse;
     });
 }
@@ -121,9 +121,7 @@ function toObservable(value) {
 }
 
 function arrayToObservable(obj) {
-    return constantObservable(obj.map(function (x) {
-        return toObservable(x);
-    }));
+    return constantObservable(obj.map(toObservable));
 }
 
 function objectToObservable(obj) {

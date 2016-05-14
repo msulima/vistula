@@ -27,11 +27,11 @@ function textObservable(Obs) {
 function createElement(tag, attributes, childNodes) {
     let parent = document.createElement(tag);
 
-    attributes.forEach(function (attributeAndValue) {
+    attributes.forEach(attributeAndValue => {
         let attribute = attributeAndValue[0];
         let Value = attributeAndValue[1];
 
-        Value.rxForEach(function (value) {
+        Value.rxForEach(value => {
             parent.setAttribute(attribute, value);
             if (isCheckbox(parent, attribute)) {
                 parent.checked = value;
@@ -41,21 +41,21 @@ function createElement(tag, attributes, childNodes) {
         });
 
         if (isCheckbox(parent, attribute)) {
-            parent.addEventListener("change", function (ev) {
+            parent.addEventListener("change", ev => {
                 Value.rxPush(ev.target.checked);
             });
         } else if (isText(parent, attribute)) {
-            parent.addEventListener("change", function (ev) {
+            parent.addEventListener("change", ev => {
                 Value.rxPush(ev.target.value);
             });
         }
     });
 
     let currentChildren = [];
-    childNodes.forEach(function (ChildNode, idx) {
+    childNodes.forEach((ChildNode, idx) => {
         currentChildren.push([]);
 
-        ChildNode.rxForEach(function ($args) {
+        ChildNode.rxForEach($args => {
             updateChildren(parent, currentChildren[idx], $args);
             currentChildren[idx] = $args;
         });
