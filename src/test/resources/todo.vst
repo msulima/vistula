@@ -25,48 +25,22 @@ sample = {
 
 todos = ([sample] or arrayPush(todos, { "title": submitTasks.title, "completed": false }) for todos in submitTasks)
 
-app = '''# html
-<form id="task" method="POST">
-  <input name="title" placeholder="What needs to be done?"/>
-</form>
-<div>
-  <ul>
-    {% for todo in todos %}
-      <li>
-        {% if todo.completed %}
-          √
-        {% else %}
-          x
-        {% endif %}
-        {{ todo.title }} / {{ capitalize(todo.title) }} / {{ capitalizeTitle(todo).title }}
-      </li>
-    {% endfor %}
-  </ul>
-  <ul>
-    {% for todo in todos %}
-      <li>
-        <input type="checkbox" checked="{{ todo.completed }}"/>
-        {% if todo.completed %}
-          √
-        {% else %}
-          x
-        {% endif %}
-        <input type="text" value="{{ todo.title }}"/>
-      </li>
-    {% endfor %}
-  </ul>
-  <button id="completeAll">Complete all</button>
-</div>
-'''
+app = '''# html:/todo.vst.html'''
 
-stdlib.dom.appendChild("app", app)
+def classForIsCompleted(todo):
+  if todo.completed:
+    "completed"
+  else:
+    "view"
+
+stdlib.dom.appendChild("todoapp", app)
 
 '''# javascript
 document.getElementById("completeAll").addEventListener("click", function (ev) {
-  todos.rxForEach(function (todos, unsubscribe) {
+  todos.rxForEach((todos, unsubscribe) => {
     unsubscribe();
-    todos.forEach(function (Todo, unsubscribe) {
-      Todo.rxForEach(function (todo, unsubscribe) {
+    todos.forEach((Todo, unsubscribe) => {
+      Todo.rxForEach((todo, unsubscribe) => {
         unsubscribe();
         todo.completed.rxPush(true);
       });

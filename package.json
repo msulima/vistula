@@ -9,7 +9,10 @@
   },
   "author": "",
   "license": "ISC",
+  "private": true,
   "devDependencies": {
+    "todomvc-app-css": "^2.0.0",
+    "todomvc-common": "^1.0.0",
     "browserify": "^13.0.0",
     "chai": "^3.5.0",
     "mocha": "^2.4.5"
