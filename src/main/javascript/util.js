@@ -48,7 +48,6 @@ function zip(observables) {
 
 function constantObservable(value) {
     var observable = new ObservableImpl();
-    observable.isConstant = true;
     observable.rxPush(value);
     return observable;
 }

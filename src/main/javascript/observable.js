@@ -6,7 +6,6 @@ var ObservableImpl = function () {
     this.observers = [];
     this.isProxy = false;
     this.proxyFor = null;
-    this.isConstant = false;
 };
 
 ObservableImpl.prototype.rxForEach = function (callback) {
@@ -54,6 +53,7 @@ ObservableImpl.prototype.rxMap = function (callback) {
 
 ObservableImpl.prototype.rxFlatMap = function (transformation) {
     let proxy = new ObservableImpl();
+    proxy.isProxy = true;
 
     let previousObservable = null;
     let unsubscribeFromPreviousObservable = null;
@@ -63,19 +63,13 @@ ObservableImpl.prototype.rxFlatMap = function (transformation) {
         if (nestedObservable.isProxy) {
             nestedObservable = nestedObservable.proxyFor;
         }
+        proxy.proxyFor = nestedObservable;
 
         if (previousObservable != null && unsubscribeFromPreviousObservable != null) {
             unsubscribeFromPreviousObservable();
             unsubscribeFromPreviousObservable = null;
         }
         previousObservable = nestedObservable;
-
-        proxy.isProxy = nestedObservable.isConstant;
-        if (nestedObservable.isConstant) {
-            proxy.proxyFor = nestedObservable;
-        } else {
-            proxy.proxyFor = null;
-        }
 
         nestedObservable.rxForEach((value, unsubscribeCallback) => {
             unsubscribeFromPreviousObservable = unsubscribeCallback;

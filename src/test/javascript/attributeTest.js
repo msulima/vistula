@@ -61,7 +61,7 @@ describe("Attribute access", function () {
 
     it("multiple modifications of a flat map", function () {
         // given
-        let A = util.toObservable(1);
+        let A = new ObservableImpl(1);
         let SubmitTasks = util.constantObservable({
             B: A
         });
@@ -72,13 +72,11 @@ describe("Attribute access", function () {
         let Field = Source.rxFlatMap(x => x.C);
         let Copy = Source.rxFlatMap(x => x.C);
 
-        console.log(A.isConstant, SubmitTasks.isConstant, Source.isConstant, Field.isConstant);
-        console.log(SubmitTasks.lastValue.B == A, Source.lastValue.C.proxyFor == A, Field.lastValue.proxyFor == A);
-
         let probe = new Probe(Copy);
 
         // when
-        Field.rxPush(2);
+        Field.rxPush(1);
+        A.rxPush(2);
         Field.rxPush(3);
 
         // then
