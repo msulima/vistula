@@ -50,10 +50,11 @@ completed = for todo in todos:
   todo.completed
 
 '''# javascript
-function editTodo(Todo) {
+function editTodo(ev, Todo) {
   Todo.rxForEach((todo, unsubscribe) => {
     unsubscribe();
     todo.editing.rxPush(true);
+    ev.target.parentElement.parentElement.parentElement.getElementsByClassName("edit")[0].focus();
   });
 };
 
