@@ -1,5 +1,5 @@
 vistula.zipAndFlatten([
-    vistula.dom.createElement("span", [], [
+    vistula.dom.createElement("span", [["class", vistula.constantObservable("foo")], ["autofocus", vistula.constantObservable(null)]], [
         vistula.dom.textNode("\n    hello\n    is it "),
         vistula.dom.textObservable(Lionel.rxMap(function ($arg) {
             return $arg + "?";

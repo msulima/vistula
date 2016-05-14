@@ -22,7 +22,10 @@ object Lexical {
 
   val expression = pl.msulima.vistula.parser.Expressions.expr
 
-  val identifier = pl.msulima.vistula.parser.Lexical.identifier
+  val identifier = P(
+    (pl.msulima.vistula.parser.Lexical.letter | "_") ~
+      (pl.msulima.vistula.parser.Lexical.letter | pl.msulima.vistula.parser.Lexical.digit | "_").rep
+  ).!.map(Ast.identifier)
 
   private val tagName = identifier.map(_.name)
 
@@ -33,7 +36,7 @@ object Lexical {
     P(attributeExpression | stringLiteral.map(Ast.expr.Str))
 
   private val attribute =
-    P(tagName.! ~ "=" ~ attributeValue)
+    P(tagName.! ~ ("=" ~ attributeValue).?).map(Attribute.tupled)
 
   private val tagBody =
     P(tagName.! ~ space ~ attribute.rep(min = 0, sep = " ") ~ space).map(Tag.tupled)
@@ -42,7 +45,7 @@ object Lexical {
     P("<" ~ tagBody ~ "/>")
 
   val openTag =
-    P("<" ~ tagBody ~ ">")
+    P("<" ~ tagBody ~ !"/" ~ ">")
 
   val closeTag =
     P("</" ~ tagName ~ ">").map(_ => ())

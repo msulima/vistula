@@ -12,6 +12,8 @@ object Primitives {
       Fragment(x.stripPrefix(MagicInlineJavascriptPrefix))
     case Ast.expr.Num(x) =>
       Fragment(s"vistula.constantObservable(${x.toString})")
+    case Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load) =>
+      Fragment(s"""vistula.constantObservable(null)""")
     case Ast.expr.Name(Ast.identifier("false"), Ast.expr_context.Load) =>
       Fragment(s"""vistula.constantObservable(false)""")
     case Ast.expr.Name(Ast.identifier("true"), Ast.expr_context.Load) =>

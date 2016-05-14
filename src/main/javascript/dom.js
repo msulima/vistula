@@ -32,11 +32,15 @@ function createElement(tag, attributes, childNodes) {
         let Value = attributeAndValue[1];
 
         Value.rxForEach(value => {
-            parent.setAttribute(attribute, value);
-            if (isCheckbox(parent, attribute)) {
-                parent.checked = value;
-            } else if (isText(parent, attribute)) {
-                parent.value = value;
+            if (value == null) {
+                parent[attribute] = true;
+            } else {
+                parent.setAttribute(attribute, value);
+                if (isCheckbox(parent, attribute)) {
+                    parent.checked = value;
+                } else if (isText(parent, attribute)) {
+                    parent.value = value;
+                }
             }
         });
 

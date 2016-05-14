@@ -12,6 +12,8 @@ case class IfNode(test: Ast.expr, body: Seq[Node], elseBlock: Seq[Node]) extends
 
 case class ForNode(identifier: Ast.identifier, expression: Ast.expr, body: Seq[Node]) extends Node
 
-case class Tag(name: String, attributes: Seq[(String, Ast.expr)]) extends Node
+case class Attribute(name: String, value: Option[Ast.expr])
+
+case class Tag(name: String, attributes: Seq[Attribute]) extends Node
 
 case class Element(tag: Tag, childNodes: Seq[Node]) extends Node

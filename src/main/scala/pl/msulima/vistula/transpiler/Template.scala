@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler
 
 import fastparse.all._
-import pl.msulima.vistula.html._
+import pl.msulima.vistula.html
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler}
 import pl.msulima.vistula.util.{Indent, ToArray}
@@ -27,7 +27,7 @@ object Template {
   }
 
   def apply(program: String): String = {
-    val nodes = apply((Statements.document ~ End).parse(program).get.value)
+    val nodes = apply((html.Statements.document ~ End).parse(program).get.value)
     if (nodes.size == 1) {
       nodes.head
     } else {
@@ -35,21 +35,21 @@ object Template {
     }
   }
 
-  private def apply(program: Seq[Node]): Seq[String] = {
+  private def apply(program: Seq[html.Node]): Seq[String] = {
     program.map(apply)
   }
 
-  private def apply: PartialFunction[Node, String] = {
-    case Element(tag, childNodes) =>
+  private def apply: PartialFunction[html.Node, String] = {
+    case html.Element(tag, childNodes) =>
       val body = ToArray(childNodes.map(apply))
       s"""vistula.dom.createElement("${tag.name}", ${attributes(tag)}, $body)""".stripMargin;
-    case ObservableNode(identifier) =>
+    case html.ObservableNode(identifier) =>
       s"vistula.dom.textObservable(${VistulaTranspiler(Ast.stmt.Expr(identifier))})";
-    case IfNode(expr, body, elseBody) =>
+    case html.IfNode(expr, body, elseBody) =>
       s"vistula.dom.ifStatement(${VistulaTranspiler(Ast.stmt.Expr(expr))}, ${ToArray(apply(body))}, ${ToArray(apply(elseBody))})";
-    case TextNode(text) =>
+    case html.TextNode(text) =>
       s"""vistula.dom.textNode(${escape(text)})""";
-    case ForNode(identifier, expression, body) =>
+    case html.ForNode(identifier, expression, body) =>
       val source = VistulaTranspiler(Ast.stmt.Expr(expression))
 
       val map =
@@ -64,10 +64,12 @@ object Template {
 
   private def escape(text: String) =s""""${text.replaceAll("\n", """\\\n""")}""""
 
-  private def attributes(tag: Tag) = {
+  private def attributes(tag: html.Tag) = {
     ToArray.toCompact(tag.attributes.map({
-      case (key, value) =>
+      case html.Attribute(key, Some(value)) =>
         s""""$key"""" -> VistulaTranspiler(Ast.stmt.Expr(value))
+      case html.Attribute(key, None) =>
+        s""""$key"""" -> VistulaTranspiler(Ast.stmt.Expr(Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load)))
     }))
   }
 }

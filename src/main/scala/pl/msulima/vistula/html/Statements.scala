@@ -38,7 +38,7 @@ object Statements {
     P(selfClosingTag).map(x => Element(x, Seq()))
 
   val element: P[Element] =
-    P(openTag ~/ node.rep(min = 0) ~ closeTag).map(Element.tupled)
+    P(openTag ~ node.rep(min = 0) ~ closeTag).map(Element.tupled)
 
   val node: P[Node] =
     P(element | selfClosingElement | forStatement | ifStatement | variable | textNode)
