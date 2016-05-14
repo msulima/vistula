@@ -1,9 +1,12 @@
-'use strict';
+"use strict";
 
 var ObservableImpl = function () {
     this.hasValue = false;
     this.lastValue = null;
     this.observers = [];
+    this.isProxy = false;
+    this.proxyFor = null;
+    this.isConstant = false;
 };
 
 ObservableImpl.prototype.rxForEach = function (callback) {
@@ -15,6 +18,14 @@ ObservableImpl.prototype.rxForEach = function (callback) {
 };
 
 ObservableImpl.prototype.rxPush = function (value) {
+    this._rxPush(value);
+
+    if (this.isProxy) {
+        this.proxyFor.rxPush(value);
+    }
+};
+
+ObservableImpl.prototype._rxPush = function (value) {
     this.hasValue = true;
     this.lastValue = value;
 
@@ -25,16 +36,8 @@ ObservableImpl.prototype._rxCall = function (callback) {
     callback(this.lastValue, this.unsubscribe.bind(this, callback));
 };
 
-ObservableImpl.prototype.rxSet = function (value) {
-    if (this.constant) {
-        this.rxPush(value);
-    } else {
-        throw "Cannot set value";
-    }
-};
-
 ObservableImpl.prototype.unsubscribe = function (callback) {
-    this.observers = this.observers.filter(function (observer) {
+    this.observers = this.observers.filter(observer => {
         return observer != callback;
     });
 };
@@ -42,34 +45,39 @@ ObservableImpl.prototype.unsubscribe = function (callback) {
 ObservableImpl.prototype.rxMap = function (callback) {
     var observable = new ObservableImpl();
 
-    this.rxForEach(function (value) {
+    this.rxForEach(value => {
         observable.rxPush(callback(value));
     });
 
     return observable;
 };
 
-ObservableImpl.prototype.rxFlatMap = function (callback) {
-    // TODO hacky as fuck
-    if (this.constant) {
-        var nestedObservable = callback(this.lastValue);
-        if (nestedObservable.constant) {
-            return nestedObservable;
+ObservableImpl.prototype.rxFlatMap = function (transformation) {
+    let proxy = new ObservableImpl();
+
+    let previousObservable = null;
+    let unsubscribeFromPreviousObservable = null;
+
+    this.rxForEach(next => {
+        let nestedObservable = transformation(next);
+
+        if (previousObservable != null && unsubscribeFromPreviousObservable != null) {
+            unsubscribeFromPreviousObservable();
+            unsubscribeFromPreviousObservable = null;
         }
-    }
-    var proxy = new ObservableImpl();
-    var currentObservable = null;
+        previousObservable = nestedObservable;
 
-    this.rxForEach(function (next) {
-        var nestedObservable = callback(next);
-        currentObservable = nestedObservable;
+        if (nestedObservable.isConstant) {
+            proxy.isProxy = true;
+            proxy.proxyFor = nestedObservable;
+        } else {
+            proxy.isProxy = false;
+            proxy.proxyFor = null;
+        }
 
-        nestedObservable.rxForEach(function (value, unsubscribeCallback) {
-            if (nestedObservable == currentObservable) {
-                proxy.rxPush(value);
-            } else {
-                unsubscribeCallback();
-            }
+        nestedObservable.rxForEach((value, unsubscribeCallback) => {
+            unsubscribeFromPreviousObservable = unsubscribeCallback;
+            proxy._rxPush(value);
         });
     });
 
