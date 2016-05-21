@@ -2,7 +2,7 @@ package pl.msulima.vistula.template.parser
 
 import fastparse.noApi._
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.template.parser.WsApi._
+import pl.msulima.vistula.template.parser.MultiWsApi._
 
 object TagParser {
 

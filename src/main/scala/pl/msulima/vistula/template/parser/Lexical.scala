@@ -2,6 +2,11 @@ package pl.msulima.vistula.template.parser
 
 import pl.msulima.vistula.parser.Ast
 
+object MultiWsApi extends fastparse.WhitespaceApi.Wrapper({
+  import fastparse.all._
+  CharsWhile(" \n".toSet, min = 0)
+})
+
 object WsApi extends fastparse.WhitespaceApi.Wrapper({
   import fastparse.all._
   NoTrace(" ".rep)
