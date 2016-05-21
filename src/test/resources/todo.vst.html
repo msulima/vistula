@@ -12,10 +12,11 @@
         <li class="{{ classForIsCompleted(todo) + ' ' + classForIsEditing(todo) }}">
             <div class="view">
                 <input class="toggle" type="checkbox" checked="{{ todo.completed }}"/>
-                <label (dblclick)="{{ editTodo(ev, todo) }}">{{ todo.title }}</label>
+                <label (dblclick)="{{ editTodo(ev, todo, editedTodo) }}">{{ todo.title }}</label>
                 <button class="destroy"></button>
             </div>
-            <input class="edit" type="text" value="{{ todo.title }}" (blur)="{{ finishEditingTodo(todo) }}"/>
+            <input #editedTodo class="edit" type="text" value="{{ todo.title }}"
+                   (blur)="{{ finishEditingTodo(todo) }}"/>
         </li>
         {% endfor %}
     </ul>

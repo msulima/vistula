@@ -20,6 +20,6 @@ case class AttributeValue(name: String, value: Ast.expr) extends Attribute
 
 case class AttributeEvent(name: String, value: Ast.expr) extends Attribute
 
-case class Tag(name: String, attributes: Seq[Attribute]) extends Node
+case class Tag(name: String, id: Option[Ast.identifier], attributes: Seq[Attribute]) extends Node
 
 case class Element(tag: Tag, childNodes: Seq[Node]) extends Node

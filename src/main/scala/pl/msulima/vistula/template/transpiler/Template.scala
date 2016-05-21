@@ -6,6 +6,8 @@ import pl.msulima.vistula.template.parser
 import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler}
 import pl.msulima.vistula.util.{Indent, ToArray}
 
+case class Scoped(variables: Seq[Ast.identifier], body: String)
+
 object Template {
 
   def apply(program: String): String = {
@@ -18,13 +20,40 @@ object Template {
   }
 
   private def apply(program: Seq[parser.Node]): Seq[String] = {
-    program.map(apply)
+    program.map(applyScope)
+  }
+
+  private def applyScope(node: parser.Node): String = {
+    val Scoped(variables, body) = applyWithScope(node)
+
+    if (variables.isEmpty) {
+      body
+    } else {
+      val variableDeclarations = variables.map(variable => s"const ${variable.name} = new vistula.ObservableImpl();")
+
+      s"""vistula.wrap(() => {
+          |${Indent.leftPad(variableDeclarations)}
+          |${Indent.leftPad("return " + body + ";")}
+          |})""".stripMargin
+    }
+  }
+
+  private def applyWithScope: PartialFunction[parser.Node, Scoped] = {
+    case parser.Element(tag, childNodes) =>
+      val children = childNodes.map(applyWithScope)
+      val variables = children.flatMap(_.variables)
+      val body = ToArray(children.map(_.body))
+
+      tag.id.map(id => {
+        Scoped(variables :+ id, s"""vistula.dom.createBoundElement("${tag.name}", ${id.name}, ${Attributes(tag)}, $body)""")
+      }).getOrElse({
+        Scoped(variables, s"""vistula.dom.createElement("${tag.name}", ${Attributes(tag)}, $body)""")
+      })
+    case other: parser.Node =>
+      Scoped(Seq(), apply(other))
   }
 
   private def apply: PartialFunction[parser.Node, String] = {
-    case parser.Element(tag, childNodes) =>
-      val body = ToArray(childNodes.map(apply))
-      s"""vistula.dom.createElement("${tag.name}", ${Attributes(tag)}, $body)""".stripMargin;
     case parser.ObservableNode(identifier) =>
       s"vistula.dom.textObservable(${VistulaTranspiler(Ast.stmt.Expr(identifier))})";
     case parser.IfNode(expr, body, elseBody) =>

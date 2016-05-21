@@ -28,7 +28,7 @@ object Lexical {
 
   val identifier = P(
     (pl.msulima.vistula.parser.Lexical.letter | "_") ~
-      (pl.msulima.vistula.parser.Lexical.letter | pl.msulima.vistula.parser.Lexical.digit | "_").rep
+      (pl.msulima.vistula.parser.Lexical.letter | pl.msulima.vistula.parser.Lexical.digit | "_" | "-").rep
   ).!.map(Ast.identifier)
 
   def kw(s: String) = pl.msulima.vistula.parser.Lexical.kw(s)

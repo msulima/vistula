@@ -8,6 +8,7 @@ function zipAndFlatten(observables) {
     });
 }
 
+// TODO: unsubscribe should propagate, otherwise memory leaks occur
 function zip(observables) {
     var observable = new ObservableImpl();
 

@@ -8,6 +8,8 @@ object TagParser {
 
   private val tagName = Lexical.identifier.map(_.name)
 
+  private val tagId = P("#" ~ Lexical.identifier)
+
   private val attributeExpression =
     P("\"" ~ Expressions.inline(Lexical.expression) ~ "\"")
 
@@ -24,7 +26,7 @@ object TagParser {
     P("(" ~ tagName.! ~ ")=" ~ attributeExpression).map(AttributeEvent.tupled)
 
   private val tagBody =
-    P(tagName.! ~ (attribute | attributeMarker | event).rep(min = 0)).map(Tag.tupled)
+    P(tagName.! ~ tagId.? ~ (attribute | attributeMarker | event).rep(min = 0)).map(Tag.tupled)
 
   val selfClosingTag: Parser[Tag] =
     P("<" ~ tagBody ~ "/>")

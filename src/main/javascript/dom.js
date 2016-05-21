@@ -24,12 +24,23 @@ function textObservable(Obs) {
     return util.constantObservable([span]);
 }
 
+function createBoundElement(tag, Target, attributes, childNodes) {
+    const source = createJustElement(tag, attributes, childNodes);
+    Target.rxPush(source);
+
+    return util.constantObservable([source]);
+}
+
 function createElement(tag, attributes, childNodes) {
-    let parent = document.createElement(tag);
+    return util.constantObservable([createJustElement(tag, attributes, childNodes)]);
+}
+
+function createJustElement(tag, attributes, childNodes) {
+    const parent = document.createElement(tag);
 
     attributes.forEach(attributeAndValue => {
-        let attribute = attributeAndValue[0];
-        let argument = attributeAndValue[1];
+        const attribute = attributeAndValue[0];
+        const argument = attributeAndValue[1];
 
         if (isEvent(attribute)) {
             setEvent(parent, attribute, argument);
@@ -38,7 +49,7 @@ function createElement(tag, attributes, childNodes) {
         }
     });
 
-    let currentChildren = [];
+    const currentChildren = [];
     childNodes.forEach((ChildNode, idx) => {
         currentChildren.push([]);
 
@@ -48,7 +59,7 @@ function createElement(tag, attributes, childNodes) {
         });
     });
 
-    return util.constantObservable([parent]);
+    return parent;
 }
 
 function isEvent(attribute) {
@@ -117,6 +128,7 @@ function updateChildren(parent, currentChildren, nextChildren) {
 
 module.exports = {
     createElement: createElement,
+    createBoundElement: createBoundElement,
     textNode: textNode,
     textObservable: textObservable,
     ifStatement: ifStatement

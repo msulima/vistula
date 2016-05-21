@@ -31,7 +31,7 @@ object Lexical {
     "as", "elif", "global", "or", "with",
     "assert", "else", "if", "pass", "yield",
     "break", "except", "import", "print",
-    "class", "exec", "in", "raise",
+    "exec", "in", "raise", // "class",
     "continue", "finally", "is", "return",
     "def", "for", "lambda", "try"
   )

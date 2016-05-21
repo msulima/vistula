@@ -1,6 +1,7 @@
 vistula.zipAndFlatten([
     vistula.dom.createElement("span", [
         ["class", vistula.constantObservable("foo")],
+        ["data-foo", vistula.constantObservable("bar")],
         ["autofocus", vistula.constantObservable(null)]
     ], [
         vistula.dom.textNode("\n    hello\n    is it "),
