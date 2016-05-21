@@ -1,4 +1,4 @@
-package pl.msulima.vistula.html
+package pl.msulima.vistula.template.parser
 
 import fastparse.all._
 import pl.msulima.vistula.parser.Ast

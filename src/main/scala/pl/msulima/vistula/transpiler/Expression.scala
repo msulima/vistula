@@ -1,6 +1,7 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.template
 import pl.msulima.vistula.util.ToArray
 
 object Expression {
@@ -20,7 +21,7 @@ object Expression {
   }
 
   private lazy val parseExpression: PartialFunction[Ast.expr, Fragment] = {
-    Generator.apply.orElse(Attribute.apply).orElse(Template.parseExpression).orElse(Primitives.apply).orElse(parseSimpleExpression)
+    Generator.apply.orElse(Attribute.apply).orElse(template.transpiler.Expression.apply).orElse(Primitives.apply).orElse(parseSimpleExpression)
   }
 
   private lazy val parseSimpleExpression: PartialFunction[Ast.expr, Fragment] = {
