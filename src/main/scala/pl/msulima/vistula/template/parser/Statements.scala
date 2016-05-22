@@ -15,18 +15,20 @@ object Statements {
 
     val endIf = Expressions.block(Lexical.kw("endif"))
 
-    P(ifStart ~ document ~ elseBlock ~ document ~ endIf).map(IfNode.tupled)
+    val elseStatement = (elseBlock ~ document).?.map(_.getOrElse(Seq.empty))
+
+    P(ifStart ~ document ~ elseStatement ~ endIf).map(IfNode.tupled)
   }
 
   val forStatement: Parser[ForNode] = {
     val identifier = P(Lexical.kw("for") ~/ Lexical.identifier)
     val expression = P(Lexical.kw("in") ~/ Lexical.expression)
 
-    val ifStart = Expressions.block(identifier ~ expression)
+    val startFor = Expressions.block(identifier ~ expression)
 
     val endFor = Expressions.block(Lexical.kw("endfor"))
 
-    P(ifStart ~ document ~ endFor).map(ForNode.tupled)
+    P(startFor ~ document ~ endFor).map(ForNode.tupled)
   }
 
   val variable =
@@ -44,6 +46,6 @@ object Statements {
   val node: P[Node] =
     P(element | selfClosingElement | forStatement | ifStatement | variable | textNode)
 
-  val document: P[Seq[Node]] =
+  lazy val document: P[Seq[Node]] =
     P(multilineSpace ~ node.rep ~ multilineSpace)
 }
