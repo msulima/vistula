@@ -42,21 +42,9 @@ def classForIsEditing(todo):
   else:
     ""
 
-wat = 1
+completed = arrayFilter(todos, lambda todo: todo.completed)
 
 '''# javascript
-const completed = todos.rxFlatMap(todos => {
-  return vistula.zipAndFlatten(todos.map(Todo => (Todo.rxFlatMap(todo => {
-    return todo.completed.rxMap(completed => {
-      if (completed) {
-        return [Todo];
-      } else {
-        return [];
-      }
-    });
-  }))));
-});
-
 function editTodo(ev, Todo, EditedTodo) {
   vistula.zip([Todo, EditedTodo]).rxForEach(($args, unsubscribe) => {
     unsubscribe();

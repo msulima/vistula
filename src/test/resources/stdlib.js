@@ -21,6 +21,20 @@ function arraySize(Dest) {
     });
 }
 
+function arrayFilter(Dests, predicate) {
+    return Dests.rxFlatMap(dests => {
+        return vistula.zipAndFlatten(dests.map(Dest => {
+            return predicate(Dest).rxMap($result => {
+                if ($result) {
+                    return [Dest];
+                } else {
+                    return [];
+                }
+            });
+        }));
+    });
+}
+
 function appendChild(Target, Observables) {
     return vistula.zip([Target, Observables]).rxMap(function ($args) {
         var target = document.getElementById($args[0]);

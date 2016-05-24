@@ -21,7 +21,8 @@ object Expression {
   }
 
   private lazy val parseExpression: PartialFunction[Ast.expr, Fragment] = {
-    Generator.apply.orElse(Attribute.apply).orElse(template.transpiler.Expression.apply).orElse(Primitives.apply).orElse(parseSimpleExpression)
+    Generator.apply.orElse(Attribute.apply).orElse(template.transpiler.Expression.apply).orElse(Primitives.apply)
+      .orElse(parseSimpleExpression).orElse(parseLambda)
   }
 
   private lazy val parseSimpleExpression: PartialFunction[Ast.expr, Fragment] = {
@@ -64,5 +65,16 @@ object Expression {
         case f :: Nil =>
           s"$f(${x.mkString(", ")})"
       }
+  }
+
+  private lazy val parseLambda: PartialFunction[Ast.expr, Fragment] = {
+    case Ast.expr.Lambda(Ast.arguments(args, None, None, Seq()), body) =>
+      val argsNames = args.map({
+        case Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Param) =>
+          x
+      })
+      val transpiledBody = Transpiler(Ast.stmt.Expr(body))
+
+      Fragment(s"(${argsNames.mkString(", ")}) => $transpiledBody", useFlatMap = true)
   }
 }
