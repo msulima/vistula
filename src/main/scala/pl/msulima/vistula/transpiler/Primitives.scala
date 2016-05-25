@@ -14,9 +14,9 @@ object Primitives {
       Fragment(s"vistula.constantObservable(${x.toString})")
     case Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load) =>
       Fragment(s"""vistula.constantObservable(null)""")
-    case Ast.expr.Name(Ast.identifier("false"), Ast.expr_context.Load) =>
+    case Ast.expr.Name(Ast.identifier("False"), Ast.expr_context.Load) =>
       Fragment(s"""vistula.constantObservable(false)""")
-    case Ast.expr.Name(Ast.identifier("true"), Ast.expr_context.Load) =>
+    case Ast.expr.Name(Ast.identifier("True"), Ast.expr_context.Load) =>
       Fragment(s"""vistula.constantObservable(true)""")
     case Ast.expr.Str(x) =>
       Fragment(s"""vistula.constantObservable("$x")""")

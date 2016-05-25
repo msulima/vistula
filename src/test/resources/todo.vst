@@ -1,5 +1,6 @@
 '''# javascript
 let submitTasks = new vistula.ObservableImpl();
+let clickedFilter = new vistula.ObservableImpl();
 
 function capitalize(Title) {
   return Title.rxMap(function (title) {
@@ -16,19 +17,44 @@ function capitalizeTitle(Todo) {
   });
 }
 
+function setFilter(Filter) {
+  Filter.rxForEach(($arg, unsubscribe) => {
+    unsubscribe();
+    clickedFilter.rxPush($arg);
+  });
+}
+
 '''
+
+filter = ("all" or clickedFilter for filter in clickedFilter)
 
 sample = {
   "title": "Finish TodoMVC",
-  "completed": false,
-  "editing": false
+  "completed": False,
+  "editing": False
 }
 
-todos = ([sample] or arrayPush(todos, {
+completedSample = {
+  "title": "Hop hop",
+  "completed": True,
+  "editing": False
+}
+
+allTodos = ([sample, completedSample] or arrayPush(allTodos, {
   "title": submitTasks.title,
-  "completed": false,
-  "editing": false
-}) for todos in submitTasks)
+  "completed": False,
+  "editing": False
+}) for allTodos in submitTasks)
+
+def isVisible(todo):
+  if filter == "all":
+    True
+  elif filter == "completed":
+    todo.completed
+  else:
+    not todo.completed
+
+todos = arrayFilter(allTodos, lambda todo: isVisible(todo))
 
 def classForIsCompleted(todo):
   if todo.completed:
@@ -39,6 +65,12 @@ def classForIsCompleted(todo):
 def classForIsEditing(todo):
   if todo.editing:
     "editing"
+  else:
+    ""
+
+def classForFilter(label):
+  if filter == label:
+    "selected"
   else:
     ""
 
@@ -62,13 +94,16 @@ function finishEditingTodo(Todo) {
 
 '''
 
-leftTodosCount = arraySize(todos) - arraySize(completed)
+leftTodosCount = arraySize(allTodos) - arraySize(completed)
 
 app = '''# html:/todo.vst.html'''
 
 stdlib.dom.appendChild("todoapp", app)
 
 '''# javascript
+filter.rxForEach(x => console.log(x));
+todos.rxFlatMap(xs => vistula.zip(xs.map(x => x.rxFlatMap(y => y.title)))).rxForEach(x => console.log(x));
+
 document.getElementById("completeAll").addEventListener("click", function (ev) {
   leftTodosCount.rxForEach((leftTodosCount, unsubscribe) => {
     unsubscribe();

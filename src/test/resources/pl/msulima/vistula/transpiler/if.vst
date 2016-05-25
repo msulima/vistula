@@ -1,5 +1,7 @@
 if X < 3:
   Y = X + 3
   Y
+elif not X < 0:
+  X
 else:
   3

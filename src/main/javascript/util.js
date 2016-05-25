@@ -106,7 +106,7 @@ function wrap(Obs) {
 
 function ifStatement(Condition, OnTrue, OnFalse) {
     return Condition.rxFlatMap($condition => {
-        return $condition ? OnTrue : OnFalse;
+        return ($condition ? OnTrue : OnFalse).rxMap(x => x); // FIXME
     });
 }
 

@@ -1,5 +1,5 @@
 [1, "A\"B", {
    "C": "D",
-   "E": false,
+   "E": False,
    "F": 2 + 2
 }, None]

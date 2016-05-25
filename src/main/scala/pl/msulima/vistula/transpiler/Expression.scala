@@ -22,11 +22,30 @@ object Expression {
 
   private lazy val parseExpression: PartialFunction[Ast.expr, Fragment] = {
     Generator.apply.orElse(Attribute.apply).orElse(template.transpiler.Expression.apply).orElse(Primitives.apply)
-      .orElse(parseSimpleExpression).orElse(parseLambda)
+      .orElse(parseSimpleExpression).orElse(parseArithmeticExpression).orElse(parseLambda)
   }
 
   private lazy val parseSimpleExpression: PartialFunction[Ast.expr, Fragment] = {
     case Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) => Fragment(x)
+    case Ast.expr.Call(Ast.expr.Name(Ast.identifier(func), Ast.expr_context.Load), args, _, _, _) =>
+      val x: Seq[String] = args.map(arg => Transpiler(Ast.stmt.Expr(arg)))
+
+      Fragment(s"$func(${x.mkString(", ")})", useFlatMap = true)
+    case Ast.expr.Call(func, args, _, _, _) =>
+      val x: Seq[String] = args.map(arg => Transpiler(Ast.stmt.Expr(arg)))
+
+      Fragment(Seq(func), useFlatMap = true) {
+        case f :: Nil =>
+          s"$f(${x.mkString(", ")})"
+      }
+  }
+
+  private lazy val parseArithmeticExpression: PartialFunction[Ast.expr, Fragment] = {
+    case Ast.expr.UnaryOp(Ast.unaryop.Not, operand) =>
+      Fragment(Seq(operand), useFlatMap = false) {
+        case left :: Nil =>
+          s"!($left)"
+      }
     case Ast.expr.BinOp(x, op, y) =>
       val operator = op match {
         case Ast.operator.Add => "+"
@@ -53,17 +72,6 @@ object Expression {
       Fragment(Seq(x, y), useFlatMap = false) {
         case left :: right :: Nil =>
           s"$left $operator $right"
-      }
-    case Ast.expr.Call(Ast.expr.Name(Ast.identifier(func), Ast.expr_context.Load), args, _, _, _) =>
-      val x: Seq[String] = args.map(arg => Transpiler(Ast.stmt.Expr(arg)))
-
-      Fragment(s"$func(${x.mkString(", ")})", useFlatMap = true)
-    case Ast.expr.Call(func, args, _, _, _) =>
-      val x: Seq[String] = args.map(arg => Transpiler(Ast.stmt.Expr(arg)))
-
-      Fragment(Seq(func), useFlatMap = true) {
-        case f :: Nil =>
-          s"$f(${x.mkString(", ")})"
       }
   }
 
