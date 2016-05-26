@@ -28,7 +28,7 @@ ObservableImpl.prototype._rxPush = function (value) {
     this.hasValue = true;
     this.lastValue = value;
 
-    this.observers.map(this._rxCall, this);
+    this.observers.forEach(this._rxCall, this);
 };
 
 ObservableImpl.prototype._rxCall = function (callback) {

@@ -1,6 +1,7 @@
 'use strict';
 
 var ObservableImpl = require('./observable').ObservableImpl;
+var PointerObservable = require('./pointer').PointerObservable;
 
 function zipAndFlatten(observables) {
     return zip(observables).rxMap($arrays => {
@@ -105,9 +106,13 @@ function wrap(Obs) {
 }
 
 function ifStatement(Condition, OnTrue, OnFalse) {
-    return Condition.rxFlatMap($condition => {
-        return ($condition ? OnTrue : OnFalse).rxMap(x => x); // FIXME
+    const Pointer = new PointerObservable();
+
+    Condition.rxForEach($condition => {
+        Pointer.rxPointTo($condition ? OnTrue : OnFalse);
     });
+
+    return Pointer;
 }
 
 function toObservable(value) {

@@ -74,7 +74,7 @@ def classForFilter(label):
   else:
     ""
 
-completed = arrayFilter(todos, lambda todo: todo.completed)
+completed = arrayFilter(allTodos, lambda todo: todo.completed)
 
 '''# javascript
 function editTodo(ev, Todo, EditedTodo) {
