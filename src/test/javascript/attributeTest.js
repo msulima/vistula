@@ -1,19 +1,31 @@
 'use strict';
 
-let ObservableImpl = require('../../main/javascript/observable').ObservableImpl;
-let util = require('../../main/javascript/util');
+const ObservableImpl = require('../../main/javascript/observable').ObservableImpl;
+const util = require('../../main/javascript/util');
 
-let Probe = require('./probe').Probe;
-var expect = require('chai').expect;
+const Probe = require('./probe').Probe;
+//noinspection JSUnusedLocalSymbols
+const expect = require('chai').expect;
 
 
 describe("Attribute access", function () {
 
+    it("access constant", function () {
+        // given
+        const Source = util.constantObservable({
+            B: util.constantObservable(1)
+        });
+        const probe = new Probe(Source.rxFlatMap($arg => $arg.B));
+
+        // when & then
+        probe.expect([1]);
+    });
+
     it("modification of a view is allowed", function () {
         // given
-        let Source = util.constantObservable(1).rxMap(x => x * 10);
-        let Copy = Source.rxMap(x => x * 10);
-        let probe = new Probe(Copy);
+        const Source = util.constantObservable(1).rxMap(x => x * 10);
+        const Copy = Source.rxMap(x => x * 10);
+        const probe = new Probe(Copy);
 
         // when
         Source.rxPush(2);
@@ -24,12 +36,12 @@ describe("Attribute access", function () {
 
     it("copies of same field are entangled", function () {
         // given
-        let Source = util.toObservable({
+        const Source = util.toObservable({
             A: 1
         });
-        let Field = Source.rxFlatMap(x => x.A);
-        let Copy = Source.rxFlatMap(x => x.A).rxMap(x => x * 10);
-        let probe = new Probe(Copy);
+        const Field = Source.rxFlatMap(x => x.A);
+        const Copy = Source.rxFlatMap(x => x.A).rxMap(x => x * 10);
+        const probe = new Probe(Copy);
 
         // when
         Field.rxPush(2);
@@ -40,15 +52,15 @@ describe("Attribute access", function () {
 
     it("modification of a flat map", function () {
         // given
-        let Source = new ObservableImpl();
-        let Mapped = Source.rxFlatMap(i => util.toObservable({
+        const Source = new ObservableImpl();
+        const Mapped = Source.rxFlatMap(i => util.toObservable({
             A: i * 10
         }));
 
-        let Field = Mapped.rxFlatMap(x => x.A);
-        let Copy = Mapped.rxFlatMap(x => x.A);
+        const Field = Mapped.rxFlatMap(x => x.A);
+        const Copy = Mapped.rxFlatMap(x => x.A);
 
-        let probe = new Probe(Copy);
+        const probe = new Probe(Copy);
 
         // when
         Source.rxPush(1);
@@ -61,18 +73,18 @@ describe("Attribute access", function () {
 
     it("multiple modifications of a flat map", function () {
         // given
-        let A = new ObservableImpl(1);
-        let SubmitTasks = util.constantObservable({
-            B: A
+        const A = new ObservableImpl();
+        const B = util.constantObservable({
+            C: A
         });
-        let Source = util.constantObservable({
-            C: SubmitTasks.rxFlatMap($arg => $arg.B)
+        const Source = util.constantObservable({
+            D: B.rxFlatMap($arg => $arg.C)
         });
 
-        let Field = Source.rxFlatMap(x => x.C);
-        let Copy = Source.rxFlatMap(x => x.C);
+        const Field = Source.rxFlatMap(x => x.D);
+        const Copy = Source.rxFlatMap(x => x.D);
 
-        let probe = new Probe(Copy);
+        const probe = new Probe(Copy);
 
         // when
         Field.rxPush(1);
