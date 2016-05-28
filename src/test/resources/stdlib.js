@@ -1,4 +1,4 @@
-let stdlib = vistula.toObservable({
+const stdlib = vistula.toObservable({
     dom: {
         appendChild: appendChild
     },
@@ -36,16 +36,17 @@ function arrayFilter(Dests, predicate) {
 }
 
 function appendChild(Target, Observables) {
+    let currentChildren = [];
     return vistula.zip([Target, Observables]).rxMap(function ($args) {
-        var target = document.getElementById($args[0]);
-        $args[1].forEach(function (obs) {
-            target.appendChild(obs);
-        });
+        const target = document.getElementById($args[0]);
+        const nextChildren = $args[1];
+        vistula.dom.updateChildren(target, currentChildren, nextChildren);
+        currentChildren = nextChildren;
     });
 }
 
 function ajaxGet(Url) {
-    var obs = new vistula.ObservableImpl();
+    const obs = new vistula.ObservableImpl();
 
     return Url.rxFlatMap(function (url) {
         var request = new XMLHttpRequest();

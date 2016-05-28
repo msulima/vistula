@@ -131,5 +131,6 @@ module.exports = {
     createBoundElement: createBoundElement,
     textNode: textNode,
     textObservable: textObservable,
-    ifStatement: ifStatement
+    ifStatement: ifStatement,
+    updateChildren: updateChildren
 };
