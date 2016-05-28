@@ -17,9 +17,15 @@ var ObservableImpl = function () {
 ObservableImpl.prototype.rxForEach = PointerObservable.prototype.rxForEach = function (callback) {
     this.observers.push(callback);
 
+    return this.rxForEachOnce(callback);
+};
+
+ObservableImpl.prototype.rxForEachOnce = PointerObservable.prototype.rxForEachOnce = function (callback) {
     if (this.hasValue) {
         this._rxCall(callback);
     }
+
+    return this.unsubscribe.bind(this, callback);
 };
 
 ObservableImpl.prototype.rxPush = function (value) {
@@ -38,7 +44,7 @@ PointerObservable.prototype.rxPush = function (value) {
 };
 
 ObservableImpl.prototype._rxCall = PointerObservable.prototype._rxCall = function (callback) {
-    callback(this.lastValue, this.unsubscribe.bind(this, callback));
+    callback(this.lastValue);
 };
 
 ObservableImpl.prototype.unsubscribe = PointerObservable.prototype.unsubscribe = function (callback) {
@@ -75,15 +81,11 @@ PointerObservable.prototype.rxPointTo = function (observable) {
     if (this.unsubscribeFromPointsTo != null) {
         this.unsubscribeFromPointsTo();
     }
+
     this.pointsTo = observable;
-
-    observable.rxForEach((value, unsubscribe) => {
+    this.unsubscribeFromPointsTo = observable.rxForEach(value => {
         if (observable == this.pointsTo) {
-            this.unsubscribeFromPointsTo = unsubscribe;
-
             ObservableImpl.prototype.rxPush.apply(this, [value]);
-        } else {
-            unsubscribe();
         }
     });
 };

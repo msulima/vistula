@@ -1,7 +1,7 @@
 'use strict';
 
 var ObservableImpl = require('./observable').ObservableImpl;
-var PointerObservable = require('./pointer').PointerObservable;
+var PointerObservable = require('./observable').PointerObservable;
 
 function zipAndFlatten(observables) {
     return zip(observables).rxMap($arrays => {
@@ -64,9 +64,7 @@ function delayedObservable(value, delay) {
 
 function aggregate(Initial, Source, createSource) {
     let $Obs = new ObservableImpl();
-    Initial.rxForEach((initial, unsubscribe) => {
-        unsubscribe();
-
+    Initial.rxForEachOnce(initial => {
         let $acc = initial;
         $Obs.rxPush($acc);
 

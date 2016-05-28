@@ -1,17 +1,18 @@
 'use strict';
 
-let vistula = require('../../main/javascript/observable');
-let vistulaUtil = require('../../main/javascript/util');
+const vistula = require('../../main/javascript/observable');
+const vistulaUtil = require('../../main/javascript/util');
+const expect = require('chai').expect;
 
-let Probe = require('./probe').Probe;
+const Probe = require('./probe').Probe;
 
 
 describe("Observable", function () {
 
     it("return last value", function () {
         // given
-        let Obs = new vistula.ObservableImpl();
-        let probe = new Probe(Obs);
+        const Obs = new vistula.ObservableImpl();
+        const probe = new Probe(Obs);
 
         // when
         Obs.rxPush(1);
@@ -20,14 +21,34 @@ describe("Observable", function () {
         probe.expect([1]);
     });
 
+    it("unsubscribe", function () {
+        // given
+        const Obs = new vistula.ObservableImpl();
+        const observed = [];
+
+        const unsubscribe = Obs.rxForEach((value) => {
+            observed.push(value);
+        });
+
+        // when
+        Obs.rxPush(1);
+        Obs.rxPush(2);
+        unsubscribe();
+        Obs.rxPush(3);
+        Obs.rxPush(4);
+
+        // then
+        expect(observed).to.deep.equal([1, 2]);
+    });
+
     it("map", function () {
         // given
-        let Obs = new vistula.ObservableImpl();
+        const Obs = new vistula.ObservableImpl();
 
-        let Mapped = Obs.rxMap((value) => {
+        const Mapped = Obs.rxMap((value) => {
             return value * 10;
         });
-        let probe = new Probe(Mapped);
+        const probe = new Probe(Mapped);
 
         // when
         Obs.rxPush(1);
@@ -37,15 +58,15 @@ describe("Observable", function () {
 
     it("flatMap", function () {
         // given
-        let Obs = new vistula.ObservableImpl();
-        let nestedObservable = new vistula.ObservableImpl();
+        const Obs = new vistula.ObservableImpl();
+        const nestedObservable = new vistula.ObservableImpl();
 
-        let Mapped = Obs.rxFlatMap((value) => {
+        const Mapped = Obs.rxFlatMap((value) => {
             return nestedObservable.rxMap((nested) => {
                 return value + nested;
             });
         });
-        let probe = new Probe(Mapped);
+        const probe = new Probe(Mapped);
 
         // when
         Obs.rxPush(1);
@@ -57,11 +78,11 @@ describe("Observable", function () {
 
     it("zip empty list", function () {
         // given
-        let Source = new vistula.ObservableImpl();
-        var Initial = vistulaUtil.constantObservable(1);
+        const Source = new vistula.ObservableImpl();
+        const Initial = vistulaUtil.constantObservable(1);
 
-        let Obs = vistulaUtil.zip([]);
-        let probe = new Probe(Obs);
+        const Obs = vistulaUtil.zip([]);
+        const probe = new Probe(Obs);
 
         // when
         // then
@@ -70,11 +91,11 @@ describe("Observable", function () {
 
     it("zipAndFlatten", function () {
         // given
-        let Obs = vistulaUtil.zipAndFlatten([
+        const Obs = vistulaUtil.zipAndFlatten([
             vistulaUtil.constantObservable([1]),
             vistulaUtil.constantObservable([2, 3])
         ]);
-        let probe = new Probe(Obs);
+        const probe = new Probe(Obs);
 
         // when & then
         probe.expect([[1, 2, 3]]);
@@ -82,18 +103,18 @@ describe("Observable", function () {
 
     it("aggregate", function () {
         // given
-        let Source = new vistula.ObservableImpl();
-        var Initial = vistulaUtil.constantObservable(1);
+        const Source = new vistula.ObservableImpl();
+        const Initial = vistulaUtil.constantObservable(1);
 
-        let Obs = vistulaUtil.aggregate(Initial, Source, ($acc, $source) => {
+        const Obs = vistulaUtil.aggregate(Initial, Source, ($acc, $source) => {
             //noinspection UnnecessaryLocalVariableJS
-            let Obs = vistulaUtil.constantObservable($acc);
-            let Source = vistulaUtil.constantObservable($source);
+            const Obs = vistulaUtil.constantObservable($acc);
+            const Source = vistulaUtil.constantObservable($source);
             return vistulaUtil.zip([Obs, Source]).rxMap((value) => {
                 return value[0] + value[1];
             });
         });
-        let probe = new Probe(Obs);
+        const probe = new Probe(Obs);
 
         // when
         Source.rxPush(10);
@@ -105,7 +126,7 @@ describe("Observable", function () {
 
     it("toObservable", function () {
         // given
-        let obj = {
+        const obj = {
             "A": {
                 "B": 1
             },
@@ -115,31 +136,31 @@ describe("Observable", function () {
             ]
         };
 
-        let Obs = vistulaUtil.toObservable(obj);
+        const Obs = vistulaUtil.toObservable(obj);
 
         // when
-        let Flat = Obs.rxFlatMap((obj) => {
+        const Flat = Obs.rxFlatMap((obj) => {
             return obj.C;
         });
-        let Nested = Obs.rxFlatMap((obj) => {
+        const Nested = Obs.rxFlatMap((obj) => {
             return obj.A.rxFlatMap((a) => {
                 return a.B;
             })
         });
-        let IsList = Obs.rxFlatMap((obj) => {
+        const IsList = Obs.rxFlatMap((obj) => {
             return obj.D.rxMap((list) => {
                 return Array.isArray(list);
             });
         });
-        let List = Obs.rxFlatMap((obj) => {
+        const List = Obs.rxFlatMap((obj) => {
             return obj.D.rxFlatMap((list) => {
                 return list[0];
             });
         });
-        let flatProbe = new Probe(Flat);
-        let nestedProbe = new Probe(Nested);
-        let isListProbe = new Probe(IsList);
-        let listProbe = new Probe(List);
+        const flatProbe = new Probe(Flat);
+        const nestedProbe = new Probe(Nested);
+        const isListProbe = new Probe(IsList);
+        const listProbe = new Probe(List);
 
         // then
         flatProbe.expect([2]);

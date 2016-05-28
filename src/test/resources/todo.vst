@@ -18,8 +18,7 @@ function capitalizeTitle(Todo) {
 }
 
 function setFilter(Filter) {
-  Filter.rxForEach(($arg, unsubscribe) => {
-    unsubscribe();
+  Filter.rxForEachOnce($arg => {
     clickedFilter.rxPush($arg);
   });
 }
@@ -78,16 +77,14 @@ completed = arrayFilter(allTodos, lambda todo: todo.completed)
 
 '''# javascript
 function editTodo(ev, Todo, EditedTodo) {
-  vistula.zip([Todo, EditedTodo]).rxForEach(($args, unsubscribe) => {
-    unsubscribe();
+  vistula.zip([Todo, EditedTodo]).rxForEachOnce($args => {
     $args[0].editing.rxPush(true);
     $args[1].focus();
   });
 };
 
 function finishEditingTodo(Todo) {
-  Todo.rxForEach((todo, unsubscribe) => {
-    unsubscribe();
+  Todo.rxForEachOnce(todo => {
     todo.editing.rxPush(false);
   });
 };
@@ -105,13 +102,10 @@ filter.rxForEach(x => console.log(x));
 todos.rxFlatMap(xs => vistula.zip(xs.map(x => x.rxFlatMap(y => y.title)))).rxForEach(x => console.log(x));
 
 document.getElementById("completeAll").addEventListener("click", function (ev) {
-  leftTodosCount.rxForEach((leftTodosCount, unsubscribe) => {
-    unsubscribe();
-    todos.rxForEach((todos, unsubscribe) => {
-      unsubscribe();
-      todos.forEach((Todo, unsubscribe) => {
-        Todo.rxForEach((todo, unsubscribe) => {
-          unsubscribe();
+  leftTodosCount.rxForEachOnce(leftTodosCount => {
+    todos.rxForEachOnce(todos => {
+      todos.forEach(Todo => {
+        Todo.rxForEachOnce(todo => {
           todo.completed.rxPush(leftTodosCount != 0);
         });
       });
