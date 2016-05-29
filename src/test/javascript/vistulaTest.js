@@ -21,6 +21,24 @@ describe("Observable", function () {
         probe.expect([1]);
     });
 
+    it("for each once is lazy", function () {
+        // given
+        const Obs = new vistula.ObservableImpl();
+        const observed = [];
+
+        Obs.rxForEachOnce(value => {
+            observed.push(value);
+        });
+
+        // when
+        expect(observed).to.be.empty;
+        Obs.rxPush(1);
+        Obs.rxPush(2);
+
+        // then
+        expect(observed).to.deep.equal([1]);
+    });
+
     it("unsubscribe", function () {
         // given
         const Obs = new vistula.ObservableImpl();

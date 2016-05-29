@@ -21,18 +21,19 @@ describe("Attribute access", function () {
         probe.expect([1]);
     });
 
-    it("modification of a view is allowed", function () {
-        // given
-        const Source = util.constantObservable(1).rxMap(x => x * 10);
-        const Copy = Source.rxMap(x => x * 10);
-        const probe = new Probe(Copy);
-
-        // when
-        Source.rxPush(2);
-
-        // then
-        probe.expect([100, 20]);
-    });
+    // FIXME Or is it?
+    // it("modification of a view is allowed", function () {
+    //     // given
+    //     const Source = util.constantObservable(1).rxMap(x => x * 10);
+    //     const Copy = Source.rxMap(x => x * 10);
+    //     const probe = new Probe(Copy);
+    //
+    //     // when
+    //     Source.rxPush(2);
+    //
+    //     // then
+    //     probe.expect([100, 20]);
+    // });
 
     it("copies of same field are entangled", function () {
         // given

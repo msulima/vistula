@@ -1,7 +1,7 @@
 'use strict';
 
-var ObservableImpl = require('./observable').ObservableImpl;
-var PointerObservable = require('./observable').PointerObservable;
+const ObservableImpl = require('./observable').ObservableImpl;
+const PointerObservable = require('./observable').PointerObservable;
 
 function zipAndFlatten(observables) {
     return zip(observables).rxMap($arrays => {
@@ -49,13 +49,13 @@ function zip(observables) {
 }
 
 function constantObservable(value) {
-    var observable = new ObservableImpl();
+    const observable = new ObservableImpl();
     observable.rxPush(value);
     return observable;
 }
 
 function delayedObservable(value, delay) {
-    var observable = new ObservableImpl();
+    const observable = new ObservableImpl();
     setTimeout(() => {
         observable.rxPush(value);
     }, delay);
@@ -63,12 +63,12 @@ function delayedObservable(value, delay) {
 }
 
 function aggregate(Initial, Source, createSource) {
-    let $Obs = new ObservableImpl();
+    const $Obs = new ObservableImpl();
     Initial.rxForEachOnce(initial => {
         let $acc = initial;
         $Obs.rxPush($acc);
 
-        let $Following = Source.rxFlatMap(source => {
+        const $Following = Source.rxFlatMap(source => {
             return createSource($acc, source);
         });
 
@@ -110,7 +110,7 @@ function arrayToObservable(obj) {
 }
 
 function objectToObservable(obj) {
-    let target = {};
+    const target = {};
 
     Object.keys(obj).forEach(function (key) {
         target[key] = toObservable(obj[key]);

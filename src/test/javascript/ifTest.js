@@ -32,9 +32,6 @@ describe("util.ifStatement", function () {
         const Condition = new vistula.ObservableImpl();
         const ConditionCopy = Condition.rxMap($arg => $arg);
 
-        Condition.marker = "Condition";
-        ConditionCopy.marker = "ConditionCopy";
-
         const probe = new Probe(util.ifStatement(
             ConditionCopy,
             util.constantObservable(10),
@@ -48,9 +45,14 @@ describe("util.ifStatement", function () {
         // when
         Condition.rxPush(true);
         Condition.rxPush(false);
+
+        // then
+        probe.expect([10, 20]);
+
+        // when
         Condition.rxPush(true);
 
         // then
-        probe.expect([10, 11, 20, 10]);
+        probe.expect([10, 20, 11, 10]);
     });
 });

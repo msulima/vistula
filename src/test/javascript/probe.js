@@ -2,11 +2,11 @@
 
 const expect = require('chai').expect;
 
-function Probe(observable) {
+function Probe(Observable) {
     const observed = [];
     this.observed = observed;
 
-    observable.rxForEach((value) => {
+    Observable.rxForEach(value => {
         observed.push(value);
     });
 }

@@ -1,6 +1,8 @@
 "use strict";
 
-var PointerObservable = function (upstreamUnsubscribe) {
+const common = require("./common");
+
+const PointerObservable = function (upstreamUnsubscribe) {
     this.hasValue = false;
     this.lastValue = null;
     this.pointsTo = null;
@@ -9,26 +11,44 @@ var PointerObservable = function (upstreamUnsubscribe) {
     this.upstreamUnsubscribe = upstreamUnsubscribe;
 };
 
-var ObservableImpl = function (upstreamUnsubscribe) {
+const MapObservable = function (upstream, transformation) {
+    this.upstream = upstream;
+    this.transformation = transformation;
+};
+
+const ObservableImpl = function (upstreamUnsubscribe) {
     this.hasValue = false;
     this.lastValue = null;
     this.observers = [];
     this.upstreamUnsubscribe = upstreamUnsubscribe;
 };
 
-ObservableImpl.prototype.rxForEach = PointerObservable.prototype.rxForEach = function (callback) {
-    this.observers.push(callback);
-    console.log(this.observers);
+ObservableImpl.prototype.rxForEach = PointerObservable.prototype.rxForEach = common.rxForEach;
 
-    return this.rxForEachOnce(callback);
+ObservableImpl.prototype.rxForEachOnce = PointerObservable.prototype.rxForEachOnce = common.rxForEachOnce;
+
+MapObservable.prototype.rxForEach = function (callback) {
+    return this.upstream.rxForEach(value => {
+        callback(this.transformation(value));
+    });
 };
 
-ObservableImpl.prototype.rxForEachOnce = PointerObservable.prototype.rxForEachOnce = function (callback) {
-    if (this.hasValue) {
-        this._rxCall(callback);
-    }
+MapObservable.prototype.rxForEachOnce = function (callback) {
+    return this.upstream.rxForEachOnce(value => {
+        callback(this.transformation(value));
+    });
+};
 
-    return this.unsubscribe.bind(this, callback);
+MapObservable.prototype.rxMap = function (transformation) {
+    return this.upstream.rxMap(value => {
+        return transformation(this.transformation(value));
+    });
+};
+
+MapObservable.prototype.rxFlatMap = function (transformation) {
+    return this.upstream.rxFlatMap(value => {
+        return transformation(this.transformation(value));
+    });
 };
 
 ObservableImpl.prototype.rxPush = function (value) {
@@ -46,37 +66,22 @@ PointerObservable.prototype.rxPush = function (value) {
     this.pointsTo.rxPush(value);
 };
 
-ObservableImpl.prototype._rxCall = PointerObservable.prototype._rxCall = function (callback) {
-    callback(this.lastValue);
-};
+ObservableImpl.prototype._rxCall = PointerObservable.prototype._rxCall = MapObservable.prototype._rxCall = common._rxCall;
 
-ObservableImpl.prototype.unsubscribe = PointerObservable.prototype.unsubscribe = function (callback) {
-    if (this.upstreamUnsubscribe) {
-        this.upstreamUnsubscribe();
-    }
-    this.observers = this.observers.filter(observer => {
-        return observer != callback;
-    });
-};
+ObservableImpl.prototype.unsubscribe = PointerObservable.prototype.unsubscribe = common.unsubscribe;
 
-ObservableImpl.prototype.rxMap = PointerObservable.prototype.rxMap = function (callback) {
-    const observable = new ObservableImpl();
-
-    this.rxForEach(value => {
-        observable.rxPush(callback(value));
-    });
-
-    return observable;
+ObservableImpl.prototype.rxMap = PointerObservable.prototype.rxMap = function (transformation) {
+    return new MapObservable(this, transformation);
 };
 
 ObservableImpl.prototype.rxFlatMap = PointerObservable.prototype.rxFlatMap = function (transformation) {
-    const proxy = new PointerObservable();
+    const Proxy = new PointerObservable();
 
     this.rxForEach(next => {
-        proxy.rxPointTo(transformation(next));
+        Proxy.rxPointTo(transformation(next));
     });
 
-    return proxy;
+    return Proxy;
 };
 
 PointerObservable.prototype.rxPointTo = function (observable) {
