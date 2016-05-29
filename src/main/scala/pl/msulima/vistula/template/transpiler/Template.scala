@@ -57,7 +57,7 @@ object Template {
     case parser.ObservableNode(identifier) =>
       s"vistula.dom.textObservable(${VistulaTranspiler(Ast.stmt.Expr(identifier))})";
     case parser.IfNode(expr, body, elseBody) =>
-      s"vistula.dom.ifStatement(${VistulaTranspiler(Ast.stmt.Expr(expr))}, ${ToArray(apply(body))}, ${ToArray(apply(elseBody))})";
+      s"vistula.ifChangedArrays(${VistulaTranspiler(Ast.stmt.Expr(expr))}, ${ToArray(apply(body))}, ${ToArray(apply(elseBody))})";
     case parser.TextNode(text) =>
       s"""vistula.dom.textNode(${escape(text)})""";
     case parser.ForNode(identifier, expression, body) =>

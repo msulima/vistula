@@ -48,6 +48,11 @@ ObservableImpl.prototype._rxCall = PointerObservable.prototype._rxCall = functio
 };
 
 ObservableImpl.prototype.unsubscribe = PointerObservable.prototype.unsubscribe = function (callback) {
+    if (this.zipResults) {
+        this.zipResults.forEach(state => {
+            state.unsubscribe();
+        });
+    }
     this.observers = this.observers.filter(observer => {
         return observer != callback;
     });

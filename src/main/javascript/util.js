@@ -9,24 +9,26 @@ function zipAndFlatten(observables) {
     });
 }
 
-// TODO: unsubscribe should propagate, otherwise memory leaks occur
 function zip(observables) {
-    var observable = new ObservableImpl();
+    const observable = new ObservableImpl();
 
     if (observables.length == 0) {
         return constantObservable([]);
     }
 
-    var results = observables.map(() => {
+    const results = observables.map(() => {
         return {
             hasValue: false,
-            lastValue: null
+            lastValue: null,
+            unsubscribe: null
         };
     });
+    // FIXME dirty hack
+    observable.zipResults = results;
 
     observables.forEach((observable, i) => {
-        observable.rxForEach(next => {
-            var state = results[i];
+        const state = results[i];
+        state.unsubscribe = observable.rxForEach(next => {
             state.hasValue = true;
             state.lastValue = next;
             rxPush();
@@ -34,7 +36,7 @@ function zip(observables) {
     });
 
     function rxPush() {
-        var allSet = results.every(result => {
+        const allSet = results.every(result => {
             return result.hasValue;
         });
 
@@ -81,24 +83,6 @@ function aggregate(Initial, Source, createSource) {
     return $Obs;
 }
 
-function distinctUntilChanged(Obs) {
-    let proxy = new ObservableImpl();
-    let hasValue = false;
-    let lastValue = null;
-
-    Obs.rxForEach($arg => {
-        let changed = !hasValue || (hasValue && lastValue != $arg);
-        hasValue = true;
-
-        if (changed) {
-            lastValue = $arg;
-            proxy.rxPush($arg);
-        }
-    });
-
-    return proxy;
-}
-
 function wrap(Obs) {
     return Obs();
 }
@@ -141,7 +125,6 @@ module.exports = {
     aggregate: aggregate,
     constantObservable: constantObservable,
     delayedObservable: delayedObservable,
-    distinctUntilChanged: distinctUntilChanged,
     ifStatement: ifStatement,
     toObservable: toObservable,
     wrap: wrap,

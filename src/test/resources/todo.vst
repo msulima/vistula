@@ -98,8 +98,6 @@ app = '''# html:/todo.vst.html'''
 stdlib.dom.appendChild("todoapp", app)
 
 '''# javascript
-filter.rxForEach(x => console.log(x));
-todos.rxFlatMap(xs => vistula.zip(xs.map(x => x.rxFlatMap(y => y.title)))).rxForEach(x => console.log(x));
 
 document.getElementById("completeAll").addEventListener("click", function (ev) {
   leftTodosCount.rxForEachOnce(leftTodosCount => {

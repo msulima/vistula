@@ -2,16 +2,6 @@
 
 var util = require("./util");
 
-function ifStatement(Condition, FragTrue, FragFalse) {
-    return util.distinctUntilChanged(Condition).rxFlatMap(function ($condition) {
-        let $fragments = $condition ? FragTrue : FragFalse;
-
-        return util.zip($fragments).rxMap(function ($arrays) {
-            return [].concat.apply([], $arrays);
-        });
-    });
-}
-
 function textNode(text) {
     return util.constantObservable([document.createTextNode(text)]);
 }
@@ -131,6 +121,5 @@ module.exports = {
     createBoundElement: createBoundElement,
     textNode: textNode,
     textObservable: textObservable,
-    ifStatement: ifStatement,
     updateChildren: updateChildren
 };
