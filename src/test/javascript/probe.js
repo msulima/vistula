@@ -1,9 +1,9 @@
 'use strict';
 
-var expect = require('chai').expect;
+const expect = require('chai').expect;
 
 function Probe(observable) {
-    let observed = [];
+    const observed = [];
     this.observed = observed;
 
     observable.rxForEach((value) => {

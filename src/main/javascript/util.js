@@ -10,8 +10,6 @@ function zipAndFlatten(observables) {
 }
 
 function zip(observables) {
-    const observable = new ObservableImpl();
-
     if (observables.length == 0) {
         return constantObservable([]);
     }
@@ -23,17 +21,8 @@ function zip(observables) {
             unsubscribe: null
         };
     });
-    // FIXME dirty hack
-    observable.zipResults = results;
 
-    observables.forEach((observable, i) => {
-        const state = results[i];
-        state.unsubscribe = observable.rxForEach(next => {
-            state.hasValue = true;
-            state.lastValue = next;
-            rxPush();
-        });
-    });
+    const observable = new ObservableImpl(() => results.forEach(x => x.unsubscribe()));
 
     function rxPush() {
         const allSet = results.every(result => {
@@ -46,6 +35,15 @@ function zip(observables) {
             }));
         }
     }
+
+    observables.forEach((observable, i) => {
+        const state = results[i];
+        state.unsubscribe = observable.rxForEach(next => {
+            state.hasValue = true;
+            state.lastValue = next;
+            rxPush();
+        });
+    });
 
     return observable;
 }

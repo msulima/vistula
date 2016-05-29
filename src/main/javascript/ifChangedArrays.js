@@ -10,12 +10,12 @@ function ifChangedArrays(Condition, FragmentsTrue, FragmentsFalse) {
     distinctUntilChanged(Condition).rxForEach(function (condition) {
         let Fragments = condition ? FragmentsTrue : FragmentsFalse;
 
-        Pointer.rxPointTo(util.zip(Fragments));
+        Pointer.rxPointTo(util.zip(Fragments).rxMap(function ($arrays) {
+            return [].concat.apply([], $arrays);
+        }));
     });
 
-    return Pointer.rxMap(function ($arrays) {
-        return [].concat.apply([], $arrays);
-    });
+    return Pointer;
 }
 
 function distinctUntilChanged(Obs) {

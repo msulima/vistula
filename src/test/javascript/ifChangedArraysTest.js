@@ -32,31 +32,4 @@ describe("util.ifChangedArrays", function () {
         // then
         probe.expect([[0, 1], [2], [0, 1], [2], [0, 1]]);
     });
-    //
-    // it("complex, nested if", function () {
-    //     // given
-    //     const Condition = new vistula.ObservableImpl();
-    //     const ConditionCopy = Condition.rxMap($arg => $arg);
-    //
-    //     Condition.marker = "Condition";
-    //     ConditionCopy.marker = "ConditionCopy";
-    //
-    //     const probe = new Probe(util.ifChangedArrays(
-    //         ConditionCopy,
-    //         util.constantObservable(10),
-    //         util.ifChangedArrays(
-    //             Condition,
-    //             util.constantObservable(11),
-    //             util.constantObservable(20)
-    //         )
-    //     ));
-    //
-    //     // when
-    //     Condition.rxPush(true);
-    //     Condition.rxPush(false);
-    //     Condition.rxPush(true);
-    //
-    //     // then
-    //     probe.expect([10, 11, 20, 10]);
-    // });
 });
