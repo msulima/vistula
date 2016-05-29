@@ -1,20 +1,20 @@
 'use strict';
 
-let vistula = require('../../main/javascript/observable');
-let vistulaUtil = require('../../main/javascript/util');
+const vistula = require('../../main/javascript/observable');
+const util = require('../../main/javascript/util');
 
-let Probe = require('./probe').Probe;
+const Probe = require('./probe').Probe;
 
 
 describe("util.ifStatement", function () {
 
     it("if", function () {
         // given
-        let Left = vistulaUtil.constantObservable(0);
-        let Right = vistulaUtil.constantObservable(1);
+        const Left = util.constantObservable(0);
+        const Right = util.constantObservable(1);
         const Condition = new vistula.ObservableImpl();
 
-        const Obs = vistulaUtil.ifStatement(Condition, Left, Right);
+        const Obs = util.ifStatement(Condition, Left, Right);
         const probe = new Probe(Obs);
 
         // when
@@ -35,13 +35,13 @@ describe("util.ifStatement", function () {
         Condition.marker = "Condition";
         ConditionCopy.marker = "ConditionCopy";
 
-        const probe = new Probe(vistulaUtil.ifStatement(
+        const probe = new Probe(util.ifStatement(
             ConditionCopy,
-            vistulaUtil.constantObservable(10),
-            vistulaUtil.ifStatement(
+            util.constantObservable(10),
+            util.ifStatement(
                 Condition,
-                vistulaUtil.constantObservable(11),
-                vistulaUtil.constantObservable(20)
+                util.constantObservable(11),
+                util.constantObservable(20)
             )
         ));
 

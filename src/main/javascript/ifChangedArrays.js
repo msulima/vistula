@@ -8,18 +8,18 @@ function ifChangedArrays(Condition, FragmentsTrue, FragmentsFalse) {
     const Pointer = new PointerObservable();
 
     distinctUntilChanged(Condition).rxForEach(function (condition) {
-        let Fragments = condition ? FragmentsTrue : FragmentsFalse;
+        const Fragments = condition ? FragmentsTrue : FragmentsFalse;
 
-        Pointer.rxPointTo(util.zip(Fragments).rxMap(function ($arrays) {
-            return [].concat.apply([], $arrays);
-        }));
+        Pointer.rxPointTo(util.zip(Fragments));
     });
 
-    return Pointer;
+    return Pointer.rxMap(function ($arrays) {
+        return [].concat.apply([], $arrays);
+    });
 }
 
 function distinctUntilChanged(Obs) {
-    let proxy = new ObservableImpl();
+    const proxy = new ObservableImpl();
     let hasValue = false;
     let lastValue = null;
 

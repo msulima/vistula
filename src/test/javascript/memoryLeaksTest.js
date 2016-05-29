@@ -37,5 +37,51 @@ describe("memory leaks", function () {
 
         // then
         expect(observed).to.deep.equal([10, 100, 200]);
+        expect(Source.observers).to.have.length(1);
+        expect(Obs.observers).to.have.length(1);
+    });
+
+    it("flatMap", function () {
+        // given
+        const Source = new vistula.ObservableImpl();
+        const Other = util.constantObservable(10);
+        const OtherCopy = Other.rxMap(x => x);
+        const Obs = Source.rxFlatMap(x => OtherCopy.rxMap(y => x * y));
+        const probe = new Probe(Obs);
+
+        // when
+        Source.rxPush(1);
+        Source.rxPush(2);
+        Source.rxPush(3);
+
+        // then
+        probe.expect([10, 20, 30]);
+        expect(Source.observers).to.have.length(1);
+        expect(Obs.observers).to.have.length(1);
+        expect(Other.observers).to.have.length(1);
+        expect(OtherCopy.observers).to.have.length(1);
+    });
+
+    it("if", function () {
+        // given
+        const Left = [util.constantObservable(0), util.constantObservable(1)];
+        const Right = [util.constantObservable(2)];
+        const Condition = new vistula.ObservableImpl();
+
+        const Obs = ifChangedArrays.ifChangedArrays(Condition, Left, Right);
+        const probe = new Probe(Obs);
+
+        // when
+        Condition.rxPush(true);
+        Condition.rxPush(false);
+        Condition.rxPush(false);
+        Condition.rxPush(true);
+        Condition.rxPush(false);
+        Condition.rxPush(true);
+
+        // then
+        expect(Obs.observers).to.have.length(1);
+        expect(Left[0].observers).to.have.length(1);
+        probe.expect([[0, 1], [2], [0, 1], [2], [0, 1]]);
     });
 });
