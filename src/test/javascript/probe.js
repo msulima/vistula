@@ -6,7 +6,7 @@ function Probe(Observable) {
     const observed = [];
     this.observed = observed;
 
-    Observable.rxForEach(value => {
+    this.unsubscribe = Observable.rxForEach(value => {
         observed.push(value);
     });
 }

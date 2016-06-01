@@ -95,9 +95,11 @@ leftTodosCount = arraySize(allTodos) - arraySize(completed)
 
 app = '''# html:/todo.vst.html'''
 
-stdlib.dom.appendChild("todoapp", app)
+foo = stdlib.dom.appendChild("todoapp", app)
 
 '''# javascript
+
+foo.rxForEachOnce(() => {});
 
 document.getElementById("completeAll").addEventListener("click", function (ev) {
   leftTodosCount.rxForEachOnce(leftTodosCount => {

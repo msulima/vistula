@@ -53,6 +53,6 @@ describe("util.ifStatement", function () {
         Condition.rxPush(true);
 
         // then
-        probe.expect([10, 20, 11, 10]);
+        probe.expect([10, 20, 10]);
     });
 });

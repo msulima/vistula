@@ -4,7 +4,7 @@ const rxForEach = function (callback) {
     this.observers.push(callback);
 
     if (this.hasValue) {
-        this._rxCall(callback);
+        callback(this.lastValue)
     }
 
     return this.unsubscribe.bind(this, callback);
@@ -23,10 +23,6 @@ const rxForEachOnce = function (callback) {
     }
 };
 
-const _rxCall = function (callback) {
-    callback(this.lastValue);
-};
-
 const unsubscribe = function (callback) {
     if (this.upstreamUnsubscribe) {
         this.upstreamUnsubscribe();
@@ -39,6 +35,5 @@ const unsubscribe = function (callback) {
 module.exports = {
     rxForEachOnce: rxForEachOnce,
     rxForEach: rxForEach,
-    _rxCall: _rxCall,
     unsubscribe: unsubscribe
 };

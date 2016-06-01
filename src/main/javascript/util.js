@@ -86,13 +86,9 @@ function wrap(Obs) {
 }
 
 function ifStatement(Condition, OnTrue, OnFalse) {
-    const Pointer = new PointerObservable();
-
-    Condition.rxForEach($condition => {
-        Pointer.rxPointTo($condition ? OnTrue : OnFalse);
+    return Condition.rxFlatMap($condition => {
+        return $condition ? OnTrue : OnFalse;
     });
-
-    return Pointer;
 }
 
 function toObservable(value) {

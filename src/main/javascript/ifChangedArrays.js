@@ -5,16 +5,12 @@ var PointerObservable = require('./observable').PointerObservable;
 var util = require("./util");
 
 function ifChangedArrays(Condition, FragmentsTrue, FragmentsFalse) {
-    const Pointer = new PointerObservable();
-
-    distinctUntilChanged(Condition).rxForEach(function (condition) {
+    return distinctUntilChanged(Condition).rxFlatMap(function (condition) {
         const Fragments = condition ? FragmentsTrue : FragmentsFalse;
 
-        Pointer.rxPointTo(util.zip(Fragments));
-    });
-
-    return Pointer.rxMap(function ($arrays) {
-        return [].concat.apply([], $arrays);
+        return util.zip(Fragments).rxMap(function ($arrays) {
+            return [].concat.apply([], $arrays);
+        });
     });
 }
 

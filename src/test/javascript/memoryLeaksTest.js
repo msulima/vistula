@@ -40,7 +40,7 @@ describe("memory leaks", function () {
         expect(Obs.observers).to.be.undefined;
     });
 
-    it("flatMap", function () {
+    it("inside flatMap", function () {
         // given
         const Source = new vistula.ObservableImpl();
         const Other = util.constantObservable(10);
@@ -61,6 +61,32 @@ describe("memory leaks", function () {
         expect(OtherCopy.observers).to.be.undefined;
     });
 
+    it("outside flatMap", function () {
+        // given
+        const Source = new vistula.ObservableImpl();
+        const FirstObs = Source.rxFlatMap(x => util.constantObservable(x * 10));
+        const firstProbe = new Probe(FirstObs);
+        const SecondObs = Source.rxFlatMap(x => util.constantObservable(x * 100));
+        const secondProbe = new Probe(SecondObs);
+
+        // when
+        Source.rxPush(1);
+        Source.rxPush(2);
+
+        // then
+        firstProbe.expect([10, 20]);
+        secondProbe.expect([100, 200]);
+
+        // when
+        secondProbe.unsubscribe();
+        Source.rxPush(3);
+
+        // then
+        firstProbe.expect([10, 20, 30]);
+        secondProbe.expect([100, 200]);
+        expect(Source.observers).to.have.length(1);
+    });
+
     it("if", function () {
         // given
         const Left = [util.constantObservable(0), util.constantObservable(1)];
@@ -79,9 +105,8 @@ describe("memory leaks", function () {
         Condition.rxPush(true);
 
         // then
-        expect(Obs.observers).to.be.undefined;
-        expect(Obs.upstream.observers).to.have.length(1);
-        expect(Obs.upstream.pointsTo.observers).to.have.length(1);
+        expect(Obs.observers).to.have.length(1);
+        expect(Obs.pointsTo.upstream.observers).to.have.length(1);
         expect(Left[0].observers).to.have.length(1);
         probe.expect([[0, 1], [2], [0, 1], [2], [0, 1]]);
     });
