@@ -32,14 +32,16 @@ function createElement(tag, attributes, childNodes) {
 function createJustElement(tag, attributes, childNodes) {
     const parent = document.createElement(tag);
 
-    attributes.forEach(attributeAndValue => {
+    const attributesUnsubscribes = attributes.map(attributeAndValue => {
         const attribute = attributeAndValue[0];
-        const argument = attributeAndValue[1];
+        const Value = attributeAndValue[1];
 
         if (isEvent(attribute)) {
-            setEvent(parent, attribute, argument);
+            setEvent(parent, attribute, Value);
+            return () => {
+            };
         } else {
-            setAttribute(parent, attribute, argument);
+            return setAttribute(parent, attribute, Value);
         }
     });
 
@@ -54,6 +56,7 @@ function createJustElement(tag, attributes, childNodes) {
     });
 
     const Obs = new vistula.ObservableImpl(() => {
+        attributesUnsubscribes.forEach(fn => fn());
         unsubscribes.forEach(fn => fn());
     });
 
@@ -72,12 +75,18 @@ function setEvent(parent, attribute, callback) {
     parent.addEventListener(eventName, callback);
 }
 
-var foo = 0;
-
 function setAttribute(parent, attribute, Value) {
-    // FIXME unsubscribe
-    console.log(foo++);
-    Value.rxForEach(value => {
+    if (isCheckbox(parent, attribute)) {
+        parent.addEventListener("change", ev => {
+            Value.rxPush(ev.target.checked);
+        });
+    } else if (isText(parent, attribute)) {
+        parent.addEventListener("change", ev => {
+            Value.rxPush(ev.target.value);
+        });
+    }
+
+    return Value.rxForEach(value => {
         if (value == null) {
             parent[attribute] = true;
         } else {
@@ -90,15 +99,6 @@ function setAttribute(parent, attribute, Value) {
         }
     });
 
-    if (isCheckbox(parent, attribute)) {
-        parent.addEventListener("change", ev => {
-            Value.rxPush(ev.target.checked);
-        });
-    } else if (isText(parent, attribute)) {
-        parent.addEventListener("change", ev => {
-            Value.rxPush(ev.target.value);
-        });
-    }
 }
 
 function isCheckbox(parent, attribute) {

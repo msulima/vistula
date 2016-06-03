@@ -15,11 +15,13 @@ function ifChangedArrays(Condition, FragmentsTrue, FragmentsFalse) {
 }
 
 function distinctUntilChanged(Obs) {
-    const proxy = new ObservableImpl();
+    const proxy = new ObservableImpl(() => {
+        unsubscribe();
+    });
     let hasValue = false;
     let lastValue = null;
 
-    Obs.rxForEach($arg => {
+    const unsubscribe = Obs.rxForEach($arg => {
         let changed = !hasValue || (hasValue && lastValue != $arg);
         hasValue = true;
 
