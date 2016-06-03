@@ -7,22 +7,26 @@ function textNode(text) {
 }
 
 function textObservable(Obs) {
-    let span = document.createElement("span");
-    Obs.rxForEach(function ($arg) {
+    const span = document.createElement("span");
+
+    const rxMap = Obs.rxMap($arg => {
         span.textContent = $arg;
+        return [span];
     });
-    return util.constantObservable([span]);
+    rxMap.marker = "text";
+    return rxMap
 }
 
 function createBoundElement(tag, Target, attributes, childNodes) {
-    const source = createJustElement(tag, attributes, childNodes);
-    Target.rxPush(source);
+    const Obs = createJustElement(tag, attributes, childNodes);
 
-    return util.constantObservable([source]);
+    Target.rxPush(Obs.lastValue[0]); // FIXME
+
+    return Obs;
 }
 
 function createElement(tag, attributes, childNodes) {
-    return util.constantObservable([createJustElement(tag, attributes, childNodes)]);
+    return createJustElement(tag, attributes, childNodes);
 }
 
 function createJustElement(tag, attributes, childNodes) {
@@ -40,16 +44,22 @@ function createJustElement(tag, attributes, childNodes) {
     });
 
     const currentChildren = [];
-    childNodes.forEach((ChildNode, idx) => {
+    const unsubscribes = childNodes.map((ChildNode, idx) => {
         currentChildren.push([]);
 
-        ChildNode.rxForEach($args => {
+        return ChildNode.rxForEach($args => {
             updateChildren(parent, currentChildren[idx], $args);
             currentChildren[idx] = $args;
         });
     });
 
-    return parent;
+    const Obs = new vistula.ObservableImpl(() => {
+        unsubscribes.forEach(fn => fn());
+    });
+
+    Obs.rxPush([parent]);
+
+    return Obs;
 }
 
 function isEvent(attribute) {
@@ -62,7 +72,11 @@ function setEvent(parent, attribute, callback) {
     parent.addEventListener(eventName, callback);
 }
 
+var foo = 0;
+
 function setAttribute(parent, attribute, Value) {
+    // FIXME unsubscribe
+    console.log(foo++);
     Value.rxForEach(value => {
         if (value == null) {
             parent[attribute] = true;

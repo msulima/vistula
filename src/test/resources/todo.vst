@@ -99,7 +99,7 @@ foo = stdlib.dom.appendChild("todoapp", app)
 
 '''# javascript
 
-foo.rxForEachOnce(() => {});
+foo.rxForEach(() => {});
 
 document.getElementById("completeAll").addEventListener("click", function (ev) {
   leftTodosCount.rxForEachOnce(leftTodosCount => {

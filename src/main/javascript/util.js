@@ -1,7 +1,6 @@
 'use strict';
 
 const ObservableImpl = require('./observable').ObservableImpl;
-const PointerObservable = require('./observable').PointerObservable;
 
 function zipAndFlatten(observables) {
     return zip(observables).rxMap($arrays => {
