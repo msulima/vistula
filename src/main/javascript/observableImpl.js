@@ -32,8 +32,16 @@ const unsubscribe = function (callback) {
     });
 };
 
+function rxPush(value) {
+    this.hasValue = true;
+    this.lastValue = value;
+
+    this.observers.forEach(obs => obs(value));
+}
+
 module.exports = {
     rxForEachOnce: rxForEachOnce,
     rxForEach: rxForEach,
+    rxPush: rxPush,
     unsubscribe: unsubscribe
 };
