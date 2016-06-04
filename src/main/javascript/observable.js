@@ -13,6 +13,9 @@ const ObservableImpl = function (upstreamUnsubscribe) {
 
 ObservableImpl.prototype.rxForEach = observableImpl.rxForEach;
 ObservableImpl.prototype.rxForEachOnce = observableImpl.rxForEachOnce;
+ObservableImpl.prototype.rxMap = rxMap;
+ObservableImpl.prototype.rxFlatMap = rxFlatMap;
+
 ObservableImpl.prototype.rxPush = observableImpl.rxPush;
 ObservableImpl.prototype.unsubscribe = observableImpl.unsubscribe;
 
@@ -23,6 +26,8 @@ const MapObservable = function (upstream, transformation) {
 
 MapObservable.prototype.rxForEach = mapObservable.rxForEach;
 MapObservable.prototype.rxForEachOnce = mapObservable.rxForEachOnce;
+MapObservable.prototype.rxMap = mapObservable.rxMap;
+MapObservable.prototype.rxFlatMap = mapObservable.rxFlatMap;
 
 const PointerObservable = function (upstream, transformation) {
     this.hasValue = false;
@@ -40,20 +45,23 @@ const PointerObservable = function (upstream, transformation) {
 
 PointerObservable.prototype.rxForEach = pointer.rxForEach;
 PointerObservable.prototype.rxForEachOnce = pointer.rxForEachOnce;
+PointerObservable.prototype.rxMap = rxMap;
+PointerObservable.prototype.rxFlatMap = rxFlatMap;
+
 PointerObservable.prototype.rxPointTo = pointer.rxPointTo;
 PointerObservable.prototype.rxPush = pointer.rxPush;
 PointerObservable.prototype.unsubscribe = pointer.unsubscribe;
 
-ObservableImpl.prototype.rxMap = PointerObservable.prototype.rxMap = function (transformation) {
+function rxMap(transformation) {
     return new MapObservable(this, transformation);
-};
-MapObservable.prototype.rxMap = mapObservable.rxMap;
+}
 
-ObservableImpl.prototype.rxFlatMap = PointerObservable.prototype.rxFlatMap = function (transformation) {
+function rxFlatMap(transformation) {
     return new PointerObservable(this, transformation);
+}
+
+module.exports = {
+    MapObservable: MapObservable,
+    PointerObservable: PointerObservable,
+    ObservableImpl: ObservableImpl
 };
-MapObservable.prototype.rxFlatMap = mapObservable.rxFlatMap;
-
-
-module.exports.PointerObservable = PointerObservable;
-module.exports.ObservableImpl = ObservableImpl;

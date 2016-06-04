@@ -40,12 +40,10 @@ describe("zip", function () {
         expect(observed).to.deep.equal([[1, 2]]);
 
         // given
+        First.rxPush(3);
         Obs.rxForEachOnce(values => {
             observed.push(values);
         });
-
-        // when
-        First.rxPush(3);
 
         // then
         expect(observed).to.deep.equal([[1, 2], [3, 2]]);
