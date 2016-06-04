@@ -51,11 +51,14 @@ function unsubscribe(callback) {
             this.unsubscribeFromPointsTo();
             this.unsubscribeFromPointsTo = null;
         }
+
+        this.hasValue = false;
+        this.lastValue = null;
     }
 }
 
 function rxPointTo(observable) {
-    if (observable == this.pointsTo) {
+    if (observable == this.pointsTo && this.hasValue) {
         return;
     }
 

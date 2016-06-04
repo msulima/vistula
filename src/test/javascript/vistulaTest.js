@@ -1,7 +1,7 @@
 'use strict';
 
 const vistula = require("../../main/javascript/observable");
-const vistulaUtil = require("../../main/javascript/util");
+const util = require("../../main/javascript/util");
 const zip = require("../../main/javascript/zip");
 const expect = require("chai").expect;
 
@@ -98,12 +98,12 @@ describe("Observable", function () {
     it("aggregate", function () {
         // given
         const Source = new vistula.ObservableImpl();
-        const Initial = vistulaUtil.constantObservable(1);
+        const Initial = util.constantObservable(1);
 
-        const Obs = vistulaUtil.aggregate(Initial, Source, ($acc, $source) => {
+        const Obs = util.aggregate(Initial, Source, ($acc, $source) => {
             //noinspection UnnecessaryLocalVariableJS
-            const Obs = vistulaUtil.constantObservable($acc);
-            const Source = vistulaUtil.constantObservable($source);
+            const Obs = util.constantObservable($acc);
+            const Source = util.constantObservable($source);
             return zip.zip([Obs, Source]).rxMap((value) => {
                 return value[0] + value[1];
             });
@@ -118,6 +118,29 @@ describe("Observable", function () {
         probe.expect([1, 11, 111]);
     });
 
+    it("flatMap then map", function () {
+        // given
+        const Source = new vistula.ObservableImpl();
+        const Source2 = Source.rxFlatMap(x => util.constantObservable(x * 10)).rxMap(x => x * 5);
+        const Obs = Source.rxFlatMap(x => Source2);
+        const probe = new Probe(Obs);
+
+        // when
+        Source.rxPush(1);
+        Source.rxPush(2);
+
+        // then
+        probe.expect([50, 100]);
+
+        // when
+        probe.unsubscribe();
+        Source.rxPush(3);
+        probe.subscribe();
+
+        // then
+        probe.expect([50, 100, 150]);
+    });
+
     it("toObservable", function () {
         // given
         const obj = {
@@ -130,7 +153,7 @@ describe("Observable", function () {
             ]
         };
 
-        const Obs = vistulaUtil.toObservable(obj);
+        const Obs = util.toObservable(obj);
 
         // when
         const Flat = Obs.rxFlatMap((obj) => {

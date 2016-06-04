@@ -103,12 +103,9 @@ foo.rxForEach(() => {});
 
 function toggleAll() {
   leftTodosCount.rxForEachOnce(leftTodosCount => {
-    console.log(leftTodosCount);
     todos.rxForEachOnce(todos => {
-      console.log(todos);
       todos.forEach(Todo => {
         Todo.rxForEachOnce(todo => {
-          console.log(todo);
           todo.completed.rxPush(leftTodosCount != 0);
         });
       });

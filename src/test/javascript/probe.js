@@ -4,15 +4,20 @@ const expect = require('chai').expect;
 
 function Probe(Observable) {
     const observed = [];
+    this.upstream = Observable;
     this.observed = observed;
 
-    this.unsubscribe = Observable.rxForEach(value => {
-        observed.push(value);
-    });
+    this.subscribe();
 }
 
 Probe.prototype.expect = function (values) {
     expect(this.observed).to.deep.equal(values);
+};
+
+Probe.prototype.subscribe = function () {
+    this.unsubscribe = this.upstream.rxForEach(value => {
+        this.observed.push(value);
+    });
 };
 
 module.exports = {

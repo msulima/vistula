@@ -1,20 +1,21 @@
 'use strict';
 
-const vistula = require('../../main/javascript/observable');
-const util = require('../../main/javascript/util');
+const vistula = require("../../main/javascript/observable");
+const util = require("../../main/javascript/util");
 
-const Probe = require('./probe').Probe;
+const Probe = require("./probe").Probe;
 
 
 describe("util.ifStatement", function () {
 
     it("if", function () {
         // given
-        const Left = util.constantObservable(0);
-        const Right = util.constantObservable(1);
+        const Left = new vistula.ObservableImpl();
+        Left.rxPush(1);
+        const Right = util.constantObservable(2);
         const Condition = new vistula.ObservableImpl();
 
-        const Obs = util.ifStatement(Condition, Left, Right);
+        const Obs = util.ifStatement(Condition, Left.rxMap(x => x * 10), Right);
         const probe = new Probe(Obs);
 
         // when
@@ -23,8 +24,10 @@ describe("util.ifStatement", function () {
         Condition.rxPush(false);
         Condition.rxPush(true);
 
+        Left.rxPush(3);
+
         // then
-        probe.expect([0, 1, 0]);
+        probe.expect([10, 2, 10, 30]);
     });
 
     it("complex, nested if", function () {
