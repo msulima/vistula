@@ -1,51 +1,6 @@
-'use strict';
+"use strict";
 
 const ObservableImpl = require('./observable').ObservableImpl;
-
-function zipAndFlatten(observables) {
-    return zip(observables).rxMap($arrays => {
-        return [].concat.apply([], $arrays);
-    });
-}
-
-function zip(observables) {
-    if (observables.length == 0) {
-        return constantObservable([]);
-    }
-
-    const results = observables.map(() => {
-        return {
-            hasValue: false,
-            lastValue: null,
-            unsubscribe: null
-        };
-    });
-
-    const observable = new ObservableImpl(() => results.forEach(x => x.unsubscribe()));
-
-    function rxPush() {
-        const allSet = results.every(result => {
-            return result.hasValue;
-        });
-
-        if (allSet) {
-            observable.rxPush(results.map(result => {
-                return result.lastValue;
-            }));
-        }
-    }
-
-    observables.forEach((observable, i) => {
-        const state = results[i];
-        state.unsubscribe = observable.rxForEach(next => {
-            state.hasValue = true;
-            state.lastValue = next;
-            rxPush();
-        });
-    });
-
-    return observable;
-}
 
 function constantObservable(value) {
     const observable = new ObservableImpl();
@@ -120,7 +75,5 @@ module.exports = {
     delayedObservable: delayedObservable,
     ifStatement: ifStatement,
     toObservable: toObservable,
-    wrap: wrap,
-    zip: zip,
-    zipAndFlatten: zipAndFlatten
+    wrap: wrap
 };

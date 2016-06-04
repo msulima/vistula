@@ -1,10 +1,11 @@
 'use strict';
 
-const vistula = require('../../main/javascript/observable');
-const vistulaUtil = require('../../main/javascript/util');
-const expect = require('chai').expect;
+const vistula = require("../../main/javascript/observable");
+const vistulaUtil = require("../../main/javascript/util");
+const zip = require("../../main/javascript/zip");
+const expect = require("chai").expect;
 
-const Probe = require('./probe').Probe;
+const Probe = require("./probe").Probe;
 
 
 describe("Observable", function () {
@@ -94,31 +95,6 @@ describe("Observable", function () {
         probe.expect([3]);
     });
 
-    it("zip empty list", function () {
-        // given
-        const Source = new vistula.ObservableImpl();
-        const Initial = vistulaUtil.constantObservable(1);
-
-        const Obs = vistulaUtil.zip([]);
-        const probe = new Probe(Obs);
-
-        // when
-        // then
-        probe.expect([[]]);
-    });
-
-    it("zipAndFlatten", function () {
-        // given
-        const Obs = vistulaUtil.zipAndFlatten([
-            vistulaUtil.constantObservable([1]),
-            vistulaUtil.constantObservable([2, 3])
-        ]);
-        const probe = new Probe(Obs);
-
-        // when & then
-        probe.expect([[1, 2, 3]]);
-    });
-
     it("aggregate", function () {
         // given
         const Source = new vistula.ObservableImpl();
@@ -128,7 +104,7 @@ describe("Observable", function () {
             //noinspection UnnecessaryLocalVariableJS
             const Obs = vistulaUtil.constantObservable($acc);
             const Source = vistulaUtil.constantObservable($source);
-            return vistulaUtil.zip([Obs, Source]).rxMap((value) => {
+            return zip.zip([Obs, Source]).rxMap((value) => {
                 return value[0] + value[1];
             });
         });

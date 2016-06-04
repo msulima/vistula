@@ -37,6 +37,7 @@ function arrayFilter(Dests, predicate) {
 
 function appendChild(Target, Observables) {
     let currentChildren = [];
+
     return vistula.zip([Target, Observables]).rxMap(function ($args) {
         const target = document.getElementById($args[0]);
         const nextChildren = $args[1];

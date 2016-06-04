@@ -1,14 +1,13 @@
 "use strict";
 
-var ObservableImpl = require('./observable').ObservableImpl;
-var PointerObservable = require('./observable').PointerObservable;
-var util = require("./util");
+const ObservableImpl = require("./observable").ObservableImpl;
+const zip = require("./zip");
 
 function ifChangedArrays(Condition, FragmentsTrue, FragmentsFalse) {
     return distinctUntilChanged(Condition).rxFlatMap(function (condition) {
         const Fragments = condition ? FragmentsTrue : FragmentsFalse;
 
-        return util.zip(Fragments).rxMap(function ($arrays) {
+        return zip.zip(Fragments).rxMap(function ($arrays) {
             return [].concat.apply([], $arrays);
         });
     });

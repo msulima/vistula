@@ -42,8 +42,10 @@ function unsubscribe(callback) {
 
     if (this.observers.length == 0) {
         this.isSubscribed = false;
-        this.unsubscribeFromUpstream();
-        this.unsubscribeFromUpstream = null;
+        if (this.unsubscribeFromUpstream != null) {
+            this.unsubscribeFromUpstream();
+            this.unsubscribeFromUpstream = null;
+        }
 
         if (this.unsubscribeFromPointsTo != null) {
             this.unsubscribeFromPointsTo();
