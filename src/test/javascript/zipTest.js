@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const vistula = require("../../main/javascript/observable");
 const util = require("../../main/javascript/util");

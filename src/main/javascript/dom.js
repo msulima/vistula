@@ -38,7 +38,7 @@ function createJustElement(tag, attributes, childNodes) {
     const unsubscribes = childNodes.map((ChildNode, idx) => {
         currentChildren.push([]);
 
-        return new vistula.StaticObservable(ChildNode, null, $args => {
+        return vistula.staticTransform(ChildNode, $args => {
             let offset = 0;
             for (let i = 0; i < idx; i++) {
                 offset += currentChildren[i].length;
@@ -48,8 +48,7 @@ function createJustElement(tag, attributes, childNodes) {
         });
     });
 
-    return new vistula.StaticObservable(vistula.zip(unsubscribes.concat(attributesUnsubscribes)), [parent], $arg => {
-    });
+    return vistula.staticValue(vistula.zip(unsubscribes.concat(attributesUnsubscribes)), [parent]);
 }
 
 function setAttributes(attributes, parent) {
@@ -94,7 +93,7 @@ function setAttribute(parent, attribute, Value, attributesMap) {
         });
     });
 
-    return new vistula.StaticObservable(Value, null, value => {
+    return vistula.staticTransform(Value, value => {
         if (value == null) {
             parent[attribute] = true;
         } else {
@@ -121,7 +120,7 @@ function isCheckbox(parent, attribute, attributesMap, action) {
 }
 
 function isText(parent, attribute, attributesMap, action) {
-    if (parent.nodeName === "INPUT" && attribute === "checked") {
+    if (parent.nodeName === "INPUT" && attribute === "value") {
         attributesMap["type"].rxForEachOnce(type => {
             if (type == "text") {
                 action();

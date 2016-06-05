@@ -2,6 +2,15 @@
 
 const observableImpl = require("./observableImpl");
 
+function staticValue(upstream, value) {
+    return new StaticObservable(upstream, value, () => {
+    });
+}
+
+function staticTransform(upstream, transform) {
+    return new StaticObservable(upstream, null, transform);
+}
+
 const StaticObservable = function (upstream, value, transform, marker) {
     this.hasValue = true;
     this.lastValue = value;
@@ -13,7 +22,6 @@ const StaticObservable = function (upstream, value, transform, marker) {
 
     this.upstream = upstream;
     this.unsubscribeFromUpstream = null;
-    this.marker = marker;
 };
 
 StaticObservable.prototype.rxForEach = rxForEach;
@@ -59,7 +67,6 @@ function unsubscribe(callback) {
 
 function unsubscribeFromAll() {
     this.isSubscribed = false;
-    console.log(this.marker);
 
     if (this.unsubscribeFromUpstream != null) {
         this.unsubscribeFromUpstream();
@@ -76,5 +83,6 @@ function rxFlatMap(transformation) {
 }
 
 module.exports = {
-    StaticObservable: StaticObservable
+    staticTransform: staticTransform,
+    staticValue: staticValue
 };

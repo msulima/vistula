@@ -1,12 +1,9 @@
-'use strict';
+"use strict";
 
-const ObservableImpl = require('../../main/javascript/observable').ObservableImpl;
-const util = require('../../main/javascript/util');
+const ObservableImpl = require("../../main/javascript/observable").ObservableImpl;
+const util = require("../../main/javascript/util");
 
-const Probe = require('./probe').Probe;
-//noinspection JSUnusedLocalSymbols
-const expect = require('chai').expect;
-
+const Probe = require("./probe").Probe;
 
 describe("Attribute access", function () {
 
