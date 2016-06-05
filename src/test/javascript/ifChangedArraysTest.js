@@ -13,7 +13,9 @@ describe("util.ifChangedArrays", function () {
 
     it("if", function () {
         // given
-        const Left = [util.constantObservable(0), util.constantObservable(1)];
+        const Source = new vistula.ObservableImpl();
+        Source.rxPush(1);
+        const Left = [util.constantObservable(0), Source];
         const Right = [util.constantObservable(2)];
         const Condition = new vistula.ObservableImpl();
 
@@ -27,9 +29,10 @@ describe("util.ifChangedArrays", function () {
         Condition.rxPush(true);
         Condition.rxPush(false);
         Condition.rxPush(true);
+        Source.rxPush(3);
         Condition.rxPush(true);
 
         // then
-        probe.expect([[0, 1], [2], [0, 1], [2], [0, 1]]);
+        probe.expect([[0, 1], [2], [0, 1], [2], [0, 1], [0, 3]]);
     });
 });

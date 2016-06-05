@@ -31,8 +31,6 @@ const ZipObservable = function (observables) {
         lastValue: null,
         unsubscribe: null
     }));
-
-    this.subscribeToAll();
 };
 
 ZipObservable.prototype.rxForEach = rxForEach;
@@ -46,6 +44,22 @@ ZipObservable.prototype.unsubscribe = unsubscribe;
 ZipObservable.prototype.subscribeToAll = subscribeToAll;
 ZipObservable.prototype.unsubscribeFromAll = unsubscribeFromAll;
 ZipObservable.prototype.onChange = onChange;
+
+function rxForEach(callback) {
+    if (!this.isSubscribed) {
+        this.subscribeToAll();
+    }
+
+    return observableImpl.rxForEach.call(this, callback);
+}
+
+function rxForEachOnce(callback) {
+    if (!this.isSubscribed) {
+        this.subscribeToAll();
+    }
+
+    return observableImpl.rxForEachOnce.call(this, callback);
+}
 
 function subscribeToAll() {
     this.isSubscribed = true;
@@ -71,22 +85,6 @@ function onChange() {
     }
 }
 
-
-function rxForEach(callback) {
-    if (!this.isSubscribed) {
-        this.subscribeToAll();
-    }
-
-    return observableImpl.rxForEach.call(this, callback);
-}
-
-function rxForEachOnce(callback) {
-    if (!this.isSubscribed) {
-        this.subscribeToAll();
-    }
-
-    return observableImpl.rxForEachOnce.call(this, callback);
-}
 
 function unsubscribe(callback) {
     observableImpl.unsubscribe.call(this, callback);

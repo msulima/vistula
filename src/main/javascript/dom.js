@@ -50,7 +50,11 @@ function createJustElement(tag, attributes, childNodes) {
         currentChildren.push([]);
 
         return ChildNode.rxForEach($args => {
-            updateChildren(parent, currentChildren[idx], $args);
+            let offset = 0;
+            for (let i = 0; i < idx; i++) {
+                offset += currentChildren[i].length;
+            }
+            updateChildren(parent, offset, currentChildren[idx], $args);
             currentChildren[idx] = $args;
         });
     });
@@ -111,22 +115,37 @@ function isText(parent, attribute) {
     return parent.nodeName === "INPUT" && parent.type === "text" && attribute === "value";
 }
 
-function updateChildren(parent, currentChildren, nextChildren) {
-    var currentLength = currentChildren.length;
-    var nextLength = nextChildren.length;
+function updateChildren(parent, offset, currentChildren, nextChildren) {
+    // console.log("A", parent, parent.childNodes, offset, currentChildren, nextChildren);
 
-    for (var i = 0; i < Math.min(currentLength, nextLength); i++) {
+    const currentLength = currentChildren.length;
+    const nextLength = nextChildren.length;
+
+    for (let i = 0; i < Math.min(currentLength, nextLength); i++) {
         parent.replaceChild(nextChildren[i], currentChildren[i]);
     }
 
     if (currentLength < nextLength) {
-        for (i = currentLength; i < nextLength; i++) {
-            parent.appendChild(nextChildren[i]);
+        // console.log("C", parent.childNodes);
+        for (let i = currentLength; i < nextLength; i++) {
+            insertAt(parent, nextChildren[i], offset + i);
         }
     } else {
-        for (i = nextLength; i < currentLength; i++) {
-            parent.removeChild(currentChildren[i]);
+        for (let i = nextLength; i < currentLength; i++) {
+            if (nextChildren.indexOf(currentChildren[i]) < 0) {
+                parent.removeChild(currentChildren[i]);
+            }
         }
+    }
+
+    // console.log("D", parent.childNodes);
+}
+
+function insertAt(parent, node, index) {
+    if (index >= parent.childNodes.length) {
+        parent.appendChild(node);
+    } else {
+        parent.insertBefore(node, parent.childNodes[index].nextSibling);
     }
 }
 

@@ -41,7 +41,7 @@ function appendChild(Target, Observables) {
     return vistula.zip([Target, Observables]).rxMap(function ($args) {
         const target = document.getElementById($args[0]);
         const nextChildren = $args[1];
-        vistula.dom.updateChildren(target, currentChildren, nextChildren);
+        vistula.dom.updateChildren(target, 0, currentChildren, nextChildren);
         currentChildren = nextChildren;
     });
 }
