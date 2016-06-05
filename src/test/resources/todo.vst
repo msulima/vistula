@@ -1,19 +1,10 @@
 '''# javascript
-let submitTasks = new vistula.ObservableImpl();
-let clickedFilter = new vistula.ObservableImpl();
+const submitTasks = new vistula.ObservableImpl();
+const clickedFilter = new vistula.ObservableImpl();
 
 function capitalize(Title) {
   return Title.rxMap(function (title) {
     return title.toLocaleUpperCase();
-  });
-}
-
-function capitalizeTitle(Todo) {
-  return Todo.rxFlatMap(function (todo) {
-      return vistula.constantObservable({
-        "completed": vistula.constantObservable(true),
-        "title": capitalize(todo.title)
-      })
   });
 }
 
@@ -24,6 +15,12 @@ function setFilter(Filter) {
 }
 
 '''
+
+def capitalizeTitle(todo):
+  {
+    "completed": True,
+    "title": capitalize(todo.title)
+  }
 
 filter = ("all" or clickedFilter for filter in clickedFilter)
 

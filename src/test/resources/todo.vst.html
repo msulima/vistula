@@ -72,6 +72,8 @@
             <a class="{{ classForFilter('completed') }}" href="#/completed" (click)="{{ setFilter('completed') }}">Completed</a>
         </li>
     </ul>
+    {% if arraySize(completed) > 0 %}
     <button class="clear-completed">Clear completed</button>
+    {% endif %}
 </footer>
 {% endif %}
