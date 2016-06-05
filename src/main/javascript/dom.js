@@ -32,24 +32,13 @@ function createElement(tag, attributes, childNodes) {
 function createJustElement(tag, attributes, childNodes) {
     const parent = document.createElement(tag);
 
-    const attributesUnsubscribes = attributes.map(attributeAndValue => {
-        const attribute = attributeAndValue[0];
-        const Value = attributeAndValue[1];
-
-        if (isEvent(attribute)) {
-            setEvent(parent, attribute, Value);
-            return () => {
-            };
-        } else {
-            return setAttribute(parent, attribute, Value);
-        }
-    });
+    const attributesUnsubscribes = setAttributes(attributes, parent);
 
     const currentChildren = [];
     const unsubscribes = childNodes.map((ChildNode, idx) => {
         currentChildren.push([]);
 
-        return ChildNode.rxForEach($args => {
+        return new vistula.StaticObservable(ChildNode, null, $args => {
             let offset = 0;
             for (let i = 0; i < idx; i++) {
                 offset += currentChildren[i].length;
@@ -59,14 +48,28 @@ function createJustElement(tag, attributes, childNodes) {
         });
     });
 
-    const Obs = new vistula.ObservableImpl(() => {
-        attributesUnsubscribes.forEach(fn => fn());
-        unsubscribes.forEach(fn => fn());
+    return new vistula.StaticObservable(vistula.zip(unsubscribes.concat(attributesUnsubscribes)), [parent], $arg => {
+    });
+}
+
+function setAttributes(attributes, parent) {
+    const attributesMap = {};
+    attributes.forEach(attributeAndValue => {
+        attributesMap[attributeAndValue[0]] = attributeAndValue[1];
     });
 
-    Obs.rxPush([parent]);
+    return attributes.map(attributeAndValue => {
+        const attribute = attributeAndValue[0];
+        const Value = attributeAndValue[1];
 
-    return Obs;
+        if (isEvent(attribute)) {
+            setEvent(parent, attribute, Value);
+
+            return vistula.constantObservable(0);
+        } else {
+            return setAttribute(parent, attribute, Value, attributesMap);
+        }
+    });
 }
 
 function isEvent(attribute) {
@@ -79,40 +82,52 @@ function setEvent(parent, attribute, callback) {
     parent.addEventListener(eventName, callback);
 }
 
-function setAttribute(parent, attribute, Value) {
-    if (isCheckbox(parent, attribute)) {
+function setAttribute(parent, attribute, Value, attributesMap) {
+    isCheckbox(parent, attribute, attributesMap, () => {
         parent.addEventListener("change", ev => {
             Value.rxPush(ev.target.checked);
         });
-    } else if (isText(parent, attribute)) {
+    });
+    isText(parent, attribute, attributesMap, () => {
         parent.addEventListener("change", ev => {
             Value.rxPush(ev.target.value);
         });
-    }
+    });
 
-    return Value.rxForEach(value => {
+    return new vistula.StaticObservable(Value, null, value => {
         if (value == null) {
             parent[attribute] = true;
         } else {
             parent.setAttribute(attribute, value);
-            if (isCheckbox(parent, attribute)) {
+
+            isCheckbox(parent, attribute, attributesMap, () => {
                 parent.checked = value;
-            } else if (isText(parent, attribute)) {
+            });
+            isText(parent, attribute, attributesMap, () => {
                 parent.value = value;
-            }
+            });
         }
     });
-
 }
 
-function isCheckbox(parent, attribute) {
-    // TODO what if type is not set yet?
-    return parent.nodeName === "INPUT" && parent.type === "checkbox" && attribute === "checked";
+function isCheckbox(parent, attribute, attributesMap, action) {
+    if (parent.nodeName === "INPUT" && attribute === "checked") {
+        attributesMap["type"].rxForEachOnce(type => {
+            if (type == "checkbox") {
+                action();
+            }
+        });
+    }
 }
 
-function isText(parent, attribute) {
-    // TODO what if type is not set yet?
-    return parent.nodeName === "INPUT" && parent.type === "text" && attribute === "value";
+function isText(parent, attribute, attributesMap, action) {
+    if (parent.nodeName === "INPUT" && attribute === "checked") {
+        attributesMap["type"].rxForEachOnce(type => {
+            if (type == "text") {
+                action();
+            }
+        });
+    }
 }
 
 function updateChildren(parent, offset, currentChildren, nextChildren) {
