@@ -15,6 +15,15 @@ function arrayPush(Dest, Elem) {
     });
 }
 
+function arrayRemove(Dest, Elem) {
+    return vistula.zip([Dest, Elem]).rxMap($args => {
+        const dest = $args[0];
+        const elem = $args[1];
+
+        return dest.filter(x => x.lastValue != elem); // FIXME bit hacky
+    });
+}
+
 function arraySize(Dest) {
     return Dest.rxMap(function ($args) {
         return $args.length;

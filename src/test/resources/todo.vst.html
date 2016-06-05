@@ -14,7 +14,7 @@
             <div class="view">
                 <input class="toggle" type="checkbox" checked="{{ todo.completed }}"/>
                 <label (dblclick)="{{ editTodo(ev, todo, editedTodo) }}">{{ todo.title }}</label>
-                <button class="destroy"></button>
+                <button (click)="{{ removeTodo(todo) }}" class="destroy"></button>
             </div>
             <input #editedTodo class="edit" type="text" value="{{ todo.title }}"
                    (blur)="{{ finishEditingTodo(todo) }}"/>

@@ -36,11 +36,17 @@ completedSample = {
   "editing": False
 }
 
-allTodos = ([sample, completedSample] or arrayPush(allTodos, {
-  "title": submitTasks.title,
-  "completed": False,
-  "editing": False
-}) for allTodos in submitTasks)
+def updateTodos(allTodos, action):
+  if action.isAdd:
+    arrayPush(allTodos, {
+      "title": action.form.title,
+      "completed": False,
+      "editing": False
+    })
+  else:
+    arrayRemove(allTodos, action.todo)
+
+allTodos = ([sample, completedSample] or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
 
 def isVisible(todo):
   if filter == "all":
@@ -77,6 +83,15 @@ function editTodo(ev, Todo, EditedTodo) {
   vistula.zip([Todo, EditedTodo]).rxForEachOnce($args => {
     $args[0].editing.rxPush(true);
     $args[1].focus();
+  });
+};
+
+function removeTodo(Todo) {
+  console.log(Todo);
+
+  submitTasks.rxPush({
+    "isAdd": vistula.constantObservable(false),
+    "todo": Todo
   });
 };
 
@@ -121,6 +136,9 @@ document.getElementById("task").addEventListener("submit", function (ev) {
     elements[key].value = "";
   });
 
-  submitTasks.rxPush(formValue);
+  submitTasks.rxPush({
+    "isAdd": vistula.constantObservable(true),
+    "form": vistula.constantObservable(formValue)
+  });
 });
 '''
