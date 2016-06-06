@@ -15,12 +15,12 @@ function arrayPush(Dest, Elem) {
     });
 }
 
-function arrayRemove(Dest, Elem) {
-    return vistula.zip([Dest, Elem]).rxMap($args => {
+function arrayDiff(Dest, Elems) {
+    return vistula.zip([Dest, Elems]).rxMap($args => {
         const dest = $args[0];
-        const elem = $args[1];
+        const elems = $args[1];
 
-        return dest.filter(x => x.lastValue != elem); // FIXME bit hacky
+        return dest.filter(x => elems.indexOf(x) < 0); // FIXME what if pointers?
     });
 }
 

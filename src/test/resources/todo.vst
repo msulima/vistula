@@ -44,7 +44,7 @@ def updateTodos(allTodos, action):
       "editing": False
     })
   else:
-    arrayRemove(allTodos, action.todo)
+    arrayDiff(allTodos, action.todos)
 
 allTodos = ([sample, completedSample] or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
 
@@ -87,11 +87,18 @@ function editTodo(ev, Todo, EditedTodo) {
 };
 
 function removeTodo(Todo) {
-  console.log(Todo);
-
   submitTasks.rxPush({
     "isAdd": vistula.constantObservable(false),
-    "todo": Todo
+    "todos": vistula.constantObservable([Todo])
+  });
+};
+
+function clearCompleted() {
+  completed.rxForEachOnce(completed => { // FIXME
+    submitTasks.rxPush({
+      "isAdd": vistula.constantObservable(false),
+      "todos": vistula.constantObservable(completed)
+    });
   });
 };
 

@@ -73,7 +73,7 @@
         </li>
     </ul>
     {% if arraySize(completed) > 0 %}
-    <button class="clear-completed">Clear completed</button>
+    <button (click)="{{ clearCompleted() }}" class="clear-completed">Clear completed</button>
     {% endif %}
 </footer>
 {% endif %}
