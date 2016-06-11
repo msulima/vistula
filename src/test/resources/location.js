@@ -1,4 +1,14 @@
-"use strict";
+const stdlib = vistula.toObservable({
+    location: {
+        hash: locationhas
+    },
+    dom: {
+        appendChild: appendChild
+    },
+    net: {
+        ajaxGet: ajaxGet
+    }
+});
 
 function arrayPush(Dest, Elem) {
     return Dest.rxMap(dest => {
@@ -66,23 +76,3 @@ function ajaxGet(Url) {
         return obs;
     });
 }
-
-const stdlib = vistula.toObservable({
-    dom: {
-        appendChild: appendChild
-    },
-    net: {
-        ajaxGet: ajaxGet
-    },
-    ajaxGet: ajaxGet,
-    appendChild: appendChild,
-    arrayDiff: arrayDiff,
-    arrayFilter: arrayFilter,
-    arrayPush: arrayPush,
-    arraySize: arraySize
-});
-
-// FIXME
-stdlib.lastValue.location = vistula.constantObservable(require("./location"));
-
-module.exports = stdlib;

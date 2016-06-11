@@ -63,13 +63,13 @@
     </span>
     <ul class="filters">
         <li>
-            <a class="{{ classForFilter('all') }}" href="#/" (click)="{{ setFilter('all') }}">All</a>
+            <a class="{{ classForFilter('all') }}" href="#/">All</a>
         </li>
         <li>
-            <a class="{{ classForFilter('active') }}" href="#/active" (click)="{{ setFilter('active') }}">Active</a>
+            <a class="{{ classForFilter('active') }}" href="#/active">Active</a>
         </li>
         <li>
-            <a class="{{ classForFilter('completed') }}" href="#/completed" (click)="{{ setFilter('completed') }}">Completed</a>
+            <a class="{{ classForFilter('completed') }}" href="#/completed">Completed</a>
         </li>
     </ul>
     {% if stdlib.arraySize(completed) > 0 %}

@@ -1,16 +1,9 @@
 '''# javascript
 const submitTasks = new vistula.ObservableImpl();
-const clickedFilter = new vistula.ObservableImpl();
 
 function capitalize(Title) {
   return Title.rxMap(function (title) {
     return title.toLocaleUpperCase();
-  });
-}
-
-function setFilter(Filter) {
-  Filter.rxForEachOnce($arg => {
-    clickedFilter.rxPush($arg);
   });
 }
 
@@ -22,7 +15,15 @@ def capitalizeTitle(todo):
     "title": capitalize(todo.title)
   }
 
-filter = ("all" or clickedFilter for filter in clickedFilter)
+def currentFilter(hash):
+  if hash == "/active":
+    "active"
+  elif hash == "/completed":
+    "completed"
+  else:
+    "all"
+
+filter = currentFilter(stdlib.location.hash)
 
 sample = {
   "title": "Finish TodoMVC",
