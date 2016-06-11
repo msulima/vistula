@@ -1,7 +1,9 @@
 "use strict";
 
-const ObservableImpl = require("../../main/javascript/observable").ObservableImpl;
-const util = require("../../main/javascript/util");
+const prodRequire = require("./prodRequire");
+
+const ObservableImpl = prodRequire("pl/msulima/vistula/observable/observable").ObservableImpl;
+const util = prodRequire("pl/msulima/vistula/observable/util");
 
 const Probe = require("./probe").Probe;
 

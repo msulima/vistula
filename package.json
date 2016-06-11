@@ -4,8 +4,8 @@
   "description": "* Dictionaries * Functions * Conditions * Loops * Assignments * Lists",
   "main": "index.js",
   "scripts": {
-    "test": "mocha src/test/javascript",
-    "browserify": "browserify src/main/javascript/module.js --s vistula -o target/vistula.js"
+    "test": "mocha --recursive src/test/javascript",
+    "browserify": "browserify src/main/javascript/pl/msulima/vistula/observable/module.js --s vistula -o target/vistula.js && browserify src/main/javascript/pl/msulima/vistula/browser/stdlib.js --s stdlib -o target/stdlib.js"
   },
   "author": "",
   "license": "ISC",

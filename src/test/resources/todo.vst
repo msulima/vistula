@@ -38,13 +38,13 @@ completedSample = {
 
 def updateTodos(allTodos, action):
   if action.isAdd:
-    arrayPush(allTodos, {
+    stdlib.arrayPush(allTodos, {
       "title": action.form.title,
       "completed": False,
       "editing": False
     })
   else:
-    arrayDiff(allTodos, action.todos)
+    stdlib.arrayDiff(allTodos, action.todos)
 
 allTodos = ([sample, completedSample] or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
 
@@ -56,7 +56,7 @@ def isVisible(todo):
   else:
     not todo.completed
 
-todos = arrayFilter(allTodos, lambda todo: isVisible(todo))
+todos = stdlib.arrayFilter(allTodos, lambda todo: isVisible(todo))
 
 def classForIsCompleted(todo):
   if todo.completed:
@@ -76,7 +76,7 @@ def classForFilter(label):
   else:
     ""
 
-completed = arrayFilter(allTodos, lambda todo: todo.completed)
+completed = stdlib.arrayFilter(allTodos, lambda todo: todo.completed)
 
 '''# javascript
 function editTodo(ev, Todo, EditedTodo) {
@@ -110,7 +110,7 @@ function finishEditingTodo(Todo) {
 
 '''
 
-leftTodosCount = arraySize(allTodos) - arraySize(completed)
+leftTodosCount = stdlib.arraySize(allTodos) - stdlib.arraySize(completed)
 
 app = '''# html:/todo.vst.html'''
 

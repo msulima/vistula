@@ -1,7 +1,9 @@
 "use strict";
 
-const vistula = require("../../main/javascript/observable");
-const staticObservable = require("../../main/javascript/static");
+const prodRequire = require("./prodRequire");
+
+const vistula = prodRequire("pl/msulima/vistula/observable/observable");
+const staticObservable = prodRequire("pl/msulima/vistula/observable/static");
 
 const Probe = require("./probe").Probe;
 const expect = require('chai').expect;

@@ -1,11 +1,4 @@
-const stdlib = vistula.toObservable({
-    dom: {
-        appendChild: appendChild
-    },
-    net: {
-        ajaxGet: ajaxGet
-    }
-});
+"use strict";
 
 function arrayPush(Dest, Elem) {
     return Dest.rxMap(dest => {
@@ -73,3 +66,18 @@ function ajaxGet(Url) {
         return obs;
     });
 }
+
+module.exports = vistula.toObservable({
+    dom: {
+        appendChild: appendChild
+    },
+    net: {
+        ajaxGet: ajaxGet
+    },
+    ajaxGet: ajaxGet,
+    appendChild: appendChild,
+    arrayDiff: arrayDiff,
+    arrayFilter: arrayFilter,
+    arrayPush: arrayPush,
+    arraySize: arraySize
+});

@@ -4,7 +4,7 @@
         <input class="new-todo" name="title" placeholder="What needs to be done?" autofocus/>
     </form>
 </header>
-{% if arraySize(todos) > 0 %}
+{% if stdlib.arraySize(todos) > 0 %}
 <section class="main">
     <input class="toggle-all" type="checkbox" (click)="{{ toggleAll() }} "/>
     <label for="toggle-all">Mark all as complete</label>
@@ -50,7 +50,7 @@
     </ul>
 </div>
 {% endif %}
-{% if arraySize(allTodos) > 0 %}
+{% if stdlib.arraySize(allTodos) > 0 %}
 <footer class="footer">
     <span class="todo-count">
         <strong>{{ leftTodosCount }}</strong>
@@ -72,7 +72,7 @@
             <a class="{{ classForFilter('completed') }}" href="#/completed" (click)="{{ setFilter('completed') }}">Completed</a>
         </li>
     </ul>
-    {% if arraySize(completed) > 0 %}
+    {% if stdlib.arraySize(completed) > 0 %}
     <button (click)="{{ clearCompleted() }}" class="clear-completed">Clear completed</button>
     {% endif %}
 </footer>
