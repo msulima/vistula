@@ -132,7 +132,7 @@ function toggleAll() {
   });
 };
 
-document.getElementById("task").addEventListener("submit", function (ev) {
+function addTask(ev) {
   ev.preventDefault();
   let elements = ev.srcElement.elements;
   let formValue = {};
@@ -147,5 +147,5 @@ document.getElementById("task").addEventListener("submit", function (ev) {
     "isAdd": vistula.constantObservable(true),
     "form": vistula.constantObservable(formValue)
   });
-});
+};
 '''

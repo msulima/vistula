@@ -1,6 +1,6 @@
 <header class="header">
     <h1>todos</h1>
-    <form id="task" method="POST">
+    <form id="task" method="POST" (submit)="{{ addTask(ev) }}">
         <input class="new-todo" name="title" placeholder="What needs to be done?" autofocus/>
     </form>
 </header>
