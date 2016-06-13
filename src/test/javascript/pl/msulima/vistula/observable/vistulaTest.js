@@ -5,6 +5,7 @@ const prodRequire = require("./prodRequire");
 const vistula = prodRequire("pl/msulima/vistula/observable/observable");
 const util = prodRequire("pl/msulima/vistula/observable/util");
 const zip = prodRequire("pl/msulima/vistula/observable/zip");
+const constantObservable = prodRequire("pl/msulima/vistula/observable/constantObservable");
 const expect = require("chai").expect;
 
 const Probe = require("./probe").Probe;
@@ -100,12 +101,12 @@ describe("Observable", function () {
     it("aggregate", function () {
         // given
         const Source = new vistula.ObservableImpl();
-        const Initial = util.constantObservable(1);
+        const Initial = constantObservable.constantObservable(1);
 
         const Obs = util.aggregate(Initial, Source, ($acc, $source) => {
             //noinspection UnnecessaryLocalVariableJS
-            const Obs = util.constantObservable($acc);
-            const Source = util.constantObservable($source);
+            const Obs = constantObservable.constantObservable($acc);
+            const Source = constantObservable.constantObservable($source);
             return zip.zip([Obs, Source]).rxMap((value) => {
                 return value[0] + value[1];
             });
@@ -123,7 +124,7 @@ describe("Observable", function () {
     it("flatMap then map", function () {
         // given
         const Source = new vistula.ObservableImpl();
-        const Source2 = Source.rxFlatMap(x => util.constantObservable(x * 10)).rxMap(x => x * 5);
+        const Source2 = Source.rxFlatMap(x => constantObservable.constantObservable(x * 10)).rxMap(x => x * 5);
         const Obs = Source.rxFlatMap(x => Source2);
         const probe = new Probe(Obs);
 
@@ -186,5 +187,21 @@ describe("Observable", function () {
         nestedProbe.expect([1]);
         isListProbe.expect([true]);
         listProbe.expect([3]);
+    });
+
+    it("fromObservable", function () {
+        // given
+        const obj = [{
+            "A": 1
+        }];
+
+        const Source = util.toObservable(obj);
+
+        // when
+        const Obs = util.fromObservable(Source);
+        const probe = new Probe(Obs);
+
+        // then
+        probe.expect([obj]);
     });
 });

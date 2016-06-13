@@ -5,6 +5,7 @@ const prodRequire = require("./prodRequire");
 const vistula = prodRequire("pl/msulima/vistula/observable/observable");
 const util = prodRequire("pl/msulima/vistula/observable/util");
 const ifChangedArrays = prodRequire("pl/msulima/vistula/observable/ifChangedArrays");
+const constantObservable = prodRequire("pl/msulima/vistula/observable/constantObservable");
 
 const Probe = require("./probe").Probe;
 
@@ -17,8 +18,8 @@ describe("util.ifChangedArrays", function () {
         // given
         const Source = new vistula.ObservableImpl();
         Source.rxPush(1);
-        const Left = [util.constantObservable(0), Source];
-        const Right = [util.constantObservable(2)];
+        const Left = [constantObservable.constantObservable(0), Source];
+        const Right = [constantObservable.constantObservable(2)];
         const Condition = new vistula.ObservableImpl();
 
         const Obs = ifChangedArrays.ifChangedArrays(Condition, Left, Right);

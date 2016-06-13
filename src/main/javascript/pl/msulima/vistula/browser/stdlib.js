@@ -74,6 +74,7 @@ const stdlib = vistula.toObservable({
     net: {
         ajaxGet: ajaxGet
     },
+    storage: require("./storage"),
     ajaxGet: ajaxGet,
     appendChild: appendChild,
     arrayDiff: arrayDiff,

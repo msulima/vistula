@@ -3,6 +3,7 @@
 const observable = require("./observable");
 const observableImpl = require("./observableImpl");
 const util = require("./util");
+const constantObservable = require("./constantObservable");
 
 function zipAndFlatten(observables) {
     return zip(observables).rxMap($arrays => {
@@ -12,7 +13,7 @@ function zipAndFlatten(observables) {
 
 function zip(observables) {
     if (observables.length == 0) {
-        return util.constantObservable([]);
+        return constantObservable.constantObservable([]);
     }
 
     return new ZipObservable(observables);

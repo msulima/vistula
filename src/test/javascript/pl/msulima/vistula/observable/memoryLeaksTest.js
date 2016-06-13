@@ -5,6 +5,7 @@ const prodRequire = require("./prodRequire");
 const vistula = prodRequire("pl/msulima/vistula/observable/observable");
 const util = prodRequire("pl/msulima/vistula/observable/util");
 const ifChangedArrays = prodRequire("pl/msulima/vistula/observable/ifChangedArrays");
+const constantObservable = prodRequire("pl/msulima/vistula/observable/constantObservable");
 
 const Probe = require("./probe").Probe;
 
@@ -45,7 +46,7 @@ describe("memory leaks", function () {
     it("inside flatMap", function () {
         // given
         const Source = new vistula.ObservableImpl();
-        const Other = util.constantObservable(10);
+        const Other = constantObservable.constantObservable(10);
         const OtherCopy = Other.rxMap(x => x);
         const Obs = Source.rxFlatMap(x => OtherCopy.rxMap(y => x * y));
         const probe = new Probe(Obs);
@@ -66,9 +67,9 @@ describe("memory leaks", function () {
     it("outside flatMap", function () {
         // given
         const Source = new vistula.ObservableImpl();
-        const FirstObs = Source.rxFlatMap(x => util.constantObservable(x * 10));
+        const FirstObs = Source.rxFlatMap(x => constantObservable.constantObservable(x * 10));
         const firstProbe = new Probe(FirstObs);
-        const SecondObs = Source.rxFlatMap(x => util.constantObservable(x * 100));
+        const SecondObs = Source.rxFlatMap(x => constantObservable.constantObservable(x * 100));
         const secondProbe = new Probe(SecondObs);
 
         // when
@@ -91,8 +92,8 @@ describe("memory leaks", function () {
 
     it("if", function () {
         // given
-        const Left = [util.constantObservable(0), util.constantObservable(1)];
-        const Right = [util.constantObservable(2)];
+        const Left = [constantObservable.constantObservable(0), constantObservable.constantObservable(1)];
+        const Right = [constantObservable.constantObservable(2)];
         const Condition = new vistula.ObservableImpl();
 
         const Obs = ifChangedArrays.ifChangedArrays(Condition, Left, Right);

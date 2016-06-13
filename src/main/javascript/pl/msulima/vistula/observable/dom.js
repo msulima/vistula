@@ -1,9 +1,9 @@
 "use strict";
 
-var util = require("./util");
+const constantObservable = require("./constantObservable");
 
 function textNode(text) {
-    return util.constantObservable([document.createTextNode(text)]);
+    return constantObservable.constantObservable([document.createTextNode(text)]);
 }
 
 function textObservable(Obs) {

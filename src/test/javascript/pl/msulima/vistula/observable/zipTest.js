@@ -5,6 +5,7 @@ const prodRequire = require("./prodRequire");
 const vistula = prodRequire("pl/msulima/vistula/observable/observable");
 const util = prodRequire("pl/msulima/vistula/observable/util");
 const zip = prodRequire("pl/msulima/vistula/observable/zip");
+const constantObservable = prodRequire("pl/msulima/vistula/observable/constantObservable");
 
 const Probe = require("./probe").Probe;
 const expect = require('chai').expect;
@@ -14,7 +15,7 @@ describe("zip", function () {
     it("zip empty list", function () {
         // given
         const Source = new vistula.ObservableImpl();
-        const Initial = util.constantObservable(1);
+        const Initial = constantObservable.constantObservable(1);
 
         const Obs = zip.zip([]);
         const probe = new Probe(Obs);
@@ -28,7 +29,7 @@ describe("zip", function () {
         // given
         const observed = [];
         const First = new vistula.ObservableImpl();
-        const Second = util.constantObservable(2);
+        const Second = constantObservable.constantObservable(2);
 
         const Obs = zip.zip([First, Second]);
         Obs.rxForEachOnce(values => {
@@ -54,8 +55,8 @@ describe("zip", function () {
     it("zipAndFlatten", function () {
         // given
         const Obs = zip.zipAndFlatten([
-            util.constantObservable([1]),
-            util.constantObservable([2, 3])
+            constantObservable.constantObservable([1]),
+            constantObservable.constantObservable([2, 3])
         ]);
         const probe = new Probe(Obs);
 

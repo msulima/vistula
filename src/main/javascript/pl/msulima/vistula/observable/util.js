@@ -1,12 +1,8 @@
 "use strict";
 
-const ObservableImpl = require('./observable').ObservableImpl;
-
-function constantObservable(value) {
-    const observable = new ObservableImpl();
-    observable.rxPush(value);
-    return observable;
-}
+const ObservableImpl = require("./observable").ObservableImpl;
+const zip = require("./zip");
+const constantObservable = require("./constantObservable");
 
 function delayedObservable(value, delay) {
     const observable = new ObservableImpl();
@@ -51,12 +47,12 @@ function toObservable(value) {
     } else if (typeof value == "object") {
         return objectToObservable(value);
     } else {
-        return constantObservable(value)
+        return constantObservable.constantObservable(value)
     }
 }
 
 function arrayToObservable(obj) {
-    return constantObservable(obj.map(toObservable));
+    return constantObservable.constantObservable(obj.map(toObservable));
 }
 
 function objectToObservable(obj) {
@@ -66,14 +62,44 @@ function objectToObservable(obj) {
         target[key] = toObservable(obj[key]);
     });
 
-    return constantObservable(target);
+    return constantObservable.constantObservable(target);
+}
+
+function fromObservable(Value) {
+    return Value.rxFlatMap(value => {
+        if (Array.isArray(value)) {
+            return arrayFromObservable(value);
+        } else if (typeof value == "object") {
+            return objectFromObservable(value);
+        } else {
+            return Value;
+        }
+    });
+}
+
+function arrayFromObservable(values) {
+    return zip.zip(values.map(fromObservable));
+}
+
+function objectFromObservable(value) {
+    const keys = Object.keys(value);
+
+    return zip.zip(keys.map(key => {
+        return value[key];
+    })).rxMap(values => {
+        const obj = {};
+        keys.forEach((key, index) => {
+            obj[key] = values[index];
+        });
+        return obj;
+    });
 }
 
 module.exports = {
     aggregate: aggregate,
-    constantObservable: constantObservable,
     delayedObservable: delayedObservable,
     ifStatement: ifStatement,
     toObservable: toObservable,
+    fromObservable: fromObservable,
     wrap: wrap
 };

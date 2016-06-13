@@ -47,7 +47,9 @@ def updateTodos(allTodos, action):
   else:
     stdlib.arrayDiff(allTodos, action.todos)
 
-allTodos = ([sample, completedSample] or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
+allTodos = (stdlib.storage.getOrDefault("todos", []) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
+
+bar = stdlib.storage.set("todos", allTodos)
 
 def isVisible(todo):
   if filter == "all":
@@ -120,6 +122,7 @@ foo = stdlib.dom.appendChild("todoapp", app)
 '''# javascript
 
 foo.rxForEach(() => {});
+bar.rxForEach(x => console.log());
 
 function toggleAll() {
   leftTodosCount.rxForEachOnce(leftTodosCount => {

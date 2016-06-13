@@ -6,9 +6,10 @@ const ifChangedArrays = require("./ifChangedArrays");
 const dom = require("./dom");
 const zip = require("./zip");
 const staticObservable = require("./static");
+const constantObservable = require("./constantObservable");
 
 const combinedExports = {};
-Object.assign(combinedExports, observable, util, ifChangedArrays, zip, staticObservable, {
+Object.assign(combinedExports, observable, util, ifChangedArrays, zip, staticObservable, constantObservable, {
     dom: dom
 });
 

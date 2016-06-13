@@ -4,6 +4,7 @@ const prodRequire = require("./prodRequire");
 
 const ObservableImpl = prodRequire("pl/msulima/vistula/observable/observable").ObservableImpl;
 const util = prodRequire("pl/msulima/vistula/observable/util");
+const constantObservable = prodRequire("pl/msulima/vistula/observable/constantObservable");
 
 const Probe = require("./probe").Probe;
 
@@ -11,8 +12,8 @@ describe("Attribute access", function () {
 
     it("access constant", function () {
         // given
-        const Source = util.constantObservable({
-            B: util.constantObservable(1)
+        const Source = constantObservable.constantObservable({
+            B: constantObservable.constantObservable(1)
         });
         const probe = new Probe(Source.rxFlatMap($arg => $arg.B));
 
@@ -23,7 +24,7 @@ describe("Attribute access", function () {
     // FIXME Or is it?
     // it("modification of a view is allowed", function () {
     //     // given
-    //     const Source = util.constantObservable(1).rxMap(x => x * 10);
+    //     const Source = constantObservable.constantObservable(1).rxMap(x => x * 10);
     //     const Copy = Source.rxMap(x => x * 10);
     //     const probe = new Probe(Copy);
     //
@@ -74,10 +75,10 @@ describe("Attribute access", function () {
     it("multiple modifications of a flat map", function () {
         // given
         const A = new ObservableImpl();
-        const B = util.constantObservable({
+        const B = constantObservable.constantObservable({
             C: A
         });
-        const Source = util.constantObservable({
+        const Source = constantObservable.constantObservable({
             D: B.rxFlatMap($arg => $arg.C)
         });
 

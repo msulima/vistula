@@ -4,6 +4,7 @@ const prodRequire = require("./prodRequire");
 
 const vistula = prodRequire("pl/msulima/vistula/observable/observable");
 const util = prodRequire("pl/msulima/vistula/observable/util");
+const constantObservable = prodRequire("pl/msulima/vistula/observable/constantObservable");
 
 const Probe = require("./probe").Probe;
 
@@ -14,7 +15,7 @@ describe("util.ifStatement", function () {
         // given
         const Left = new vistula.ObservableImpl();
         Left.rxPush(1);
-        const Right = util.constantObservable(2);
+        const Right = constantObservable.constantObservable(2);
         const Condition = new vistula.ObservableImpl();
 
         const Obs = util.ifStatement(Condition, Left.rxMap(x => x * 10), Right);
@@ -39,11 +40,11 @@ describe("util.ifStatement", function () {
 
         const probe = new Probe(util.ifStatement(
             ConditionCopy,
-            util.constantObservable(10),
+            constantObservable.constantObservable(10),
             util.ifStatement(
                 Condition,
-                util.constantObservable(11),
-                util.constantObservable(20)
+                constantObservable.constantObservable(11),
+                constantObservable.constantObservable(20)
             )
         ));
 
