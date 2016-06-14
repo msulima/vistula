@@ -16,7 +16,6 @@ function set(Key, Value) {
         const key = $args[0];
         const value = $args[1];
 
-        console.log(key, value);
         localStorage[key] = JSON.stringify(value);
         return value;
     });

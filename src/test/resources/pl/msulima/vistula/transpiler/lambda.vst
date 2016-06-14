@@ -1,1 +1,1 @@
-Z = arrayFilter(XS, lambda X, Y: X + 2)
+arrayFilter(XS, lambda X, Y: X + 2)

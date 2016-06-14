@@ -23,7 +23,7 @@ def currentFilter(hash):
   else:
     "all"
 
-filter = currentFilter(stdlib.location.hash)
+let filter = currentFilter(stdlib.location.hash)
 
 def updateTodos(allTodos, action):
   if action.isAdd:
@@ -35,11 +35,11 @@ def updateTodos(allTodos, action):
   else:
     stdlib.arrayDiff(allTodos, action.todos)
 
-storageName = "todos-vistula"
+let storageName = "todos-vistula"
 
-allTodos = (stdlib.storage.getOrDefault(storageName, []) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
+let allTodos = (stdlib.storage.getOrDefault(storageName, []) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
 
-bar = stdlib.storage.set(storageName, allTodos)
+let bar = stdlib.storage.set(storageName, allTodos)
 
 def isVisible(todo):
   if filter == "all":
@@ -49,7 +49,7 @@ def isVisible(todo):
   else:
     not todo.completed
 
-todos = stdlib.arrayFilter(allTodos, lambda todo: isVisible(todo))
+let todos = stdlib.arrayFilter(allTodos, lambda todo: isVisible(todo))
 
 def classForIsCompleted(todo):
   if todo.completed:
@@ -69,20 +69,13 @@ def classForFilter(label):
   else:
     ""
 
-completed = stdlib.arrayFilter(allTodos, lambda todo: todo.completed)
+let completed = stdlib.arrayFilter(allTodos, lambda todo: todo.completed)
 
 '''# javascript
 function editTodo(ev, Todo, EditedTodo) {
   vistula.zip([Todo, EditedTodo]).rxForEachOnce($args => {
     $args[0].editing.rxPush(true);
     $args[1].focus();
-  });
-};
-
-function removeTodo(Todo) {
-  submitTasks.rxPush({
-    "isAdd": vistula.constantObservable(false),
-    "todos": vistula.constantObservable([Todo])
   });
 };
 
@@ -95,19 +88,22 @@ function clearCompleted() {
   });
 };
 
-function finishEditingTodo(Todo) {
-  Todo.rxForEachOnce(todo => {
-    todo.editing.rxPush(false);
-  });
-};
-
 '''
 
-leftTodosCount = stdlib.arraySize(allTodos) - stdlib.arraySize(completed)
+def removeTodo(todo):
+  submitTasks = {
+    "isAdd": False,
+    "todos": [todo]
+  }
 
-app = '''# html:/todo.vst.html'''
+def finishEditingTodo(todo):
+  todo.editing = False
 
-foo = stdlib.dom.appendChild("todoapp", app)
+let leftTodosCount = stdlib.arraySize(allTodos) - stdlib.arraySize(completed)
+
+let app = '''# html:/todo.vst.html'''
+
+let foo = stdlib.dom.appendChild("todoapp", app)
 
 '''# javascript
 

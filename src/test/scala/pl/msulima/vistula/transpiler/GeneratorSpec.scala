@@ -8,7 +8,7 @@ class GeneratorSpec extends Specification {
   "transpiles generator" in {
     val program =
       """
-        |W = (X or Y + Z for Y in Z)
+        |let W = (X or Y + Z for Y in Z)
       """.stripMargin
 
     program.toJavaScript must_==

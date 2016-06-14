@@ -7,7 +7,7 @@ import pl.msulima.vistula.util.ToArray
 object Expression {
 
   def apply: PartialFunction[Ast.stmt, String] = {
-    case Ast.stmt.AssignStmt(Ast.identifier(name), value) =>
+    case Ast.stmt.DeclareStmt(Ast.identifier(name), value) =>
       s"const $name = ${Transpiler(value)}"
     case Ast.stmt.Expr(value) =>
       val fragment = parseExpression(value)
@@ -20,7 +20,7 @@ object Expression {
       }
   }
 
-  private lazy val parseExpression: PartialFunction[Ast.expr, Fragment] = {
+  lazy val parseExpression: PartialFunction[Ast.expr, Fragment] = {
     Generator.apply.orElse(Attribute.apply).orElse(template.transpiler.Expression.apply).orElse(Primitives.apply)
       .orElse(parseSimpleExpression).orElse(parseArithmeticExpression).orElse(parseLambda)
   }

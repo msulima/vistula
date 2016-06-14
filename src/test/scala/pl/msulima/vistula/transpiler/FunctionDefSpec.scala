@@ -9,7 +9,7 @@ class FunctionDefSpec extends Specification {
     val program =
       """
         |def a(X):
-        |  Y = X + 2
+        |  let Y = X + 2
         |  Y - 1
       """.stripMargin
 

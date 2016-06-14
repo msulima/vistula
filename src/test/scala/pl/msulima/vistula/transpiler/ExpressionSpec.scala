@@ -28,7 +28,7 @@ class ExpressionSpec extends Specification {
   "transpiles assignment" in {
     val program =
       """
-        |X = Y + 3
+        |let X = Y + 3
       """.stripMargin
 
     program.toJavaScript must_==
@@ -38,7 +38,7 @@ class ExpressionSpec extends Specification {
   "transpiles function call" in {
     val program =
       """
-        |X = a(Y, 3)
+        |let X = a(Y, 3)
       """.stripMargin
 
     program.toJavaScript must_==
@@ -48,7 +48,7 @@ class ExpressionSpec extends Specification {
   "transpiles complex assignment" in {
     val program =
       """
-        |X = Y + 3 - a(Z + 1, 3)
+        |let X = Y + 3 - a(Z + 1, 3)
       """.stripMargin
 
     program.toJavaScript must_==

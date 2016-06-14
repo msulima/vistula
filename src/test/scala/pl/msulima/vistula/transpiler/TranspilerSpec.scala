@@ -12,6 +12,7 @@ class TranspilerSpec extends Specification {
   }
 
   test("attribute")
+  test("change")
   test("if")
   test("lambda")
   test("loop")

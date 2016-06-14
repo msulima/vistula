@@ -1,2 +1,2 @@
-Y = for X in XS:
+let Y = for X in XS:
     X + 2

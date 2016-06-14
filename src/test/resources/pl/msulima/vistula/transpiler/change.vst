@@ -1,11 +1,3 @@
-def a(X):
-  if X == 0:
-    X + 2
-  else:
-    X
-
-Y = a(Y)
-
-# Y = 2
-
-Z = Y
+W = Q + 2
+X = False
+Y.Z = 2 + 3
