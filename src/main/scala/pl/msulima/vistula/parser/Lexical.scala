@@ -33,7 +33,8 @@ object Lexical {
     "break", "except", "import", "print",
     "exec", "in", "raise", // "class",
     "continue", "finally", "is", "return",
-    "def", "for", "lambda", "try"
+    "def", "for", "lambda", "try",
+    "let"
   )
 
   val stringliteral: P[String] = P(stringprefix.? ~ (longstring | shortstring))

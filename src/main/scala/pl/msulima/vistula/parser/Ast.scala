@@ -41,7 +41,9 @@ object Ast {
     case class Assign(targets: Seq[expr], value: expr) extends stmt
 
     // Extension
-    case class AssignStmt(target: identifier, value: stmt) extends stmt
+    case class AssignStmt(target: expr, value: stmt) extends stmt
+
+    case class DeclareStmt(target: identifier, value: stmt) extends stmt
 
     case class AugAssign(target: expr, op: operator, value: expr) extends stmt
 
