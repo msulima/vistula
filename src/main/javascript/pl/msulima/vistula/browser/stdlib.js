@@ -67,6 +67,12 @@ function ajaxGet(Url) {
     });
 }
 
+function focus(Element) {
+    Element.rxForEachOnce(element => {
+        element.focus();
+    })
+}
+
 const stdlib = vistula.toObservable({
     dom: {
         appendChild: appendChild
@@ -80,7 +86,8 @@ const stdlib = vistula.toObservable({
     arrayDiff: arrayDiff,
     arrayFilter: arrayFilter,
     arrayPush: arrayPush,
-    arraySize: arraySize
+    arraySize: arraySize,
+    focus: focus
 });
 
 // FIXME

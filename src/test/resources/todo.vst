@@ -72,12 +72,6 @@ def classForFilter(label):
 let completed = stdlib.arrayFilter(allTodos, lambda todo: todo.completed)
 
 '''# javascript
-function editTodo(ev, Todo, EditedTodo) {
-  vistula.zip([Todo, EditedTodo]).rxForEachOnce($args => {
-    $args[0].editing.rxPush(true);
-    $args[1].focus();
-  });
-};
 
 function clearCompleted() {
   completed.rxForEachOnce(completed => { // FIXME
@@ -89,6 +83,10 @@ function clearCompleted() {
 };
 
 '''
+
+def editTodo(todo, formField):
+  todo.editing = True
+  stdlib.focus(formField)
 
 def removeTodo(todo):
   submitTasks = {
