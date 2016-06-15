@@ -9,12 +9,16 @@ function arrayPush(Dest, Elem) {
 }
 
 function arrayDiff(Dest, Elems) {
-    return vistula.zip([Dest, Elems]).rxMap($args => {
+    const Obs = new vistula.ObservableImpl();
+
+    vistula.zip([Dest, Elems]).rxForEachOnce($args => {
         const dest = $args[0];
         const elems = $args[1];
 
-        return dest.filter(x => elems.indexOf(x) < 0); // FIXME what if pointers?
+        Obs.rxPush(dest.filter(x => elems.indexOf(x) < 0)); // FIXME what if pointers?
     });
+
+    return Obs;
 }
 
 function arraySize(Dest) {

@@ -1,19 +1,23 @@
 '''# javascript
 const submitTasks = new vistula.ObservableImpl();
 
-function capitalize(Title) {
-  return Title.rxMap(function (title) {
-    return title.toLocaleUpperCase();
+function addTask(ev) {
+  ev.preventDefault();
+  let elements = ev.srcElement.elements;
+  let formValue = {};
+  Object.keys(elements).forEach(function (key) {
+    formValue[elements[key].name] = vistula.toObservable(elements[key].value);
   });
-}
+  Object.keys(elements).forEach(function (key) {
+    elements[key].value = "";
+  });
 
+  submitTasks.rxPush({
+    "isAdd": vistula.constantObservable(true),
+    "form": vistula.constantObservable(formValue)
+  });
+};
 '''
-
-def capitalizeTitle(todo):
-  {
-    "completed": True,
-    "title": capitalize(todo.title)
-  }
 
 def currentFilter(hash):
   if hash == "/active":
@@ -71,28 +75,21 @@ def classForFilter(label):
 
 let completed = stdlib.arrayFilter(allTodos, lambda todo: todo.completed)
 
-'''# javascript
-
-function clearCompleted() {
-  completed.rxForEachOnce(completed => { // FIXME
-    submitTasks.rxPush({
-      "isAdd": vistula.constantObservable(false),
-      "todos": vistula.constantObservable(completed)
-    });
-  });
-};
-
-'''
-
-def editTodo(todo, formField):
-  todo.editing = True
-  stdlib.focus(formField)
+def clearCompleted():
+  submitTasks = {
+    "isAdd": False,
+    "todos": completed
+  }
 
 def removeTodo(todo):
   submitTasks = {
     "isAdd": False,
     "todos": [todo]
   }
+
+def editTodo(todo, formField):
+  todo.editing = True
+  stdlib.focus(formField)
 
 def finishEditingTodo(todo):
   todo.editing = False
@@ -117,23 +114,6 @@ function toggleAll() {
         });
       });
     });
-  });
-};
-
-function addTask(ev) {
-  ev.preventDefault();
-  let elements = ev.srcElement.elements;
-  let formValue = {};
-  Object.keys(elements).forEach(function (key) {
-    formValue[elements[key].name] = vistula.toObservable(elements[key].value);
-  });
-  Object.keys(elements).forEach(function (key) {
-    elements[key].value = "";
-  });
-
-  submitTasks.rxPush({
-    "isAdd": vistula.constantObservable(true),
-    "form": vistula.constantObservable(formValue)
   });
 };
 '''
