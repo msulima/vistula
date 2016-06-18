@@ -34,7 +34,7 @@ object Lexical {
     "exec", "in", "raise", // "class",
     "continue", "finally", "is", "return",
     "def", "for", "lambda", "try",
-    "let"
+    "let", "mut"
   )
 
   val stringliteral: P[String] = P(stringprefix.? ~ (longstring | shortstring))

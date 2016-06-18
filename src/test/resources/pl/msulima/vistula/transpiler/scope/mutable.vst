@@ -1,0 +1,4 @@
+let mut A = 2
+let b = 3
+let mut X = A + b
+let Y = A + b

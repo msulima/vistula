@@ -43,7 +43,7 @@ object Ast {
     // Extension
     case class AssignStmt(target: expr, value: stmt) extends stmt
 
-    case class DeclareStmt(target: identifier, value: stmt) extends stmt
+    case class DeclareStmt(target: identifier, value: stmt, mutable: Boolean) extends stmt
 
     case class AugAssign(target: expr, op: operator, value: expr) extends stmt
 

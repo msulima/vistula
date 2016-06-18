@@ -19,4 +19,5 @@ class TranspilerSpec extends Specification {
   test("method")
   test("primitives")
   test("templates")
+  test("scope/mutable")
 }
