@@ -18,11 +18,11 @@ class ExpressionSpec extends Specification {
   "transpiles simple statement" in {
     val program =
       """
-        |2 + 2
+        |let X = 2 + 2
       """.stripMargin
 
     program.toJavaScript must_==
-      "vistula.constantObservable(2 + 2);"
+      "const X = vistula.constantObservable(2 + 2);"
   }
 
   "transpiles assignment" in {

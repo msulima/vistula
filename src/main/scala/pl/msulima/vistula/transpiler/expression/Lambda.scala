@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.expression
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.{Fragment, Transpiler}
+import pl.msulima.vistula.transpiler.{Fragment, RxFlatMap, Transpiler}
 
 object Lambda {
 
@@ -13,6 +13,6 @@ object Lambda {
       })
       val transpiledBody = Transpiler(Ast.stmt.Expr(body))
 
-      Fragment(s"(${argsNames.mkString(", ")}) => $transpiledBody", useFlatMap = true)
+      Fragment(s"(${argsNames.mkString(", ")}) => $transpiledBody", RxFlatMap)
   }
 }

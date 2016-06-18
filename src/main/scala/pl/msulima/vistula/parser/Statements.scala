@@ -61,7 +61,7 @@ class Statements(indent: Int) {
 
   val assign_stmt: P[Ast.stmt] = P(expr ~ "=" ~ (small_stmt | compound_stmt)).map(Ast.stmt.AssignStmt.tupled)
 
-  val declare_stmt: P[Ast.stmt] = P(declare_factory(kw("let"), mutable = false) | declare_factory(kw("let") ~ kw("mut"), mutable = true))
+  val declare_stmt: P[Ast.stmt] = P(declare_factory(kw("let"), mutable = true) | declare_factory(kw("const"), mutable = false))
 
   private def declare_factory(prefix: P[Unit], mutable: Boolean): P[Ast.stmt.DeclareStmt] = {
     P(prefix ~ Lexical.identifier ~ "=" ~ (small_stmt | compound_stmt)).map({

@@ -1,7 +1,7 @@
 package pl.msulima.vistula.template.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.Fragment
+import pl.msulima.vistula.transpiler.{Fragment, RxMap}
 
 import scala.io.Source
 
@@ -18,8 +18,8 @@ object Expression {
       val lines = source.getLines().toList
       source.close()
 
-      Fragment(Template(lines.mkString("\n")))
+      Fragment(Template(lines.mkString("\n")), RxMap)
     case Ast.expr.Str(x) if x.startsWith(MagicInlineHtmlPrefix) =>
-      Fragment(Template(x.stripPrefix(MagicInlineHtmlPrefix)))
+      Fragment(Template(x.stripPrefix(MagicInlineHtmlPrefix)), RxMap)
   }
 }

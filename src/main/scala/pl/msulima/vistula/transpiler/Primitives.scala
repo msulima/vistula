@@ -9,24 +9,29 @@ object Primitives {
 
   def apply: PartialFunction[Ast.expr, Fragment] = {
     case Ast.expr.Str(x) if x.startsWith(MagicInlineJavascriptPrefix) =>
-      Fragment(x.stripPrefix(MagicInlineJavascriptPrefix))
+      Fragment(x.stripPrefix(MagicInlineJavascriptPrefix), RxMap)
+    case expr: Ast.expr if static.isDefinedAt(expr) =>
+      Fragment(static(expr), Static)
+  }
+
+  def static: PartialFunction[Ast.expr, String] = {
     case Ast.expr.Num(x) =>
-      Fragment(s"vistula.constantObservable(${x.toString})")
+      x.toString
     case Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load) =>
-      Fragment(s"""vistula.constantObservable(null)""")
+      "null"
     case Ast.expr.Name(Ast.identifier("False"), Ast.expr_context.Load) =>
-      Fragment(s"""vistula.constantObservable(false)""")
+      "false"
     case Ast.expr.Name(Ast.identifier("True"), Ast.expr_context.Load) =>
-      Fragment(s"""vistula.constantObservable(true)""")
+      "true"
     case Ast.expr.Str(x) =>
-      Fragment(s"""vistula.constantObservable("$x")""")
+      s""""$x""""
     case Ast.expr.List(elts, Ast.expr_context.Load) =>
-      Fragment(s"""vistula.constantObservable(${ToArray(elts.map(x => Transpiler.apply(Ast.stmt.Expr(x))))})""")
+      ToArray(elts.map(x => Transpiler.apply(Ast.stmt.Expr(x))))
     case Ast.expr.Dict(keys, values) =>
       val dict = keys.zip(values).map({
         case (Ast.expr.Str(key), value) =>
           (s""""$key"""", Transpiler(Ast.stmt.Expr(value)))
       })
-      Fragment(s"""vistula.constantObservable(${ToArray.toDict(dict)})""")
+      ToArray.toDict(dict)
   }
 }

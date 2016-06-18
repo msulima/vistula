@@ -30,6 +30,6 @@ object Generator {
             |    const ${acc.name} = vistula.constantObservable($$acc);
             |    const ${source.name} = vistula.constantObservable($$source);
             |${Indent.leftPad("return " + Transpiler(body) + ";")}
-            |})""".stripMargin, Seq())
+            |})""".stripMargin, RxMap)
   }
 }
