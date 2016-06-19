@@ -38,6 +38,6 @@ class Expression(scope: Scope) {
 
   private lazy val parseExpression: PartialFunction[Ast.expr, CodeTemplate] = {
     Generator.apply.orElse(Attribute.apply).orElse(template.transpiler.Expression.apply).orElse(Primitives.apply)
-      .orElse(new Name(scope).apply).orElse(FunctionCall.apply).orElse(Arithmetic.apply).orElse(Lambda.apply)
+      .orElse(new Name(scope).apply).orElse(FunctionCall.apply(scope)).orElse(Arithmetic.apply).orElse(Lambda.apply)
   }
 }

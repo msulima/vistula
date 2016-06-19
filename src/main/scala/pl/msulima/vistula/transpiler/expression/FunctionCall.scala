@@ -1,18 +1,26 @@
 package pl.msulima.vistula.transpiler.expression
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.{CodeTemplate, RxFlatMap, Transpiler}
+import pl.msulima.vistula.transpiler.{CodeTemplate, RxFlatMap, Scope, Transpiler}
 
 object FunctionCall {
 
-  def apply: PartialFunction[Ast.expr, CodeTemplate] = {
+  def apply(scope: Scope): PartialFunction[Ast.expr, CodeTemplate] = {
     case Ast.expr.Call(Ast.expr.Name(Ast.identifier(func), Ast.expr_context.Load), args, _, _, _) =>
-      val x: Seq[String] = args.map(arg => Transpiler(arg))
-
-      CodeTemplate(s"$func(${x.mkString(", ")})", RxFlatMap, Seq())
+      CodeTemplate(s"$func(${arguments(scope, args)})${suffix(scope)}", RxFlatMap, Seq())
     case Ast.expr.Call(func, args, _, _, _) =>
-      val x: Seq[String] = args.map(arg => Transpiler(arg))
+      CodeTemplate(s"%s(${arguments(scope, args)})${suffix(scope)}", RxFlatMap, Seq(func))
+  }
 
-      CodeTemplate(s"%s(${x.mkString(", ")})", RxFlatMap, Seq(func))
+  private def arguments(scope: Scope, args: Seq[Ast.expr]) = {
+    args.map(arg => Transpiler(scope.copy(mutable = true), arg)).mkString(", ")
+  }
+
+  private def suffix(scope: Scope) = {
+    if (scope.mutable) {
+      ""
+    } else {
+      ".rxLastValue()"
+    }
   }
 }
