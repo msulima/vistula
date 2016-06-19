@@ -31,7 +31,7 @@ object Transpiler {
   }
 
   def apply(stmt: Ast.stmt): String = {
-    Expression.apply.orElse(FunctionDef.apply).orElse(If.apply).orElse(Loop.apply).orElse(Assign.apply(EmptyScope).andThen(_.code))(stmt)
+    scoped(EmptyScope, stmt).code
   }
 
   def apply(scope: Scope, expr: Ast.expr): String = {
@@ -55,8 +55,8 @@ object Transpiler {
   }
 
   def scoped(scope: Scope, stmt: Ast.stmt): ScopedResult = {
-    val base = Expression.apply.orElse(FunctionDef.apply).orElse(If.apply).orElse(Loop.apply).andThen(code => scope(code))
+    val base = FunctionDef.apply.orElse(If.apply).orElse(Loop.apply).andThen(code => scope(code))
 
-    base.orElse(Assign.apply(scope: Scope))(stmt)
+    base.orElse(Expression.apply(scope).orElse(Assign.apply(scope)))(stmt)
   }
 }

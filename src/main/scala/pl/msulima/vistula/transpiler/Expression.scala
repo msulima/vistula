@@ -8,13 +8,17 @@ case class Result(code: String, mutable: Boolean)
 
 object Expression {
 
-  def apply: PartialFunction[Ast.stmt, String] = {
+  def apply(scope: Scope): PartialFunction[Ast.stmt, ScopedResult] = {
     case Ast.stmt.Expr(value) =>
       val result = foo(value)
       if (result.mutable) {
-        result.code
+        scope {
+          result.code
+        }
       } else {
-        s"vistula.constantObservable(${result.code})"
+        scope {
+          s"vistula.constantObservable(${result.code})"
+        }
       }
   }
 
