@@ -1,0 +1,5 @@
+W
+let Q = 2 + 3
+let X = 2 + 3 + 4
+let Y = a(Y, 3)
+let Z = Y + 3 - a(Z + 1, 3)
