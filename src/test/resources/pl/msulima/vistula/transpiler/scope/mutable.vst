@@ -2,3 +2,4 @@ let A = 2
 const b = 3
 let X = A + b
 const Y = A + b
+const Z = f(A, b)

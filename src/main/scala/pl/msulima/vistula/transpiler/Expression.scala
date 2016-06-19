@@ -2,7 +2,7 @@ package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template
-import pl.msulima.vistula.transpiler.expression.{Arithmetic, FunctionCall, Lambda}
+import pl.msulima.vistula.transpiler.expression.{Arithmetic, FunctionCall, Lambda, Name}
 
 case class Result(code: String, mutable: Boolean)
 
@@ -38,16 +38,6 @@ class Expression(scope: Scope) {
 
   private lazy val parseExpression: PartialFunction[Ast.expr, CodeTemplate] = {
     Generator.apply.orElse(Attribute.apply).orElse(template.transpiler.Expression.apply).orElse(Primitives.apply)
-      .orElse(loadName).orElse(FunctionCall.apply).orElse(Arithmetic.apply).orElse(Lambda.apply)
-  }
-
-  private lazy val loadName: PartialFunction[Ast.expr, CodeTemplate] = {
-    case Ast.expr.Name(id, Ast.expr_context.Load) =>
-      val mapper = if (scope.variables.contains(id)) {
-        Static
-      } else {
-        RxMap
-      }
-      CodeTemplate(id.name, mapper = mapper)
+      .orElse(new Name(scope).apply).orElse(FunctionCall.apply).orElse(Arithmetic.apply).orElse(Lambda.apply)
   }
 }
