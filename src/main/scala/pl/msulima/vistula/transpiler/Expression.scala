@@ -19,13 +19,7 @@ class Expression(scope: Scope) {
     case Ast.stmt.Expr(value) =>
       val result = foo(value)
 
-      scope {
-        if (result.mutable || !scope.mutable) {
-          result.code
-        } else {
-          s"vistula.constantObservable(${result.code})"
-        }
-      }
+      scope(result)
   }
 
   private def foo(expr: Ast.expr): Result = {
@@ -37,7 +31,7 @@ class Expression(scope: Scope) {
   }
 
   private lazy val parseExpression: PartialFunction[Ast.expr, CodeTemplate] = {
-    Generator.apply.orElse(Attribute.apply).orElse(template.transpiler.Expression.apply).orElse(Primitives.apply)
+    Generator.apply.orElse(Attribute.apply).orElse(template.transpiler.Expression.apply).orElse(Primitives.apply(scope))
       .orElse(new Name(scope).apply).orElse(FunctionCall.apply(scope)).orElse(Arithmetic.apply).orElse(Lambda.apply)
       .orElse(Dereference.apply).orElse(Tuple.apply(scope))
   }

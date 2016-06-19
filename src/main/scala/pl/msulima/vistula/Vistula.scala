@@ -7,7 +7,7 @@ import pl.msulima.vistula.transpiler.Transpiler
 object Vistula {
 
   def toJavaScript(input: String): String = {
-    Transpiler.scoped(parse(input)).mkString("", ";\n", ";")
+    Transpiler.scoped(parse(input))
   }
 
   private def parse(input: String) = {

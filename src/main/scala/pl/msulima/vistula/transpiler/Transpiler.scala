@@ -31,23 +31,15 @@ object Transpiler {
   }
 
   def apply(stmt: Ast.stmt): String = {
-    scoped(EmptyScope, stmt).code
+    scoped(EmptyScope, stmt).asCodeObservable
   }
 
-  def apply(scope: Scope, expr: Ast.expr): String = {
-    apply(scope, Ast.stmt.Expr(expr))
-  }
-
-  def apply(scope: Scope, stmt: Ast.stmt): String = {
-    scoped(scope, stmt).code
-  }
-
-  def scoped(program: Seq[Ast.stmt]): Seq[String] = {
-    program.foldLeft(ScopedResult("", EmptyScope))((acc, stmt) => {
+  def scoped(program: Seq[Ast.stmt]): String = {
+    program.foldLeft(ScopedResult(EmptyScope, Result("", mutable = false)))((acc, stmt) => {
       val result = scoped(acc.scope, stmt)
 
-      result.copy(code = acc.code + ";\n" + result.code)
-    }).code.split(";\n").drop(1)
+      result.copy(result = acc.result.copy(code = acc.result.code + result.asCodeObservable + ";\n"))
+    }).result.code.dropRight(1)
   }
 
   def scoped(scope: Scope, expr: Ast.expr): ScopedResult = {

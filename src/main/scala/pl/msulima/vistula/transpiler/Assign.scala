@@ -13,11 +13,13 @@ object Assign {
       }
 
       nextScope {
-        s"const ${identifier.name} = ${Transpiler(scope.copy(mutable = mutable), value)}"
+        val transpiler = Transpiler.scoped(scope.copy(mutable = mutable), value)
+
+        s"const ${identifier.name} = ${transpiler.asCodeObservable}"
       }
     case Ast.stmt.AssignStmt(expr, value) =>
       scope {
-        s"${Transpiler(scope, value)}.rxForEachOnce($$arg => ${Transpiler(scope, expr)}.rxPush($$arg))"
+        s"${Transpiler.scoped(scope, value).asCodeObservable}.rxForEachOnce($$arg => ${Transpiler.scoped(scope, expr).asCodeObservable}.rxPush($$arg))"
       }
   }
 }

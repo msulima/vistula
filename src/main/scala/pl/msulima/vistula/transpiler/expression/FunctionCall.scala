@@ -13,6 +13,6 @@ object FunctionCall {
   }
 
   private def arguments(scope: Scope, args: Seq[Ast.expr]) = {
-    args.map(arg => Transpiler(scope.copy(mutable = true), arg)).mkString(", ")
+    args.map(arg => Transpiler.scoped(scope.copy(mutable = true), arg).asCodeObservable).mkString(", ")
   }
 }
