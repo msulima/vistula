@@ -18,12 +18,11 @@ class Expression(scope: Scope) {
   def apply: PartialFunction[Ast.stmt, ScopedResult] = {
     case Ast.stmt.Expr(value) =>
       val result = foo(value)
-      if (result.mutable) {
-        scope {
+
+      scope {
+        if (result.mutable || !scope.mutable) {
           result.code
-        }
-      } else {
-        scope {
+        } else {
           s"vistula.constantObservable(${result.code})"
         }
       }
