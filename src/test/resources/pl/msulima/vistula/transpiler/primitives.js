@@ -4,7 +4,8 @@ vistula.constantObservable([
     vistula.constantObservable({
         "C": vistula.constantObservable("D"),
         "E": vistula.constantObservable(false),
-        "F": vistula.constantObservable(2 + 2)
+        "F": vistula.constantObservable(2 + 2),
+        "G": vistula.constantObservable((3))
     }),
     vistula.constantObservable(null)
 ]);

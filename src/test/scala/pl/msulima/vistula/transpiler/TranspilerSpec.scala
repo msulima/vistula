@@ -11,6 +11,8 @@ class TranspilerSpec extends Specification {
     }
   }
 
+  test("scope/dereference")
+
   test("attribute")
   test("change")
   test("expression")

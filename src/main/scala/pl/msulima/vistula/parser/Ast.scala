@@ -150,6 +150,7 @@ object Ast {
 
     case class Tuple(elts: Seq[expr], ctx: expr_context) extends expr
 
+    case class Dereference(value: expr) extends expr
   }
 
   // col_offset is the byte offset in the utf8 string the parser uses
@@ -160,6 +161,8 @@ object Ast {
   object expr_context {
 
     case object Load extends expr_context
+
+    case object Dereference extends expr_context
 
     case object Store extends expr_context
 

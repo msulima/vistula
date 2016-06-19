@@ -98,10 +98,12 @@ object Expressions {
       }
   }
   val atom: P[Ast.expr] = {
+    val deref: P[Ast.expr] = P("*" ~ atom).map(Ast.expr.Dereference)
     val empty_tuple = ("(" ~ ")").map(_ => Ast.expr.Tuple(Nil, Ast.expr_context.Load))
     val empty_list = ("[" ~ "]").map(_ => Ast.expr.List(Nil, Ast.expr_context.Load))
     val empty_dict = ("{" ~ "}").map(_ => Ast.expr.Dict(Nil, Nil))
     P(
+      deref |
       empty_tuple |
         empty_list |
         empty_dict |
@@ -126,7 +128,8 @@ object Expressions {
     val call = P("(" ~ arglist ~ ")").map { case (args, (keywords, starargs, kwargs)) => (lhs: Ast.expr) => Ast.expr.Call(lhs, args, keywords, starargs, kwargs) }
     val slice = P("[" ~ subscriptlist ~ "]").map(args => (lhs: Ast.expr) => Ast.expr.Subscript(lhs, args, Ast.expr_context.Load))
     val attr = P("." ~ NAME).map(id => (lhs: Ast.expr) => Ast.expr.Attribute(lhs, id, Ast.expr_context.Load))
-    P(call | slice | attr)
+    val deref_attr = P("->" ~ NAME).map(id => (lhs: Ast.expr) => Ast.expr.Attribute(lhs, id, Ast.expr_context.Dereference))
+    P(call | slice | attr | deref_attr)
   }
   val subscriptlist = P(subscript.rep(1, ",") ~ ",".?).map {
     case Seq(x) => x

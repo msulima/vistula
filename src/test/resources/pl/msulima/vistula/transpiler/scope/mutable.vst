@@ -3,4 +3,4 @@ const b = 3
 let X = A + b
 const Y = A + b
 let Z = f(A + 2, b)
-const W = f(A, b)
+const W = *(F(A, b))

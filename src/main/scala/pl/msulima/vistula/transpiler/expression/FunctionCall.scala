@@ -7,20 +7,12 @@ object FunctionCall {
 
   def apply(scope: Scope): PartialFunction[Ast.expr, CodeTemplate] = {
     case Ast.expr.Call(Ast.expr.Name(Ast.identifier(func), Ast.expr_context.Load), args, _, _, _) =>
-      CodeTemplate(s"$func(${arguments(scope, args)})${suffix(scope)}", RxFlatMap, Seq())
+      CodeTemplate(s"$func(${arguments(scope, args)})", RxFlatMap, Seq())
     case Ast.expr.Call(func, args, _, _, _) =>
-      CodeTemplate(s"%s(${arguments(scope, args)})${suffix(scope)}", RxFlatMap, Seq(func))
+      CodeTemplate(s"%s(${arguments(scope, args)})", RxFlatMap, Seq(func))
   }
 
   private def arguments(scope: Scope, args: Seq[Ast.expr]) = {
     args.map(arg => Transpiler(scope.copy(mutable = true), arg)).mkString(", ")
-  }
-
-  private def suffix(scope: Scope) = {
-    if (scope.mutable) {
-      ""
-    } else {
-      ".rxLastValue()"
-    }
   }
 }
