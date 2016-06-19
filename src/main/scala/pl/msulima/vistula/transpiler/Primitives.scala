@@ -7,11 +7,11 @@ object Primitives {
 
   private val MagicInlineJavascriptPrefix = "# javascript\n"
 
-  def apply: PartialFunction[Ast.expr, Fragment] = {
+  def apply: PartialFunction[Ast.expr, CodeTemplate] = {
     case Ast.expr.Str(x) if x.startsWith(MagicInlineJavascriptPrefix) =>
-      Fragment(x.stripPrefix(MagicInlineJavascriptPrefix), RxMap)
+      CodeTemplate(x.stripPrefix(MagicInlineJavascriptPrefix), RxMap)
     case expr: Ast.expr if static.isDefinedAt(expr) =>
-      Fragment(static(expr), Static)
+      CodeTemplate(static(expr), Static)
   }
 
   def static: PartialFunction[Ast.expr, String] = {

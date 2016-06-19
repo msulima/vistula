@@ -4,8 +4,8 @@ import pl.msulima.vistula.parser.Ast
 
 object Attribute {
 
-  def apply: PartialFunction[Ast.expr, Fragment] = {
+  def apply: PartialFunction[Ast.expr, CodeTemplate] = {
     case Ast.expr.Attribute(expr, identifier, Ast.expr_context.Load) =>
-      Fragment(s"$$arg.${identifier.name}", RxFlatMap, Seq(expr))
+      CodeTemplate(s"$$arg.${identifier.name}", RxFlatMap, Seq(expr))
   }
 }

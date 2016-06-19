@@ -23,9 +23,9 @@ object GeneratorSource {
 
 object Generator {
 
-  def apply: PartialFunction[Ast.expr, Fragment] = {
+  def apply: PartialFunction[Ast.expr, CodeTemplate] = {
     case Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)) =>
-      Fragment(
+      CodeTemplate(
         s"""vistula.aggregate(${Transpiler(initial)}, ${source.name}, ($$acc, $$source) => {
             |    const ${acc.name} = vistula.constantObservable($$acc);
             |    const ${source.name} = vistula.constantObservable($$source);
