@@ -9,6 +9,13 @@ case class Result(code: String, mutable: Boolean)
 object Expression {
 
   def apply(scope: Scope): PartialFunction[Ast.stmt, ScopedResult] = {
+    new Expression(scope).apply
+  }
+}
+
+class Expression(scope: Scope) {
+
+  def apply: PartialFunction[Ast.stmt, ScopedResult] = {
     case Ast.stmt.Expr(value) =>
       val result = foo(value)
       if (result.mutable) {
@@ -30,13 +37,18 @@ object Expression {
     Result(codeTemplate.resolve(upstreamFragments), mutable = nextMutable)
   }
 
-  lazy val parseExpression: PartialFunction[Ast.expr, CodeTemplate] = {
+  private lazy val parseExpression: PartialFunction[Ast.expr, CodeTemplate] = {
     Generator.apply.orElse(Attribute.apply).orElse(template.transpiler.Expression.apply).orElse(Primitives.apply)
       .orElse(loadName).orElse(FunctionCall.apply).orElse(Arithmetic.apply).orElse(Lambda.apply)
   }
 
   private lazy val loadName: PartialFunction[Ast.expr, CodeTemplate] = {
-    case Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Load) =>
-      CodeTemplate(x, mapper = RxMap)
+    case Ast.expr.Name(id, Ast.expr_context.Load) =>
+      val mapper = if (scope.variables.contains(id)) {
+        Static
+      } else {
+        RxMap
+      }
+      CodeTemplate(id.name, mapper = mapper)
   }
 }
