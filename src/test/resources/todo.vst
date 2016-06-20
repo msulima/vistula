@@ -89,7 +89,8 @@ def removeTodo(todo):
 
 def editTodo(todo, formField):
   todo.editing = True
-  stdlib.focus(formField)
+  const x = formField
+  x.focus()
 
 def finishEditingTodo(todo):
   todo.editing = False

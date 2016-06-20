@@ -18,12 +18,12 @@ object Transpiler {
   }
 
   def returnLast(program: Seq[Ast.stmt]): String = {
-    val lines = apply(program.init) :+ s"return ${Transpiler(program.last)}"
-    lines.mkString("", ";\n", ";\n")
+    val nextScope = scoped(EmptyScope, program.init)
+    nextScope.result.code + s"return ${scoped(nextScope.scope, program.last).result.code};"
   }
 
-  def apply(program: Seq[Ast.stmt]): Seq[String] = {
-    program.map(x => apply(x))
+  def apply(program: Seq[Ast.stmt]): String = {
+    scoped(EmptyScope, program).result.code.dropRight(1)
   }
 
   def apply(expr: Ast.expr): String = {
@@ -34,12 +34,12 @@ object Transpiler {
     scoped(EmptyScope, stmt).asCodeObservable
   }
 
-  def scoped(program: Seq[Ast.stmt]): String = {
-    program.foldLeft(ScopedResult(EmptyScope, Result("", mutable = false)))((acc, stmt) => {
+  def scoped(scope: Scope, program: Seq[Ast.stmt]): ScopedResult = {
+    program.foldLeft(ScopedResult(scope, Result("", mutable = false)))((acc, stmt) => {
       val result = scoped(acc.scope, stmt)
 
       result.copy(result = acc.result.copy(code = acc.result.code + result.asCodeObservable + ";\n"))
-    }).result.code.dropRight(1)
+    })
   }
 
   def scoped(scope: Scope, expr: Ast.expr): ScopedResult = {
