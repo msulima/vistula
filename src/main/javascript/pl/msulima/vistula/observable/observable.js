@@ -13,6 +13,7 @@ const ObservableImpl = function (upstreamUnsubscribe) {
 
 ObservableImpl.prototype.rxForEach = observableImpl.rxForEach;
 ObservableImpl.prototype.rxForEachOnce = observableImpl.rxForEachOnce;
+ObservableImpl.prototype.rxLastValue = observableImpl.rxLastValue;
 ObservableImpl.prototype.rxMap = rxMap;
 ObservableImpl.prototype.rxFlatMap = rxFlatMap;
 
@@ -26,6 +27,7 @@ const MapObservable = function (upstream, transformation) {
 
 MapObservable.prototype.rxForEach = mapObservable.rxForEach;
 MapObservable.prototype.rxForEachOnce = mapObservable.rxForEachOnce;
+MapObservable.prototype.rxLastValue = mapObservable.rxLastValue;
 MapObservable.prototype.rxMap = mapObservable.rxMap;
 MapObservable.prototype.rxFlatMap = mapObservable.rxFlatMap;
 
@@ -45,6 +47,7 @@ const PointerObservable = function (upstream, transformation) {
 
 PointerObservable.prototype.rxForEach = pointer.rxForEach;
 PointerObservable.prototype.rxForEachOnce = pointer.rxForEachOnce;
+PointerObservable.prototype.rxLastValue = pointer.rxLastValue;
 PointerObservable.prototype.rxMap = rxMap;
 PointerObservable.prototype.rxFlatMap = rxFlatMap;
 

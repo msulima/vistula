@@ -36,6 +36,7 @@ const ZipObservable = function (observables) {
 
 ZipObservable.prototype.rxForEach = rxForEach;
 ZipObservable.prototype.rxForEachOnce = rxForEachOnce;
+ZipObservable.prototype.rxLastValue = rxLastValue;
 ZipObservable.prototype.rxMap = rxMap;
 ZipObservable.prototype.rxFlatMap = rxFlatMap;
 
@@ -60,6 +61,12 @@ function rxForEachOnce(callback) {
     }
 
     return observableImpl.rxForEachOnce.call(this, callback);
+}
+
+function rxLastValue() {
+    return this.results.map(state => {
+        return state.observable.rxLastValue();
+    })
 }
 
 function subscribeToAll() {

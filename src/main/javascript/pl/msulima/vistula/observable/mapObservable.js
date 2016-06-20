@@ -12,6 +12,10 @@ function rxForEachOnce(callback) {
     });
 }
 
+function rxLastValue() {
+    return this.transformation(this.upstream.rxLastValue());
+}
+
 function rxMap(transformation) {
     return this.upstream.rxMap(value => {
         return transformation(this.transformation(value));
@@ -28,5 +32,6 @@ module.exports = {
     rxFlatMap: rxFlatMap,
     rxForEach: rxForEach,
     rxForEachOnce: rxForEachOnce,
+    rxLastValue: rxLastValue,
     rxMap: rxMap
 };

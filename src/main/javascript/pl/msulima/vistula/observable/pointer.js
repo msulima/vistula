@@ -24,6 +24,10 @@ function rxForEachOnce(callback) {
     return observableImpl.rxForEachOnce.call(this, callback);
 }
 
+function rxLastValue() {
+    return this.transformation(this.upstream.rxLastValue()).rxLastValue()
+}
+
 function rxPush(value) {
     if (this.pointsTo == null) {
         this.rxForEachOnce(() => { // FIXME
@@ -77,6 +81,7 @@ function rxPointTo(observable) {
 module.exports = {
     rxForEach: rxForEach,
     rxForEachOnce: rxForEachOnce,
+    rxLastValue: rxLastValue,
     rxPointTo: rxPointTo,
     rxPush: rxPush,
     unsubscribe: unsubscribe
