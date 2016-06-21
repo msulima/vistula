@@ -101,6 +101,14 @@ let app = '''# html:/todo.vst.html'''
 
 let foo = stdlib.dom.appendChild("todoapp", app)
 
+def toggleAll():
+  const x = leftTodosCount
+
+  for todo in todos:
+    todo.completed = x != 0
+
+  *y
+
 '''# javascript
 
 foo.rxForEach(() => {});
