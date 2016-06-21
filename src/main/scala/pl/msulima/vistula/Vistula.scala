@@ -12,7 +12,7 @@ object Vistula {
 
   def toJavaScriptRpn(input: String): String = {
     parse(input).collect({
-      case Ast.stmt.Expr(expr) => rpn.Transpiler.remaped(rpn.Tokenizer(expr).toList)
+      case Ast.stmt.Expr(expr) => rpn.Transpiler(rpn.Tokenizer.apply2(expr)).value
     }).mkString("", ";\n", ";")
   }
 

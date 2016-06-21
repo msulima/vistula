@@ -5,11 +5,11 @@ import pl.msulima.vistula.util.ToArray
 
 object Primitives {
 
-  def apply: PartialFunction[Ast.expr, Seq[Token]] = {
+  def apply: PartialFunction[Ast.expr, Token] = {
     case expr: Ast.expr if static.isDefinedAt(expr) =>
-      Seq(ConstantOperand(static(expr)))
+      ConstantOperand(static(expr))
     case Ast.expr.List(elts, Ast.expr_context.Load) =>
-      elts.flatMap(x => Transpiler.box(Tokenizer(x))) :+ StaticArray(elts.size) :+ Box
+      Tokenizer.box(ConstantOperation(StaticArray(elts.size), elts.map(x => Tokenizer.box(x))))
   }
 
   private def static: PartialFunction[Ast.expr, String] = {

@@ -5,9 +5,9 @@ import pl.msulima.vistula.parser.Ast
 
 object BinOp {
 
-  def apply: PartialFunction[Ast.expr, Seq[Token]] = {
+  def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.BinOp(x, op, y) =>
-      Tokenizer(x) ++ Tokenizer(y) :+ BinOp(op)
+      ConstantOperation(BinOp(op), Seq(Tokenizer(x), Tokenizer(y)))
   }
 }
 

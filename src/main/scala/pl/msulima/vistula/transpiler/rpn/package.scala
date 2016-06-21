@@ -22,4 +22,8 @@ package object rpn {
     def apply(operands: List[ConstantOperand]): ConstantOperand
   }
 
+  sealed trait Operation extends Token
+
+  case class ConstantOperation(operator: ConstantOperator, operands: Seq[Token]) extends Operation
+
 }

@@ -14,17 +14,15 @@ case object Box extends ConstantOperator {
   }
 }
 
-case class RxMap(observablesCount: Int) extends ConstantOperator {
+case class RxMap(mutables: Seq[MutableOperand]) extends ConstantOperator {
 
-  override val operands = observablesCount + 1
+  override val operands = 1
 
   override def apply(operands: List[ConstantOperand]): ConstantOperand = {
-    val observables = operands.take(observablesCount)
-
-    val value = if (observablesCount == 1) {
-      s"${observables.head.value}.rxMap($$arg => (${operands.last.value}))"
+    val value = if (mutables.size == 1) {
+      s"${mutables.head.value}.rxMap($$arg => (${operands.last.value}))"
     } else {
-      s"vistula.zip(${ToArray.compact(observables.map(_.value))}).rxMap($$args => (${operands.last.value}))"
+      s"vistula.zip(${ToArray.compact(mutables.map(_.value))}).rxMap($$args => (${operands.last.value}))"
     }
     ConstantOperand(value)
   }
