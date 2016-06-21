@@ -31,6 +31,8 @@ object Transpiler extends App {
 
     if (mutablesCount == 0) {
       tokens
+    } else if (mutablesCount == 1 && tokens.size == 1) {
+      tokens.map(x => ConstantOperand(x.asInstanceOf[MutableOperand].value))
     } else {
       val (mutables, constants) = mapMutables(mutablesCount, tokens)
 
