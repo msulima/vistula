@@ -12,6 +12,7 @@ class RpnSpec extends Specification {
         |A + 2 + B + False;
         |[1, 2 + 3, B, C - 4];
         |A.B;
+        |F(A, 3);
       """.stripMargin
 
     Vistula.toJavaScriptRpn(program) must_==
@@ -23,6 +24,7 @@ class RpnSpec extends Specification {
         |    B,
         |    C.rxMap($arg => ($arg - 4))
         |]);
-        |A.rxFlatMap($arg => $arg.B);""".stripMargin
+        |A.rxFlatMap($arg => $arg.B);
+        |F(A, vistula.constantObservable(3));""".stripMargin
   }
 }

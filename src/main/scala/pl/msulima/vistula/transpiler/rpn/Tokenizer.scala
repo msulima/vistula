@@ -17,7 +17,7 @@ object Tokenizer extends App {
   }
 
   def apply(expr: Ast.expr): Token = {
-    BinOp.apply.orElse(Primitives.apply).orElse(Name.apply)(expr)
+    BinOp.apply.orElse(Primitives.apply).orElse(FunctionCall.apply).orElse(Name.apply)(expr)
   }
 
   def findAndReplace(token: Token): Token = {
