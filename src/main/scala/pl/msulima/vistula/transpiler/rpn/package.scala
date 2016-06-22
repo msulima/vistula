@@ -4,26 +4,17 @@ package object rpn {
 
   sealed trait Token
 
+  case class MutableOperand(value: String) extends Token
 
-  sealed trait Operand extends Token {
-    val value: String
-  }
+  case class ConstantOperand(value: String) extends Token
 
-  case class MutableOperand(value: String) extends Operand
-
-  case class ConstantOperand(value: String) extends Operand
-
-  sealed trait Operator extends Token
-
-  trait ConstantOperator extends Operator {
-
-    val operands: Int
+  trait Operator {
 
     def apply(operands: List[ConstantOperand]): ConstantOperand
   }
 
   sealed trait Operation extends Token
 
-  case class ConstantOperation(operator: ConstantOperator, operands: Seq[Token]) extends Operation
+  case class ConstantOperation(operator: Operator, operands: Seq[Token]) extends Operation
 
 }

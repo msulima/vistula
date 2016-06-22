@@ -26,7 +26,7 @@ object Primitives {
   }
 }
 
-case class StaticArray(operands: Int) extends ConstantOperator {
+case class StaticArray(operands: Int) extends Operator {
 
   def apply(operands: List[ConstantOperand]): ConstantOperand = {
     ConstantOperand(ToArray(operands.map(_.value)))

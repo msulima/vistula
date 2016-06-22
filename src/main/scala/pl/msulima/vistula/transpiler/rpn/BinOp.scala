@@ -11,9 +11,7 @@ object BinOp {
   }
 }
 
-case class BinOp(operator: Ast.operator) extends ConstantOperator {
-
-  override val operands = 2
+case class BinOp(operator: Ast.operator) extends Operator {
 
   private val op = operator match {
     case Ast.operator.Add => "+"

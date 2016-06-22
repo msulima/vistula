@@ -2,9 +2,7 @@ package pl.msulima.vistula.transpiler.rpn
 
 import pl.msulima.vistula.util.ToArray
 
-case object Box extends ConstantOperator {
-
-  override val operands: Int = 1
+case object Box extends Operator {
 
   override def apply(operands: List[ConstantOperand]): ConstantOperand = {
     operands match {
@@ -14,9 +12,7 @@ case object Box extends ConstantOperator {
   }
 }
 
-case class RxMap(mutables: Seq[MutableOperand]) extends ConstantOperator {
-
-  override val operands = 1
+case class RxMap(mutables: Seq[MutableOperand]) extends Operator {
 
   override def apply(operands: List[ConstantOperand]): ConstantOperand = {
     val value = if (mutables.size == 1) {
@@ -28,9 +24,7 @@ case class RxMap(mutables: Seq[MutableOperand]) extends ConstantOperator {
   }
 }
 
-case object RxFlatMap extends ConstantOperator {
-
-  override val operands = 2
+case object RxFlatMap extends Operator {
 
   override def apply(operands: List[ConstantOperand]): ConstantOperand = {
     ConstantOperand(s"${operands.head.value}.rxFlatMap($$arg => $$arg.${operands(1).value})")
