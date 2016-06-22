@@ -17,7 +17,7 @@ object Transpiler extends App {
       case Reference(value) =>
         Constant(value)
       case _ =>
-        val moved = Tokenizer.findAndReplace(token)
+        val moved = Dereferencer(token)
         moved match {
           case Operation(RxMap(_), _) =>
             moved
