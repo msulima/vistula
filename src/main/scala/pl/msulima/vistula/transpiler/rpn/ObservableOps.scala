@@ -33,6 +33,6 @@ case object RxFlatMap extends ConstantOperator {
   override val operands = 2
 
   override def apply(operands: List[ConstantOperand]): ConstantOperand = {
-    ConstantOperand(s"${operands.head.value}.${operands(1).value}")
+    ConstantOperand(s"${operands.head.value}.rxFlatMap($$arg => $$arg.${operands(1).value})")
   }
 }
