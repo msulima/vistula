@@ -6,8 +6,8 @@ object Name {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Name(id, Ast.expr_context.Load) =>
-      MutableOperand(id.name)
+      Reference(id.name)
     case Ast.expr.Attribute(expr, id, Ast.expr_context.Load) =>
-      ConstantOperation(RxFlatMap, Seq(Tokenizer.box(expr), ConstantOperand(id.name)))
+      Operation(RxFlatMap, Seq(Tokenizer.box(expr), Constant(id.name)))
   }
 }

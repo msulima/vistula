@@ -4,29 +4,29 @@ import pl.msulima.vistula.util.ToArray
 
 case object Box extends Operator {
 
-  override def apply(operands: List[ConstantOperand]): ConstantOperand = {
+  override def apply(operands: List[Constant]): Constant = {
     operands match {
       case value :: Nil =>
-        ConstantOperand(s"vistula.constantObservable(${value.value})")
+        Constant(s"vistula.constantObservable(${value.value})")
     }
   }
 }
 
-case class RxMap(mutables: Seq[MutableOperand]) extends Operator {
+case class RxMap(mutables: Seq[Reference]) extends Operator {
 
-  override def apply(operands: List[ConstantOperand]): ConstantOperand = {
+  override def apply(operands: List[Constant]): Constant = {
     val value = if (mutables.size == 1) {
       s"${mutables.head.value}.rxMap($$arg => (${operands.last.value}))"
     } else {
       s"vistula.zip(${ToArray.compact(mutables.map(_.value))}).rxMap($$args => (${operands.last.value}))"
     }
-    ConstantOperand(value)
+    Constant(value)
   }
 }
 
 case object RxFlatMap extends Operator {
 
-  override def apply(operands: List[ConstantOperand]): ConstantOperand = {
-    ConstantOperand(s"${operands.head.value}.rxFlatMap($$arg => $$arg.${operands(1).value})")
+  override def apply(operands: List[Constant]): Constant = {
+    Constant(s"${operands.head.value}.rxFlatMap($$arg => $$arg.${operands(1).value})")
   }
 }

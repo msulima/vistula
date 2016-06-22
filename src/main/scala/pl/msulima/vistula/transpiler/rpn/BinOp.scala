@@ -7,7 +7,7 @@ object BinOp {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.BinOp(x, op, y) =>
-      ConstantOperation(BinOp(op), Seq(Tokenizer(x), Tokenizer(y)))
+      Operation(BinOp(op), Seq(Tokenizer(x), Tokenizer(y)))
   }
 }
 
@@ -21,10 +21,10 @@ case class BinOp(operator: Ast.operator) extends Operator {
     case Ast.operator.Mod => "%"
   }
 
-  override def apply(operands: List[ConstantOperand]): ConstantOperand = {
+  override def apply(operands: List[Constant]): Constant = {
     operands match {
       case left :: right :: Nil =>
-        ConstantOperand(s"${left.value} $op ${right.value}")
+        Constant(s"${left.value} $op ${right.value}")
     }
   }
 }

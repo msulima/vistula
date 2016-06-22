@@ -2,24 +2,24 @@ package pl.msulima.vistula.transpiler.rpn
 
 object Transpiler extends App {
 
-  def apply(token: Token): ConstantOperand = {
+  def apply(token: Token): Constant = {
     token match {
-      case ConstantOperation(Box, operands) =>
+      case Operation(Box, operands) =>
         apply(box(operands.head))
-      case ConstantOperation(operation, operands) =>
+      case Operation(operation, operands) =>
         operation.apply(operands.map(apply).toList)
-      case x: ConstantOperand => x
+      case x: Constant => x
     }
   }
 
   def box(token: Token): Token = {
     token match {
-      case MutableOperand(value) =>
-        ConstantOperand(value)
+      case Reference(value) =>
+        Constant(value)
       case _ =>
         val moved = Tokenizer.findAndReplace(token)
         moved match {
-          case ConstantOperation(RxMap(_), _) =>
+          case Operation(RxMap(_), _) =>
             moved
           case _ =>
             Box.apply(List(apply(moved)))
