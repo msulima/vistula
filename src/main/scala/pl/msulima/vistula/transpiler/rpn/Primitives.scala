@@ -9,7 +9,7 @@ object Primitives {
     case expr: Ast.expr if static.isDefinedAt(expr) =>
       Constant(static(expr))
     case Ast.expr.List(elts, Ast.expr_context.Load) =>
-      Tokenizer.box(Operation(StaticArray(elts.size), elts.map(x => Tokenizer.box(x))))
+      Box(Operation(StaticArray(elts.size), elts.map(expr => Box(Tokenizer.apply(expr)))))
   }
 
   private def static: PartialFunction[Ast.expr, String] = {

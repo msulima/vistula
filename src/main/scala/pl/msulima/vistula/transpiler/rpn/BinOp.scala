@@ -7,7 +7,7 @@ object BinOp {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.BinOp(x, op, y) =>
-      Operation(BinOp(op), Seq(Tokenizer(x), Tokenizer(y)))
+      Operation(BinOp(op), Seq(Tokenizer.apply(x), Tokenizer.apply(y)))
   }
 }
 

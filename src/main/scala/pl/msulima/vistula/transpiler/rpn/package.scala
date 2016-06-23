@@ -4,6 +4,10 @@ package object rpn {
 
   sealed trait Token
 
+  case class Rx(token: Token) extends Token
+
+  case class Box(token: Token) extends Token
+
   case class Reference(value: String) extends Token
 
   case class Constant(value: String) extends Token
