@@ -6,11 +6,7 @@ import pl.msulima.vistula.transpiler.rpn
 object Transpiler extends App {
 
   def apply: PartialFunction[Ast.expr, Constant] = {
-    rpn.Tokenizer.apply.andThen(Dereferencer.apply).andThen(x => {
-      println(x)
-      println("")
-      toConstant(x)
-    })
+    rpn.Tokenizer.apply.andThen(Dereferencer.apply).andThen(toConstant)
   }
 
   private def toConstant(token: Token): Constant = {

@@ -6,6 +6,7 @@ import pl.msulima.vistula.Vistula
 class RpnSpec extends Specification {
 
   "transpiles generator" in {
+
     val program =
       """
         |A + 2;
@@ -13,6 +14,7 @@ class RpnSpec extends Specification {
         |[1, 2 + 3, B, C - 4];
         |A.B;
         |F(A, 3);
+        |F(A, 3).B;
         |Y + 3 - a(Z + 1, 3);
       """.stripMargin
 
@@ -27,6 +29,7 @@ class RpnSpec extends Specification {
         |]);
         |A.rxFlatMap($arg => $arg.B);
         |F(A, vistula.constantObservable(3));
+        |F(A, vistula.constantObservable(3)).rxFlatMap($arg => $arg.B);
         |vistula.zip([Y, a(Z.rxMap($arg => ($arg + 1)), vistula.constantObservable(3))]).rxMap($args => ($args[0] + 3 - $args[1]));""".stripMargin
   }
 }
