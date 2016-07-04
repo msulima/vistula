@@ -12,7 +12,7 @@ case object BoxOp extends Operator {
   }
 }
 
-case class RxMapOp(boxes: Seq[Rx]) extends Operator {
+case class RxMapOp(boxes: Seq[Observable]) extends Operator {
 
   override def apply(operands: List[Constant]): Constant = {
     val mutables = operands.init

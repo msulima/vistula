@@ -6,7 +6,7 @@ object Name {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Name(id, Ast.expr_context.Load) =>
-      Rx(Reference(id.name))
+      Observable(Reference(id.name))
     case Ast.expr.Attribute(expr, id, Ast.expr_context.Load) =>
       Operation(RxFlatMap, Seq(Tokenizer.apply(expr), Constant(id.name)))
   }

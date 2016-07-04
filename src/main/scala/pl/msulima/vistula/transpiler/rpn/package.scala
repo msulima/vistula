@@ -4,7 +4,7 @@ package object rpn {
 
   sealed trait Token
 
-  case class Rx(token: Token) extends Token
+  case class Observable(token: Token) extends Token
 
   case class Box(token: Token) extends Token
 
