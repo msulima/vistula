@@ -10,10 +10,6 @@ object ToArray {
     }
   }
 
-  def compact(seq: Seq[_]) = {
-    s"[${seq.mkString(", ")}]"
-  }
-
   def toDict(seq: Seq[(_, _)]) = "{\n" + Indent.leftPad(seq.map({
     case (key, value) =>
       s"$key: $value"

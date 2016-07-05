@@ -1,7 +1,7 @@
 package pl.msulima.vistula
 
 import fastparse.all._
-import pl.msulima.vistula.parser.{Ast, Statements}
+import pl.msulima.vistula.parser.Statements
 import pl.msulima.vistula.transpiler.{Transpiler, rpn}
 
 object Vistula {
@@ -11,8 +11,8 @@ object Vistula {
   }
 
   def toJavaScriptRpn(input: String): String = {
-    parse(input).collect({
-      case Ast.stmt.Expr(expr) => rpn.Transpiler.apply(expr).value
+    parse(input).map(stmt => {
+      rpn.Transpiler.apply(stmt).value
     }).mkString("", ";\n", ";")
   }
 

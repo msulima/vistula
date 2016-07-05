@@ -31,7 +31,7 @@ class Expression(scope: Scope) {
   }
 
   private lazy val parseExpression: PartialFunction[Ast.expr, CodeTemplate] = {
-    val byRpn = rpn.Transpiler.apply.andThen(c => CodeTemplate(c.value, Static))
+    val byRpn = rpn.Transpiler.applyExpr.andThen(c => CodeTemplate(c.value, Static))
 
     byRpn.orElse(Generator.apply.orElse(template.transpiler.Expression.apply)
       .orElse(Lambda.apply).orElse(Dereference.apply).orElse(Tuple.apply(scope)))

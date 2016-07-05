@@ -22,7 +22,7 @@ case class RxMapOp(boxes: Seq[Observable]) extends Operator {
     } else if (boxes.size == 1) {
       s"${mutables.head.value}.rxMap($$arg => (${operands.last.value}))"
     } else {
-      s"vistula.zip(${ToArray.compact(mutables.map(_.value))}).rxMap($$args => (${operands.last.value}))"
+      s"vistula.zip(${ToArray(mutables.map(_.value))}).rxMap($$args => (${operands.last.value}))"
     }
     Constant(value)
   }

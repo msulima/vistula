@@ -5,7 +5,11 @@ import pl.msulima.vistula.transpiler.rpn
 
 object Transpiler extends App {
 
-  def apply: PartialFunction[Ast.expr, Constant] = {
+  def apply: PartialFunction[Ast.stmt, Constant] = {
+    rpn.Tokenizer.applyStmt.andThen(Dereferencer.apply).andThen(toConstant)
+  }
+
+  def applyExpr: PartialFunction[Ast.expr, Constant] = {
     rpn.Tokenizer.apply.andThen(Dereferencer.apply).andThen(toConstant)
   }
 
