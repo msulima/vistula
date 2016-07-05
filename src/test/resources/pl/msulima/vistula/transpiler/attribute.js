@@ -1,3 +1,4 @@
+X.rxFlatMap($arg => ($arg.Y)).rxFlatMap($arg => ($arg.Z));
 vistula.zip([
     Q.rxFlatMap($arg => ($arg.W)),
     X.rxFlatMap($arg => ($arg.Y)).rxFlatMap($arg => ($arg.Z))

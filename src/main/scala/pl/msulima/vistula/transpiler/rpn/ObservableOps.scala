@@ -31,6 +31,6 @@ case class RxMapOp(boxes: Seq[Observable]) extends Operator {
 case object RxFlatMap extends Operator {
 
   override def apply(operands: List[Constant]): Constant = {
-    Constant(s"${operands.head.value}.rxFlatMap($$arg => $$arg.${operands(1).value})")
+    Constant(s"${operands.head.value}.rxFlatMap($$arg => ($$arg.${operands(1).value}))")
   }
 }

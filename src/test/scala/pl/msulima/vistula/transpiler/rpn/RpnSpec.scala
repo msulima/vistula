@@ -2,17 +2,17 @@ package pl.msulima.vistula.transpiler.rpn
 
 import org.specs2.mutable.Specification
 import pl.msulima.vistula.Vistula
-import pl.msulima.vistula.testutil._
 
 class RpnSpec extends Specification {
 
-  def test(file: String) = {
-    file in {
-      Vistula.toJavaScriptRpn(readFile(s"/pl/msulima/vistula/transpiler/$file.vst")) must_== readFile(s"/pl/msulima/vistula/transpiler/$file.js")
-    }
-  }
+  "test" in {
 
-  test("expression")
+    val program =
+      """A.B(1)""".stripMargin
+
+    Vistula.toJavaScriptRpn(program) must_==
+      """A.rxFlatMap($arg => $arg.B).rxFlatMap($arg => $arg.C);""".stripMargin
+  }
 
   "transpiles generator" in {
 
@@ -39,9 +39,9 @@ class RpnSpec extends Specification {
         |    B,
         |    C.rxMap($arg => ($arg - 4))
         |]);
-        |A.rxFlatMap($arg => $arg.B);
+        |A.rxFlatMap($arg => ($arg.B));
         |F(A, vistula.constantObservable(3));
-        |F(A, vistula.constantObservable(3)).rxFlatMap($arg => $arg.B);
+        |F(A, vistula.constantObservable(3)).rxFlatMap($arg => ($arg.B));
         |vistula.zip([
         |    Y,
         |    a(Z.rxMap($arg => ($arg + 1)), vistula.constantObservable(3))
