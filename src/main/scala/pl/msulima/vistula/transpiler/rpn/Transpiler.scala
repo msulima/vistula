@@ -14,11 +14,15 @@ object Transpiler extends App {
   }
 
   private def toConstant(token: Token): Constant = {
+    //    println("^", token)
+
     token match {
-      case Operation(op@RxMapOp(boxes), operands) =>
-        op(operands.map(toConstant).toList)
-      case Operation(operation, operands) =>
-        operation.apply(operands.map(toConstant).toList)
+      case Observable(op) =>
+        toConstant(op)
+      case Operation(op@RxMapOp(_), operands, output) =>
+        op(operands.map(toConstant).toList, toConstant(output))
+      case Operation(operation, operands, output) =>
+        operation.apply(operands.map(toConstant).toList, toConstant(output))
       case x: Constant => x
     }
   }

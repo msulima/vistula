@@ -4,40 +4,41 @@ import pl.msulima.vistula.util.ToArray
 
 case object BoxOp extends Operator {
 
-  override def apply(operands: List[Constant]): Constant = {
-    operands match {
-      case value :: Nil =>
-        Constant(s"vistula.constantObservable(${value.value})")
-    }
+  override def apply(operands: List[Constant], output: Constant): Constant = {
+    Constant(s"vistula.constantObservable(${output.value})")
+  }
+}
+
+case object Noop extends Operator {
+
+  override def apply(operands: List[Constant], output: Constant): Constant = {
+    output
   }
 }
 
 case object UnboxOp extends Operator {
 
-  override def apply(operands: List[Constant]): Constant = {
+  override def apply(operands: List[Constant], output: Constant): Constant = {
     Constant(s"${operands.head.value}.rxLastValue()")
   }
 }
 
-case class RxMapOp(boxes: Seq[Observable]) extends Operator {
+case class RxMapOp(useFlatMap: Boolean) extends Operator {
 
-  override def apply(operands: List[Constant]): Constant = {
-    val mutables = operands.init
-
-    val value = if (boxes.isEmpty) {
-      operands.last.value
-    } else if (boxes.size == 1) {
-      s"${mutables.head.value}.rxMap($$arg => (${operands.last.value}))"
+  override def apply(operands: List[Constant], output: Constant): Constant = {
+    val mapper = if (useFlatMap) {
+      "rxFlatMap"
     } else {
-      s"vistula.zip(${ToArray(mutables.map(_.value))}).rxMap($$args => (${operands.last.value}))"
+      "rxMap"
+    }
+
+    val value = if (operands.isEmpty) {
+      output.value
+    } else if (operands.size == 1) {
+      s"${operands.head.value}.$mapper($$arg => (${output.value}))"
+    } else {
+      s"vistula.zip(${ToArray(operands.map(_.value))}).$mapper($$args => (${output.value}))"
     }
     Constant(value)
-  }
-}
-
-case object RxFlatMap extends Operator {
-
-  override def apply(operands: List[Constant]): Constant = {
-    Constant(s"${operands.head.value}.rxFlatMap($$arg => ($$arg.${operands(1).value}))")
   }
 }

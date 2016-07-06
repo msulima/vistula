@@ -15,13 +15,13 @@ object Assign {
         body
       }
 
-      Operation(Assign(identifier), Seq(value))
+      Operation(Assign(identifier), Seq(), value)
   }
 }
 
 case class Assign(identifier: Ast.identifier) extends Operator {
 
-  override def apply(operands: List[Constant]): Constant = {
-    Constant(s"const ${identifier.name} = ${operands.head.value}")
+  override def apply(operands: List[Constant], output: Constant): Constant = {
+    Constant(s"const ${identifier.name} = ${output.value}")
   }
 }

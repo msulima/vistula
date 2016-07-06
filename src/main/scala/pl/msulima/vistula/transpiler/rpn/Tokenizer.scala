@@ -5,6 +5,10 @@ import pl.msulima.vistula.transpiler.rpn.expression._
 
 object Tokenizer {
 
+  def boxed(expr: Ast.expr) = {
+    Box(apply(expr))
+  }
+
   private val expr: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.Expr(ex) =>
       apply(ex)

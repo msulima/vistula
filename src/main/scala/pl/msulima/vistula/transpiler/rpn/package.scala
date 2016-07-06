@@ -12,9 +12,9 @@ package object rpn {
 
   trait Operator {
 
-    def apply(operands: List[Constant]): Constant
+    def apply(inputs: List[Constant], output: Constant): Constant
   }
 
-  case class Operation(operator: Operator, operands: Seq[Token]) extends Token
+  case class Operation(operator: Operator, inputs: Seq[Token], output: Token) extends Token
 
 }

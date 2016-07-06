@@ -10,7 +10,7 @@ object Primitives {
     case expr: Ast.expr if static.isDefinedAt(expr) =>
       Constant(static(expr))
     case Ast.expr.List(elts, Ast.expr_context.Load) =>
-      Box(Operation(StaticArray(elts.size), elts.map(expr => Box(Tokenizer.apply(expr)))))
+      Box(Operation(StaticArray(elts.size), elts.map(expr => Tokenizer.boxed(expr)), Constant("ignore")))
   }
 
   private def static: PartialFunction[Ast.expr, String] = {
@@ -29,7 +29,7 @@ object Primitives {
 
 case class StaticArray(operands: Int) extends Operator {
 
-  def apply(operands: List[Constant]): Constant = {
+  def apply(operands: List[Constant], output: Constant): Constant = {
     Constant(ToArray(operands.map(_.value)))
   }
 }

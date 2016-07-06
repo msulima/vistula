@@ -7,6 +7,6 @@ object Dereference {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Dereference(value) =>
-      Operation(UnboxOp, Seq(Box(Tokenizer.apply(value))))
+      Operation(UnboxOp, Seq(), Box(Tokenizer.apply(value)))
   }
 }
