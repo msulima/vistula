@@ -12,6 +12,13 @@ case object BoxOp extends Operator {
   }
 }
 
+case object UnboxOp extends Operator {
+
+  override def apply(operands: List[Constant]): Constant = {
+    Constant(s"${operands.head.value}.rxLastValue()")
+  }
+}
+
 case class RxMapOp(boxes: Seq[Observable]) extends Operator {
 
   override def apply(operands: List[Constant]): Constant = {

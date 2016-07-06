@@ -1,6 +1,7 @@
-package pl.msulima.vistula.transpiler.rpn
+package pl.msulima.vistula.transpiler.rpn.expression
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.transpiler.rpn.{Operation, _}
 
 object Assign {
 

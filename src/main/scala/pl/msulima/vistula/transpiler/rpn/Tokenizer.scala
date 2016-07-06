@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.rpn
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.rpn
+import pl.msulima.vistula.transpiler.rpn.expression._
 
 object Tokenizer {
 
@@ -11,7 +11,7 @@ object Tokenizer {
   }
 
   def applyStmt: PartialFunction[Ast.stmt, Token] = {
-    expr.orElse(rpn.Assign.apply)
+    expr.orElse(Assign.apply)
   }
 
   def apply: PartialFunction[Ast.expr, Token] = {
