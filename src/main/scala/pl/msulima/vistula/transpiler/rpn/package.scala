@@ -8,8 +8,6 @@ package object rpn {
 
   case class Box(token: Token) extends Token
 
-  case class Reference(value: String) extends Token
-
   case class Constant(value: String) extends Token
 
   trait Operator {

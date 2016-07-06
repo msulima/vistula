@@ -20,7 +20,6 @@ object Transpiler extends App {
       case Operation(operation, operands) =>
         operation.apply(operands.map(toConstant).toList)
       case x: Constant => x
-      case x: Reference => Constant(x.value)
     }
   }
 }

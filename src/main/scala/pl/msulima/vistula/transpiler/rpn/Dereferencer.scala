@@ -28,7 +28,7 @@ object Dereferencer {
         Seq(x)
       case Box(Observable(_)) =>
         Seq()
-      case _: Box | _: Constant | _: Reference =>
+      case _: Box | _: Constant =>
         Seq()
     }
   }
@@ -63,8 +63,6 @@ object Dereferencer {
       case token =>
         apply(token) match {
           case op@Operation(RxMapOp(_), _) =>
-            op
-          case op: Reference =>
             op
           case toBox =>
             Operation(BoxOp, Seq(toBox))
