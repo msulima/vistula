@@ -5,8 +5,16 @@ import pl.msulima.vistula.parser.Ast
 object Assign {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
-    case Ast.stmt.DeclareStmt(identifier, value, mutable) =>
-      Operation(Assign(identifier), Seq(Box(Tokenizer.applyStmt(value))))
+    case Ast.stmt.DeclareStmt(identifier, stmt, mutable) =>
+      val body = Tokenizer.applyStmt(stmt)
+
+      val value = if (mutable) {
+        Box(body)
+      } else {
+        body
+      }
+
+      Operation(Assign(identifier), Seq(value))
   }
 }
 

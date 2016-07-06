@@ -15,6 +15,6 @@ object Tokenizer {
   }
 
   def apply: PartialFunction[Ast.expr, Token] = {
-    BinOp.apply.orElse(Primitives.apply).orElse(FunctionCall.apply).orElse(Name.apply)
+    BinOp.apply.orElse(Primitives.apply).orElse(FunctionCall.apply).orElse(Name.apply).orElse(Dereference.apply)
   }
 }

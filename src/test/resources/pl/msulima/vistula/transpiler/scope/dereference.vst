@@ -1,4 +1,5 @@
 const x = 2
 const a = x.y
 const b = x.y()
-let C = *Y
+const C = *Y
+let D = *Y
