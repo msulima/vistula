@@ -3,10 +3,26 @@ package pl.msulima.vistula.transpiler.rpn
 object OperationDereferencer {
 
   def apply(operation: Operation): Token = {
-    val observables = findInputObservables(operation)
-    val useFlatMap = operation.output.isInstanceOf[Observable]
+    val (observables, inputs) = findInputObservables(operation)
 
-    println(operation, observables, useFlatMap)
+    dereference(operation.copy(inputs = inputs), observables)
+  }
+
+  private def findInputObservables(operation: Operation) = {
+    val xs = operation.inputs.map({
+      case input@Observable(Operation(RxMapOp(false), inputs, output)) =>
+        (inputs, output)
+      case input: Observable =>
+        (Seq(input), input)
+      case input =>
+        (Seq(), input)
+    })
+
+    (xs.flatMap(_._1), xs.map(_._2))
+  }
+
+  private def dereference(operation: Operation, observables: Seq[Token]) = {
+    val useFlatMap = operation.output.isInstanceOf[Observable]
 
     if (observables.isEmpty) {
       if (useFlatMap) {
@@ -15,35 +31,7 @@ object OperationDereferencer {
         operation
       }
     } else {
-      val mapping = createMapping(observables)
-
-      Observable(Operation(RxMapOp(useFlatMap), observables, substituteObservables(operation, mapping)))
+      Observable(Operation(RxMapOp(useFlatMap), observables, operation))
     }
-  }
-
-  private def findInputObservables(operation: Operation): Seq[Observable] = {
-    operation.inputs.collect({
-      case input: Observable =>
-        input
-    })
-  }
-
-  private def createMapping(observables: Seq[Observable]): Map[Observable, String] = {
-    if (observables.size == 1) {
-      Map(observables.head -> "$arg")
-    } else {
-      observables.zipWithIndex.map({
-        case (mutable, index) => mutable -> s"$$args[$index]"
-      }).toMap
-    }
-  }
-
-  private def substituteObservables(operation: Operation, mapping: Map[Observable, String]): Token = {
-    operation.copy(inputs = operation.inputs.map({
-      case input: Observable =>
-        Constant(mapping(input))
-      case input =>
-        input
-    }))
   }
 }

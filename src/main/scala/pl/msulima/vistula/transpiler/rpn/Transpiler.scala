@@ -20,7 +20,12 @@ object Transpiler extends App {
       case Observable(op) =>
         toConstant(op)
       case Operation(op@RxMapOp(_), operands, output) =>
-        op(operands.map(toConstant).toList, toConstant(output))
+        op(operands.map(toConstant).toList, toConstant(
+          SubstituteObservables(
+            operands.map(_.asInstanceOf[Observable]),
+            output.asInstanceOf[Operation]
+          ))
+        )
       case Operation(operation, operands, output) =>
         operation.apply(operands.map(toConstant).toList, toConstant(output))
       case x: Constant => x
