@@ -3,8 +3,13 @@ package pl.msulima.vistula.transpiler.rpn
 import pl.msulima.vistula.transpiler.Scope
 
 object Dereferencer {
-
   def apply(scope: Scope)(token: Token): Token = {
+    new Dereferencer(scope).apply(token)
+  }
+}
+
+class Dereferencer(scope: Scope) {
+  def apply(token: Token): Token = {
     token match {
       case x: Constant =>
         x
@@ -14,18 +19,20 @@ object Dereferencer {
         } else {
           Observable(Constant(id.name))
         }
+      case Box(x: Box) =>
+        apply(x)
       case x: Box =>
-        apply(scope)(x.token) match {
+        apply(x.token) match {
           case t: Observable =>
             Operation(Noop, Seq(), t)
           case t =>
             Operation(BoxOp, Seq(), t)
         }
       case observable: Observable =>
-        Observable(apply(scope)(observable.token))
+        Observable(apply(observable.token))
       case operation: Operation =>
-        val dereferencedInputs = operation.inputs.map(apply(scope))
-        val dereferencedOutput = apply(scope)(operation.output)
+        val dereferencedInputs = operation.inputs.map(apply)
+        val dereferencedOutput = apply(operation.output)
 
         OperationDereferencer(Operation(operation.operator, dereferencedInputs, dereferencedOutput))
     }
