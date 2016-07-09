@@ -4,6 +4,8 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.rpn.expression.Assign
 import pl.msulima.vistula.transpiler.{Scope, rpn}
 
+case class ScopedResult(scope: Scope, token: Constant)
+
 object Transpiler {
 
   def scoped(program: Seq[Ast.stmt]): String = {
@@ -44,9 +46,9 @@ object Transpiler {
       case Observable(op) =>
         toConstant(op)
       case Operation(op@RxMapOp(_), operands, output) =>
-        op(operands.map(toConstant).toList, toConstant(
+        op(operands.map(toConstant).distinct.toList, toConstant(
           SubstituteObservables(
-            operands.map(_.asInstanceOf[Observable]),
+            operands.map(_.asInstanceOf[Observable]).distinct,
             output.asInstanceOf[Operation]
           ))
         )

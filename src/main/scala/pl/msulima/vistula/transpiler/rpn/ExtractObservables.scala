@@ -10,7 +10,7 @@ object ExtractObservables {
 
   private def findInputObservables(operation: Operation) = {
     val xs = operation.inputs.map({
-      case input@Observable(Operation(RxMapOp(false), inputs, output)) =>
+      case Observable(Operation(RxMapOp(false), inputs, output)) =>
         (inputs, output)
       case input: Observable =>
         (Seq(input), input)

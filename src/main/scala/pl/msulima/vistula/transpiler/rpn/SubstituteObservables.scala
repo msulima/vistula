@@ -5,11 +5,15 @@ object SubstituteObservables {
   def apply(observables: Seq[Observable], operation: Operation): Token = {
     val mapping = createMapping(observables)
 
+    apply(mapping, operation)
+  }
+
+  private def apply(mapping: Map[Observable, String], operation: Operation): Token = {
     operation.copy(inputs = operation.inputs.map({
       case input: Observable =>
         Constant(mapping(input))
       case operation: Operation =>
-        apply(observables, operation)
+        apply(mapping, operation)
       case input =>
         input
     }))
