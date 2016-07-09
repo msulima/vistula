@@ -16,7 +16,10 @@ object Dereferencer {
       case observable: Observable =>
         Observable(apply(observable.token))
       case operation: Operation =>
-        OperationDereferencer(operation.copy(inputs = operation.inputs.map(apply)))
+        val dereferencedInputs = operation.inputs.map(apply)
+        val dereferencedOutput = apply(operation.output)
+
+        OperationDereferencer(Operation(operation.operator, dereferencedInputs, dereferencedOutput))
     }
   }
 }

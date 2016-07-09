@@ -17,6 +17,8 @@ object Transpiler extends App {
     //    println("^", token)
 
     token match {
+      case Box(op) =>
+        BoxOp(List(), toConstant(op))
       case Observable(op) =>
         toConstant(op)
       case Operation(op@RxMapOp(_), operands, output) =>
