@@ -19,11 +19,12 @@ object Tokenizer {
   }
 
   def apply: PartialFunction[Ast.expr, Token] = {
-    BinOp.apply
-      .orElse(Primitives.apply)
-      .orElse(FunctionCall.apply)
-      .orElse(Name.apply)
+    Primitives.apply
+      .orElse(BinOp.apply)
       .orElse(Dereference.apply)
+      .orElse(FunctionCall.apply)
+      .orElse(Lambda.apply)
+      .orElse(Name.apply)
       .orElse(Tuple.apply)
   }
 }
