@@ -1,5 +1,7 @@
 package pl.msulima.vistula.transpiler
 
+import pl.msulima.vistula.parser.Ast
+
 package object rpn {
 
   sealed trait Token
@@ -9,6 +11,8 @@ package object rpn {
   case class Box(token: Token) extends Token
 
   case class Constant(value: String) extends Token
+
+  case class Reference(id: Ast.identifier) extends Token
 
   trait Operator {
 

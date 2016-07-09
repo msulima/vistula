@@ -11,9 +11,7 @@ object Vistula {
   }
 
   def toJavaScriptRpn(input: String): String = {
-    parse(input).map(stmt => {
-      rpn.Transpiler.apply(stmt).value
-    }).mkString("", ";\n", ";")
+    rpn.Transpiler.scoped(parse(input))
   }
 
   private def parse(input: String) = {
