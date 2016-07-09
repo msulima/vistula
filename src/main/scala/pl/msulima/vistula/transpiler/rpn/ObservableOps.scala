@@ -19,7 +19,7 @@ case object Noop extends Operator {
 case object UnboxOp extends Operator {
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(s"${operands.head.value}.rxLastValue()")
+    Constant(s"${output.value}.rxLastValue()")
   }
 }
 
