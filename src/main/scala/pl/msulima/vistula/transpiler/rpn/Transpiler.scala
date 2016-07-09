@@ -4,17 +4,17 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.rpn.expression.Assign
 import pl.msulima.vistula.transpiler.{Scope, rpn}
 
-object Transpiler extends App {
+object Transpiler {
 
   def scoped(program: Seq[Ast.stmt]): String = {
-    program.foldLeft(ScopedResult(Scope(Seq(), Seq(), mutable = false), Constant("")))((acc, stmt) => {
+    program.foldLeft(ScopedResult(pl.msulima.vistula.transpiler.Transpiler.EmptyScope, Constant("")))((acc, stmt) => {
       val result = apply(acc.scope)(stmt)
 
       result.copy(token = Constant(acc.token.value + result.token.value + ";\n"))
     }).token.value.dropRight(1)
   }
 
-  def apply(scope: Scope): PartialFunction[Ast.stmt, ScopedResult] = {
+  private def apply(scope: Scope): PartialFunction[Ast.stmt, ScopedResult] = {
     rpn.Tokenizer.applyStmt.andThen(Dereferencer.apply(scope)).andThen(extractScope(scope))
   }
 
@@ -38,8 +38,6 @@ object Transpiler extends App {
   }
 
   private def toConstant(token: Token): Constant = {
-    //    println("^", token)
-
     token match {
       case Box(op) =>
         BoxOp(List(), toConstant(op))

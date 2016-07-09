@@ -8,10 +8,12 @@ class RpnSpec extends Specification {
   "test" in {
 
     val program =
-      """arrayFilter(XS, lambda X, Y: X + 2)""".stripMargin
+      """let body = "# html:/pl/msulima/vistula/transpiler/templates.vst.html"""".stripMargin
 
     Vistula.toJavaScriptRpn(program) must_==
-      """arrayFilter(XS, (X, Y) => X.rxMap($arg => ($arg + 2)));""".stripMargin
+      """const body = vistula.dom.createElement("span", [], [
+        |    vistula.dom.textObservable(X)
+        |]);""".stripMargin
   }
 
   "transpiles generator" in {

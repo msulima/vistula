@@ -19,7 +19,11 @@ object Tokenizer {
   }
 
   def apply: PartialFunction[Ast.expr, Token] = {
-    Primitives.apply
+    val priorities =
+      HtmlReference.apply
+        .orElse(Primitives.apply)
+
+    priorities
       .orElse(BinOp.apply)
       .orElse(Dereference.apply)
       .orElse(FunctionCall.apply)

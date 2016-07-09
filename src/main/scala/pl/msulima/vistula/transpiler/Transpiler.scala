@@ -5,7 +5,7 @@ import pl.msulima.vistula.util.Indent
 
 object Transpiler {
 
-  val EmptyScope = new Scope(Seq(), Seq(), mutable = true)
+  val EmptyScope = new Scope(Seq(), Seq(), mutable = false)
 
   def wrap(program: Seq[Ast.stmt]): String = {
     if (program.size == 1) {
