@@ -30,7 +30,7 @@ class Expression(scope: Scope) {
   }
 
   private lazy val parseExpression: PartialFunction[Ast.expr, CodeTemplate] = {
-    val byRpn = rpn.Transformer.applyExpr(scope).andThen(c => CodeTemplate(c.program.map(rpn.Transpiler.toConstant).mkString(";"), Static))
+    val byRpn = rpn.Transformer.applyExpr(scope).andThen(c => CodeTemplate(rpn.Transpiler.toJavaScript(c.program), Static))
 
     byRpn.orElse(Generator.apply).orElse(template.transpiler.Expression.apply)
   }

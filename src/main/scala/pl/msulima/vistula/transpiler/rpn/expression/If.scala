@@ -1,6 +1,7 @@
 package pl.msulima.vistula.transpiler.rpn.expression
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.parser.Ast.stmt
 import pl.msulima.vistula.transpiler.rpn._
 import pl.msulima.vistula.util.Indent
 
@@ -8,10 +9,11 @@ case object If extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.If(testExpr, body, orElse) =>
-      val b = Box(Operation(Wrap, body.map(Tokenizer.applyStmt), Constant("ignore")))
-      val e = Box(Operation(Wrap, orElse.map(Tokenizer.applyStmt), Constant("ignore")))
+      Operation(If, Seq(transpile(body), transpile(orElse)), Tokenizer.apply(testExpr))
+  }
 
-      Operation(If, Seq(b, e), Tokenizer.apply(testExpr))
+  private def transpile(body: Seq[stmt]) = {
+    Box(Transformer.returnLast(body))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {

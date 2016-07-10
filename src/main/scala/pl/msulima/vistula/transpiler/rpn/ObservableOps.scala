@@ -24,7 +24,7 @@ case object Wrap extends Operator {
     } else {
       Constant(
         s"""vistula.wrap(() => {
-            |${Indent.leftPad(operands.map(_.value))}
+            |${Indent.leftPad(Transpiler.toJavaScript(operands))}
             |})""".stripMargin)
     }
   }

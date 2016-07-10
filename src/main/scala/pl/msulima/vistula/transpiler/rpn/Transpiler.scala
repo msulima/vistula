@@ -6,12 +6,14 @@ import pl.msulima.vistula.parser.Ast
 object Transpiler {
 
   def scoped(program: Seq[Ast.stmt]): String = {
-    val result = Transformer.scoped(program)
-
-    result.program.map(toConstant).map(_.value).mkString("", ";\n", ";")
+    toJavaScript(Transformer.scoped(program))
   }
 
-  def toConstant(token: Token): Constant = {
+  def toJavaScript(program: Seq[Token]): String = {
+    program.map(toConstant).map(_.value).mkString("", ";\n", ";")
+  }
+
+  private def toConstant(token: Token): Constant = {
     token match {
       case Box(op) =>
         BoxOp(List(), toConstant(op))

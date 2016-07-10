@@ -21,6 +21,8 @@ class Dereferencer(scope: Scope) {
         unbox(boxToken)
       case observable: Observable =>
         Observable(apply(observable.token))
+      case operation@Operation(Wrap, _, _) =>
+        operation
       case operation: Operation =>
         val dereferencedInputs = operation.inputs.map(apply)
         val dereferencedOutput = apply(operation.output)
