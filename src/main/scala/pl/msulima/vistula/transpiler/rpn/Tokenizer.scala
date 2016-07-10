@@ -15,7 +15,9 @@ object Tokenizer {
   }
 
   def applyStmt: PartialFunction[Ast.stmt, Token] = {
-    expr.orElse(Assign.apply)
+    expr
+      .orElse(Assign.apply)
+      .orElse(If.apply)
   }
 
   def apply: PartialFunction[Ast.expr, Token] = {
@@ -26,10 +28,12 @@ object Tokenizer {
 
     priorities
       .orElse(BinOp.apply)
+      .orElse(Compare.apply)
       .orElse(Dereference.apply)
       .orElse(FunctionCall.apply)
       .orElse(Lambda.apply)
       .orElse(Name.apply)
       .orElse(Tuple.apply)
+      .orElse(UnaryOp.apply)
   }
 }

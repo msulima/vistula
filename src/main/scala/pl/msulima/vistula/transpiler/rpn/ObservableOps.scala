@@ -1,6 +1,6 @@
 package pl.msulima.vistula.transpiler.rpn
 
-import pl.msulima.vistula.util.ToArray
+import pl.msulima.vistula.util.{Indent, ToArray}
 
 case object BoxOp extends Operator {
 
@@ -13,6 +13,20 @@ case object Noop extends Operator {
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
     output
+  }
+}
+
+case object Wrap extends Operator {
+
+  override def apply(operands: List[Constant], output: Constant): Constant = {
+    if (operands.size == 1) {
+      operands.head
+    } else {
+      Constant(
+        s"""vistula.wrap(() => {
+            |${Indent.leftPad(operands.map(_.value))}
+            |})""".stripMargin)
+    }
   }
 }
 
