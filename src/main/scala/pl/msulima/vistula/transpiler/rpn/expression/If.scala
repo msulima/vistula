@@ -9,7 +9,11 @@ case object If extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.If(testExpr, body, orElse) =>
-      Operation(If, Seq(transpile(body), transpile(orElse)), Tokenizer.apply(testExpr))
+      Operation(If, Seq(
+        Tokenizer.boxed(testExpr),
+        transpile(body),
+        transpile(orElse)
+      ), Observable(Constant("ignore")))
   }
 
   private def transpile(body: Seq[stmt]) = {
@@ -18,9 +22,9 @@ case object If extends Operator {
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
     val transpiled =
-      s"""${output.value},
-         |${operands.head.value},
-         |${operands(1).value}""".stripMargin
+      s"""${operands.head.value},
+         |${operands(1).value},
+         |${operands(2).value}""".stripMargin
 
     Constant(
       s"""vistula.ifStatement(

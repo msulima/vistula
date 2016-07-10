@@ -4,7 +4,7 @@ import pl.msulima.vistula.parser.Ast.identifier
 import pl.msulima.vistula.transpiler.Scope
 
 object Dereferencer {
-  def apply(scope: Scope)(token: Token): Token = {
+  def apply(scope: Scope, token: Token): Token = {
     new Dereferencer(scope).apply(token)
   }
 }
@@ -47,6 +47,8 @@ class Dereferencer(scope: Scope) {
         inner
       case _ =>
         inner match {
+          case Observable(t: Constant) =>
+            t
           case t: Observable =>
             Operation(Noop, Seq(), t)
           case t =>

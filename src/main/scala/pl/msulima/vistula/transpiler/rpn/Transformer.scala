@@ -12,11 +12,22 @@ object Transformer {
     val result = scoped(program)
 
     if (result.isEmpty || result.size == 1) {
-      result.head
+      checkObservable(result.last, result)
     } else {
       val body = result.init :+ Operation(Return, Seq(result.last), Constant("ignore"))
 
-      Operation(Wrap, body, Constant("ignore"))
+      checkObservable(result.last, body)
+    }
+  }
+
+  private def checkObservable(token: Token, body: Seq[Token]) = {
+    val useFlatMap = token.isInstanceOf[Observable]
+    val operation = Operation(Wrap, body, Constant("ignore"))
+
+    if (useFlatMap) {
+      Observable(operation)
+    } else {
+      operation
     }
   }
 
@@ -29,14 +40,18 @@ object Transformer {
   }
 
   private def apply(scope: Scope): PartialFunction[Ast.stmt, ScopedResult] = {
-    rpn.Tokenizer.applyStmt.andThen(Dereferencer.apply(scope)).andThen(extractScope(scope))
+    rpn.Tokenizer.applyStmt.andThen(run(scope))
   }
 
   def applyExpr(scope: Scope): PartialFunction[Ast.expr, ScopedResult] = {
-    rpn.Tokenizer.apply.andThen(Dereferencer.apply(scope)).andThen(extractScope(scope))
+    rpn.Tokenizer.apply.andThen(run(scope))
   }
 
-  private def extractScope(currentScope: Scope)(token: Token) = {
+  private def run(scope: Scope)(token: Token): ScopedResult = {
+    extractScope(scope, Dereferencer(scope, token))
+  }
+
+  private def extractScope(currentScope: Scope, token: Token) = {
     token match {
       case Operation(Assign(identifier, mutable), _, _) =>
         val nextScope = if (mutable) {

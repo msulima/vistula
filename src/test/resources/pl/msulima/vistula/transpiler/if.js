@@ -5,7 +5,7 @@ vistula.ifStatement(
         return Y;
     }),
     vistula.ifStatement(
-        X.rxMap($arg => ($arg < 0)).rxMap($arg => (!($arg))),
+        X.rxMap($arg => (!($arg < 0))),
         X,
         vistula.constantObservable(3)
     )
