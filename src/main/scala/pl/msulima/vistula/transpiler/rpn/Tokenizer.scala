@@ -21,6 +21,7 @@ object Tokenizer {
   def apply: PartialFunction[Ast.expr, Token] = {
     val priorities =
       HtmlReference.apply
+        .orElse(JavaScriptReference.apply)
         .orElse(Primitives.apply)
 
     priorities

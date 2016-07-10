@@ -2,7 +2,6 @@ package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template
-import pl.msulima.vistula.transpiler.expression._
 
 case class Result(code: String, mutable: Boolean)
 
@@ -33,7 +32,6 @@ class Expression(scope: Scope) {
   private lazy val parseExpression: PartialFunction[Ast.expr, CodeTemplate] = {
     val byRpn = rpn.Transpiler.applyExpr(scope).andThen(c => CodeTemplate(c.token.value, Static))
 
-    byRpn.orElse(Generator.apply.orElse(template.transpiler.Expression.apply)
-      .orElse(Lambda.apply).orElse(Dereference.apply).orElse(Tuple.apply(scope)))
+    byRpn.orElse(Generator.apply).orElse(template.transpiler.Expression.apply)
   }
 }
