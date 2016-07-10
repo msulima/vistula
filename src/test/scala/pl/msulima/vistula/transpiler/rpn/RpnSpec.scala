@@ -11,8 +11,6 @@ class RpnSpec extends Specification {
       """if X < 3:
         |  let Y = X + 3
         |  Y
-        |elif not X < 0:
-        |  X
         |else:
         |  3
         | """.stripMargin

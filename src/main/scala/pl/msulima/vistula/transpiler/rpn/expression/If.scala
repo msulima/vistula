@@ -4,7 +4,7 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.rpn._
 import pl.msulima.vistula.util.Indent
 
-object If extends Operator {
+case object If extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.If(testExpr, body, orElse) =>
