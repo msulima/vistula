@@ -55,7 +55,7 @@ object Template {
 
   private def apply: PartialFunction[parser.Node, String] = {
     case parser.ObservableNode(identifier) =>
-      s"vistula.dom.textObservable(${VistulaTranspiler(Ast.stmt.Expr(identifier))})";
+      s"vistula.dom.textObservable(${VistulaTranspiler(Ast.stmt.Expr(identifier)).dropRight(1)})";
     case parser.IfNode(expr, body, elseBody) =>
       s"vistula.ifChangedArrays(${VistulaTranspiler(Ast.stmt.Expr(expr))}, ${ToArray(apply(body))}, ${ToArray(apply(elseBody))})";
     case parser.TextNode(text) =>
