@@ -1,0 +1,6 @@
+def a(X):
+  X + 2
+
+def b(X, Y):
+  let Z = X + Y
+  Z + 2

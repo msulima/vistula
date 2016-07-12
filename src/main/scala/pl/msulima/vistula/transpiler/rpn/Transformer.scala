@@ -8,27 +8,35 @@ case class ScopedResult(scope: Scope, program: Seq[Token])
 
 object Transformer {
 
-  def returnLast(program: Seq[Ast.stmt]): Token = {
+  def wrapAndReturnLast(program: Seq[Ast.stmt]): Token = {
     val result = scoped(program)
 
-    if (result.isEmpty || result.size == 1) {
-      checkObservable(result.last, result)
+    val body = if (result.isEmpty || result.size == 1) {
+      result
     } else {
-      val body = result.init :+ Operation(Return, Seq(result.last), Constant("ignore"))
-
-      checkObservable(result.last, body)
+      result.init :+ Operation(Return, Seq(result.last), Constant("ignore"))
     }
+
+    Box(checkObservable(result.last, body))
   }
 
   private def checkObservable(token: Token, body: Seq[Token]) = {
     val useFlatMap = token.isInstanceOf[Observable]
-    val operation = Operation(Wrap, body, Constant("ignore"))
+    val operation = Operation(WrapScope, body, Constant("ignore"))
 
     if (useFlatMap) {
       Observable(operation)
     } else {
       operation
     }
+  }
+
+  def returnLast(program: Seq[Ast.stmt]): Token = {
+    val result = scoped(program)
+
+    val toReturn = Operation(Return, Seq(result.last), Constant("ignore"))
+
+    Operation(FunctionScope, result.init :+ toReturn, Constant("ignore"))
   }
 
   def scoped(program: Seq[Ast.stmt]): Seq[Token] = {

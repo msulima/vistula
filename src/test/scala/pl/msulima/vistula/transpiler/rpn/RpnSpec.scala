@@ -8,22 +8,14 @@ class RpnSpec extends Specification {
   "test" in {
 
     val program =
-      """if X < 3:
-        |  let Y = X + 3
-        |  Y
-        |else:
-        |  3
+      """def a(X):
+        |  X + 2
         | """.stripMargin
 
     Vistula.toJavaScriptRpn(program) must_==
-      """vistula.ifStatement(
-        |    X.rxMap($arg => ($arg < 3)),
-        |    vistula.wrap(() => {
-        |        const Y = X.rxMap($arg => ($arg + 3));
-        |        return Y;
-        |    }),
-        |    vistula.constantObservable(3)
-        |);""".stripMargin
+      """function a(X) {
+        |    return X.rxMap($arg => ($arg + 2));
+        |};""".stripMargin
   }
 
   "transpiles generator" in {

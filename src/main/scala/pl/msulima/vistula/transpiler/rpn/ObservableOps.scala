@@ -16,7 +16,14 @@ case object Noop extends Operator {
   }
 }
 
-case object Wrap extends Operator {
+case object FunctionScope extends Operator {
+
+  override def apply(operands: List[Constant], output: Constant): Constant = {
+    Constant(Transpiler.toJavaScript(operands))
+  }
+}
+
+case object WrapScope extends Operator {
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
     if (operands.size == 1) {
