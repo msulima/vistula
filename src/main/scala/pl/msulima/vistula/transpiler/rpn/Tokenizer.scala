@@ -17,9 +17,10 @@ object Tokenizer {
   def applyStmt: PartialFunction[Ast.stmt, Token] = {
     expr
       .orElse(Assign.apply)
+      .orElse(FunctionDef.apply)
       .orElse(If.apply)
       .orElse(Return.apply)
-      .orElse(FunctionDef.apply)
+      .orElse(Loop.apply)
   }
 
   def apply: PartialFunction[Ast.expr, Token] = {
