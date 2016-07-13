@@ -9,7 +9,7 @@ object Name {
     case Ast.expr.Name(id, Ast.expr_context.Load) =>
       Reference(id)
     case Ast.expr.Attribute(expr, id, Ast.expr_context.Load) =>
-      Observable(Operation(Attribute, Seq(Tokenizer.apply(expr)), Observable(Constant(id.name))))
+      Operation(Attribute, Seq(Tokenizer.apply(expr)), Observable(Constant(id.name)))
   }
 }
 

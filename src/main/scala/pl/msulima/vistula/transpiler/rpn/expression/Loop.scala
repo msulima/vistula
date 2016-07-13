@@ -10,7 +10,7 @@ object Loop extends Operator {
     case Ast.stmt.For(Ast.expr.Name(Ast.identifier(name), Ast.expr_context.Load), iterExpr, body, _) =>
       val iter = Tokenizer.boxed(iterExpr)
 
-      Observable(Operation(Loop, Seq(Constant(name), iter), Transformer.returnLast(body)))
+      Operation(Loop, Seq(Constant(name), iter), Observable(Transformer.returnLast(body)))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
