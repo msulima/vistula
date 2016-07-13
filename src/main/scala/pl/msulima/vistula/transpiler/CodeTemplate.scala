@@ -13,16 +13,6 @@ case object Static extends Mapper {
   override def mapMethod = "rxMap"
 }
 
-case object RxMap extends Mapper {
-
-  override def mapMethod = "rxMap"
-}
-
-case object RxFlatMap extends Mapper {
-
-  override def mapMethod = "rxFlatMap"
-}
-
 case class CodeTemplate(template: String, mapper: Mapper, dependencies: Seq[Ast.expr] = Seq()) {
 
   def resolve(upstream: Seq[Result]) = {
