@@ -4,6 +4,7 @@ let X = A + b
 const Y = A + b
 let Z = f(A + 2, b)
 const W = *(F(A, b))
+const e = 2 + 2
 
 def F(A, B):
   const a = A

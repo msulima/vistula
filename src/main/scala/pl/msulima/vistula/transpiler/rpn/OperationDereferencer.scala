@@ -2,7 +2,7 @@ package pl.msulima.vistula.transpiler.rpn
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.Scope
-import pl.msulima.vistula.transpiler.rpn.expression.Reference
+import pl.msulima.vistula.transpiler.rpn.expression.{Dereference, Reference}
 
 class OperationDereferencer(scope: Scope) {
 
@@ -10,15 +10,17 @@ class OperationDereferencer(scope: Scope) {
     val (op, observables) = ExtractObservables(operation)
 
     if (op.operator == Reference) {
+      reference(op, observables)
+    } else if (op.operator == Dereference) {
       dereference(op, observables)
     } else {
       map(op, observables)
     }
   }
 
-  private def dereference(operation: Operation, observables: Seq[Token]): Token = {
+  private def reference(operation: Operation, observables: Seq[Token]): Token = {
     if (operation.inputs.isEmpty) {
-      dereference(operation.output.asInstanceOf[Constant].value)
+      reference(operation.output.asInstanceOf[Constant].value)
     } else {
       operation.inputs.head match {
         case observable: Observable =>
@@ -29,11 +31,20 @@ class OperationDereferencer(scope: Scope) {
     }
   }
 
-  private def dereference(id: String): Token = {
+  private def reference(id: String): Token = {
     if (scope.variables.contains(Ast.identifier(id))) {
       Constant(id)
     } else {
       Observable(Constant(id))
+    }
+  }
+
+  private def dereference(operation: Operation, observables: Seq[Token]): Token = {
+    map(operation, observables) match {
+      case Operation(Dereference, Nil, op) =>
+        op
+      case Observable(op) =>
+        op
     }
   }
 

@@ -3,10 +3,14 @@ package pl.msulima.vistula.transpiler.rpn.expression
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.rpn._
 
-object Dereference {
+case object Dereference extends Operator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Dereference(value) =>
-      Operation(UnboxOp, Seq(), Box(Tokenizer.apply(value)))
+      Operation(Dereference, Seq(), Tokenizer.apply(value))
+  }
+
+  override def apply(operands: List[Constant], output: Constant): Constant = {
+    Constant(s"${output.value}.rxLastValue()")
   }
 }

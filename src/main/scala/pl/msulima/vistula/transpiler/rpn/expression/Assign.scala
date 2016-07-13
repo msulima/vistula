@@ -12,7 +12,7 @@ object Assign extends Operator {
       val value = if (mutable) {
         Box(body)
       } else {
-        body
+        Operation(Dereference, Seq(), body)
       }
 
       Operation(Declare(identifier, mutable), Seq(), value)

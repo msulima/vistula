@@ -37,13 +37,6 @@ case object WrapScope extends Operator {
   }
 }
 
-case object UnboxOp extends Operator {
-
-  override def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(s"${output.value}.rxLastValue()")
-  }
-}
-
 case class RxMapOp(useFlatMap: Boolean) extends Operator {
 
   override def apply(operands: List[Constant], output: Constant): Constant = {

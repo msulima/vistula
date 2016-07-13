@@ -2,4 +2,5 @@ const x = 2
 const a = x.y.z
 const b = x.y()
 const C = *Y
-let D = *Y
+const D = Y
+let E = *Y
