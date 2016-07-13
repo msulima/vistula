@@ -44,6 +44,7 @@ object Tokenizer {
       .orElse(Compare.apply)
       .orElse(Dereference.apply)
       .orElse(FunctionCall.apply)
+      .orElse(Generator.apply)
       .orElse(Lambda.apply)
       .orElse(Reference.apply)
       .orElse(Tuple.apply)

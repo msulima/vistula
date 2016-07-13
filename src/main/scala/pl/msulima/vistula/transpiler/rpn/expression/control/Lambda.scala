@@ -3,7 +3,7 @@ package pl.msulima.vistula.transpiler.rpn.expression.control
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.rpn._
 
-object Lambda extends Operator {
+case object Lambda extends Operator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Lambda(Ast.arguments(args, None, None, Seq()), body) =>
