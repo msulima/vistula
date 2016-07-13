@@ -9,6 +9,10 @@ object Tokenizer {
     Box(apply(expr))
   }
 
+  def boxed(stmt: Ast.stmt) = {
+    Box(applyStmt(stmt))
+  }
+
   private val expr: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.Expr(ex) =>
       apply(ex)

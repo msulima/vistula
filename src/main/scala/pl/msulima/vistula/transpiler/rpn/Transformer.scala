@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.rpn
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.rpn.expression.{Assign, Return}
+import pl.msulima.vistula.transpiler.rpn.expression.{Declare, Return}
 import pl.msulima.vistula.transpiler.{Scope, rpn}
 
 case class ScopedResult(scope: Scope, program: Seq[Token])
@@ -61,7 +61,7 @@ object Transformer {
 
   private def extractScope(currentScope: Scope, token: Token) = {
     token match {
-      case Operation(Assign(identifier, mutable), _, _) =>
+      case Operation(Declare(identifier, mutable), _, _) =>
         val nextScope = if (mutable) {
           currentScope.copy(observables = currentScope.observables :+ identifier)
         } else {

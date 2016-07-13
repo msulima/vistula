@@ -49,6 +49,6 @@ object Transpiler {
   def scoped(scope: Scope, stmt: Ast.stmt): ScopedResult = {
     val base = FunctionDef.apply.andThen(code => scope(code))
 
-    base.orElse(Expression.apply(scope).orElse(Assign.apply(scope)))(stmt)
+    base.orElse(Expression.apply(scope))(stmt)
   }
 }
