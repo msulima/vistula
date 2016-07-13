@@ -2,15 +2,18 @@ package pl.msulima.vistula.transpiler.rpn
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.Scope
-import pl.msulima.vistula.transpiler.rpn.expression.{Dereference, Reference}
+import pl.msulima.vistula.transpiler.rpn.expression.{Dereference, FunctionCall, Reference}
 
 class OperationDereferencer(scope: Scope) {
 
   def apply(operation: Operation): Token = {
     val (op, observables) = ExtractObservables(operation)
 
+    // FIXME hacky as fuck
     if (op.operator == Reference) {
       reference(op, observables)
+    } else if (op.operator == FunctionCall) {
+      functionCall(op, observables)
     } else if (op.operator == Dereference) {
       dereference(op, observables)
     } else {
@@ -28,6 +31,17 @@ class OperationDereferencer(scope: Scope) {
         case _ =>
           operation.copy(output = operation.output.asInstanceOf[Observable].token)
       }
+    }
+  }
+
+  private def functionCall(operation: Operation, observables: Seq[Token]): Token = {
+    operation.inputs.head match {
+      case observable: Observable =>
+        map(operation, observables)
+      case observable: Constant =>
+        map(operation, observables)
+      case _ =>
+        operation.copy(output = operation.output.asInstanceOf[Observable].token)
     }
   }
 
