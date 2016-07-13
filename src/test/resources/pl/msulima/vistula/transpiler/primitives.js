@@ -1,4 +1,4 @@
-vistula.constantObservable([
+const A = vistula.constantObservable([
     vistula.constantObservable(1),
     vistula.constantObservable("A\"B"),
     vistula.constantObservable({

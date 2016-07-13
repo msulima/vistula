@@ -25,7 +25,7 @@ class RpnSpec extends Specification {
       """
         |A + 2;
         |A + 2 + B + False;
-        |[1, 2 + 3, B, C - 4];
+        |let A = [1, 2 + 3, B, C - 4]
         |A.B;
         |F(A, 3);
         |F(A, 3).B;
@@ -38,7 +38,7 @@ class RpnSpec extends Specification {
         |    A,
         |    B
         |]).rxMap($args => ($args[0] + 2 + $args[1] + false));
-        |vistula.constantObservable([
+        |const A = vistula.constantObservable([
         |    vistula.constantObservable(1),
         |    vistula.constantObservable(2 + 3),
         |    B,

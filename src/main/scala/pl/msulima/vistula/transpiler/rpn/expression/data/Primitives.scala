@@ -1,4 +1,4 @@
-package pl.msulima.vistula.transpiler.rpn.expression
+package pl.msulima.vistula.transpiler.rpn.expression.data
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.rpn.{Tokenizer, _}
@@ -10,13 +10,13 @@ object Primitives {
     case expr: Ast.expr if static.isDefinedAt(expr) =>
       Constant(static(expr))
     case Ast.expr.List(elts, Ast.expr_context.Load) =>
-      Box(Operation(StaticArray, elts.map(expr => Tokenizer.boxed(expr)), Tokenizer.Ignored))
+      Operation(StaticArray, elts.map(expr => Tokenizer.boxed(expr)), Tokenizer.Ignored)
     case Ast.expr.Dict(keys, values) =>
       val dict = keys.zip(values).flatMap({
         case (Ast.expr.Str(key), expr) =>
           Seq(Constant(s""""$key""""), Tokenizer.boxed(expr))
       })
-      Box(Operation(StaticDict, dict, Tokenizer.Ignored))
+      Operation(StaticDict, dict, Tokenizer.Ignored)
   }
 
   private def static: PartialFunction[Ast.expr, String] = {

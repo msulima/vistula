@@ -1,9 +1,9 @@
-package pl.msulima.vistula.transpiler.rpn.expression
+package pl.msulima.vistula.transpiler.rpn.expression.data
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.rpn._
 
-object JavaScriptReference {
+object InlineJavaScript {
 
   private val MagicInlineJavascriptPrefix = "# javascript\n"
 
@@ -11,6 +11,6 @@ object JavaScriptReference {
     case Ast.expr.Str(x) if x.startsWith(MagicInlineJavascriptPrefix) =>
       val content = x.stripPrefix(MagicInlineJavascriptPrefix)
 
-      Operation(Noop, List(), Observable(Constant(content)))
+      Operation(Noop, Seq(), Observable(Constant(content)))
   }
 }

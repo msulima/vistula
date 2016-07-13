@@ -1,4 +1,4 @@
-package pl.msulima.vistula.transpiler.rpn.expression
+package pl.msulima.vistula.transpiler.rpn.expression.data
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.transpiler.Template
@@ -6,7 +6,7 @@ import pl.msulima.vistula.transpiler.rpn._
 
 import scala.io.Source
 
-object HtmlReference {
+object InlineHtml {
 
   private val MagicInlineHtmlPrefix = "# html\n"
   private val MagicClasspathHtmlRegex = "^# html:(.+?)".r
@@ -25,6 +25,6 @@ object HtmlReference {
   }
 
   private def toOperation(html: String) = {
-    Operation(Noop, List(), Observable(Constant(html)))
+    Operation(Noop, Seq(), Observable(Constant(html)))
   }
 }

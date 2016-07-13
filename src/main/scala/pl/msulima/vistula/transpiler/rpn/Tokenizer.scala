@@ -1,7 +1,10 @@
 package pl.msulima.vistula.transpiler.rpn
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.rpn.expression._
+import pl.msulima.vistula.transpiler.rpn.expression.arithmetic.{BinOp, Compare, UnaryOp}
+import pl.msulima.vistula.transpiler.rpn.expression.control._
+import pl.msulima.vistula.transpiler.rpn.expression.data.{InlineHtml, InlineJavaScript, Primitives, Tuple}
+import pl.msulima.vistula.transpiler.rpn.expression.reference._
 
 object Tokenizer {
 
@@ -23,6 +26,7 @@ object Tokenizer {
   def applyStmt: PartialFunction[Ast.stmt, Token] = {
     expr
       .orElse(Assign.apply)
+      .orElse(Declare.apply)
       .orElse(FunctionDef.apply)
       .orElse(If.apply)
       .orElse(Return.apply)
@@ -31,8 +35,8 @@ object Tokenizer {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     val priorities =
-      HtmlReference.apply
-        .orElse(JavaScriptReference.apply)
+      InlineHtml.apply
+        .orElse(InlineJavaScript.apply)
         .orElse(Primitives.apply)
 
     priorities

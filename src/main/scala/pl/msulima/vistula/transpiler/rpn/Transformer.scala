@@ -1,7 +1,8 @@
 package pl.msulima.vistula.transpiler.rpn
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.rpn.expression.{Declare, Return}
+import pl.msulima.vistula.transpiler.rpn.expression.control.Return
+import pl.msulima.vistula.transpiler.rpn.expression.reference.Declare
 import pl.msulima.vistula.transpiler.{Scope, rpn}
 
 case class ScopedResult(scope: Scope, program: Seq[Token])

@@ -2,7 +2,7 @@ package pl.msulima.vistula.transpiler.rpn
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.Scope
-import pl.msulima.vistula.transpiler.rpn.expression.{Dereference, FunctionCall, Reference}
+import pl.msulima.vistula.transpiler.rpn.expression.reference.{Dereference, FunctionCall, Reference}
 
 class OperationDereferencer(scope: Scope) {
 

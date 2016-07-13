@@ -1,4 +1,4 @@
-package pl.msulima.vistula.transpiler.rpn.expression
+package pl.msulima.vistula.transpiler.rpn.expression.arithmetic
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.rpn.{Tokenizer, _}
