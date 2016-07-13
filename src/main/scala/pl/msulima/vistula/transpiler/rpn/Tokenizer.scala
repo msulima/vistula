@@ -5,6 +5,8 @@ import pl.msulima.vistula.transpiler.rpn.expression._
 
 object Tokenizer {
 
+  val Ignored = Constant("ignored")
+
   def boxed(expr: Ast.expr) = {
     Box(apply(expr))
   }

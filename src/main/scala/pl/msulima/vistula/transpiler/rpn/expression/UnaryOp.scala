@@ -8,7 +8,7 @@ case object UnaryOp extends Operator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.UnaryOp(Ast.unaryop.Not, operand) =>
-      Operation(UnaryOp, Seq(Tokenizer.apply(operand)), Constant("ignore"))
+      Operation(UnaryOp, Seq(Tokenizer.apply(operand)), Tokenizer.Ignored)
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {

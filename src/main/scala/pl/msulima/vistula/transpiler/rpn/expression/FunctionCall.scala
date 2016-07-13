@@ -7,9 +7,9 @@ case object FunctionCall extends Operator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Call(Ast.expr.Name(Ast.identifier(func), Ast.expr_context.Load), args, _, _, _) =>
-      Operation(FunctionCall, Constant(func) +: args.map(expr => Tokenizer.boxed(expr)), Observable(Constant("ignore")))
+      Operation(FunctionCall, Constant(func) +: args.map(expr => Tokenizer.boxed(expr)), Observable(Tokenizer.Ignored))
     case Ast.expr.Call(func, args, _, _, _) =>
-      Operation(FunctionCall, Tokenizer.apply(func) +: args.map(expr => Tokenizer.boxed(expr)), Observable(Constant("ignore")))
+      Operation(FunctionCall, Tokenizer.apply(func) +: args.map(expr => Tokenizer.boxed(expr)), Observable(Tokenizer.Ignored))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {

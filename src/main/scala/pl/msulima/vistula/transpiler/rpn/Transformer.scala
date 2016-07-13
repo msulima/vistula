@@ -14,7 +14,7 @@ object Transformer {
     val body = if (result.isEmpty || result.size == 1) {
       result
     } else {
-      result.init :+ Operation(Return, Seq(result.last), Constant("ignore"))
+      result.init :+ Operation(Return, Seq(result.last), Tokenizer.Ignored)
     }
 
     Box(checkObservable(result.last, body))
@@ -22,7 +22,7 @@ object Transformer {
 
   private def checkObservable(token: Token, body: Seq[Token]) = {
     val useFlatMap = token.isInstanceOf[Observable]
-    val operation = Operation(WrapScope, body, Constant("ignore"))
+    val operation = Operation(WrapScope, body, Tokenizer.Ignored)
 
     if (useFlatMap) {
       Observable(operation)
@@ -34,9 +34,9 @@ object Transformer {
   def returnLast(program: Seq[Ast.stmt]): Token = {
     val result = scoped(program)
 
-    val toReturn = Operation(Return, Seq(result.last), Constant("ignore"))
+    val toReturn = Operation(Return, Seq(result.last), Tokenizer.Ignored)
 
-    Operation(FunctionScope, result.init :+ toReturn, Constant("ignore"))
+    Operation(FunctionScope, result.init :+ toReturn, Tokenizer.Ignored)
   }
 
   def scoped(program: Seq[Ast.stmt]): Seq[Token] = {

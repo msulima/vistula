@@ -8,7 +8,7 @@ case object Return extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.Return(Some(value)) =>
-      Operation(Return, Seq(Tokenizer.apply(value)), Constant("ignore"))
+      Operation(Return, Seq(Tokenizer.apply(value)), Tokenizer.Ignored)
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {

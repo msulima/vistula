@@ -12,7 +12,7 @@ case object If extends Operator {
         Tokenizer.boxed(testExpr),
         Transformer.wrapAndReturnLast(body),
         Transformer.wrapAndReturnLast(orElse)
-      ), Observable(Constant("ignore")))
+      ), Observable(Tokenizer.Ignored))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
