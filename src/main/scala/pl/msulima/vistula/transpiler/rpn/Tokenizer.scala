@@ -39,7 +39,7 @@ object Tokenizer {
       .orElse(Dereference.apply)
       .orElse(FunctionCall.apply)
       .orElse(Lambda.apply)
-      .orElse(Name.apply)
+      .orElse(Reference.apply)
       .orElse(Tuple.apply)
       .orElse(UnaryOp.apply)
   }

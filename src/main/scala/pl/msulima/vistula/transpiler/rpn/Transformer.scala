@@ -60,17 +60,17 @@ object Transformer {
   }
 
   private def extractScope(currentScope: Scope, token: Token) = {
-    token match {
+    val nextScope = token match {
       case Operation(Declare(identifier, mutable), _, _) =>
-        val nextScope = if (mutable) {
+        if (mutable) {
           currentScope.copy(observables = currentScope.observables :+ identifier)
         } else {
           currentScope.copy(variables = currentScope.variables :+ identifier)
         }
-
-        ScopedResult(nextScope, Seq(token))
       case _ =>
-        ScopedResult(currentScope, Seq(token))
+        currentScope
     }
+
+    ScopedResult(nextScope, Seq(token))
   }
 }
