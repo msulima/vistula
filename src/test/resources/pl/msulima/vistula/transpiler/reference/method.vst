@@ -1,1 +1,6 @@
-W.X.Y(Z)
+W.X.F(Y)
+W.F(Y).Z
+const w = 2
+const y = 2
+w.x.f(y)
+w.f(y).z

@@ -27,10 +27,12 @@ class Dereferencer(operationDereferencer: OperationDereferencer) {
         val dereferencedOutput = apply(callee)
 
         val dereferencedInputs = dereferencedOutput match {
-          case Observable(t) =>
-            arguments.map(arg => apply(Box(arg)))
+          case Observable(t: Constant) =>
+            t +: arguments.map(arg => apply(Box(arg)))
+          case _: Observable =>
+            dereferencedOutput +: arguments.map(arg => apply(Box(arg)))
           case _ =>
-            arguments.map(apply)
+            dereferencedOutput +: arguments.map(apply)
         }
 
         operationDereferencer(Operation(FunctionCall, dereferencedInputs, dereferencedOutput))
