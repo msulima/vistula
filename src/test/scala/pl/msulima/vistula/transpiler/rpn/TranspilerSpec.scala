@@ -12,10 +12,7 @@ class TranspilerSpec extends Specification {
     }
   }
 
-  test("attribute")
   test("change")
-  test("expression")
-  test("function")
   test("if")
   test("inline_javascript")
   test("lambda")
@@ -23,6 +20,4 @@ class TranspilerSpec extends Specification {
   test("method")
   test("primitives")
   test("templates")
-  test("scope/dereference")
-  test("scope/mutable")
 }

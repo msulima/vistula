@@ -9,7 +9,7 @@ trait TranspilerSpecification {
   def transpileAndCompare(basePath: String)(file: String) = {
     file in {
       Vistula.toJavaScriptRpn(readFile(s"/pl/msulima/vistula/transpiler/$basePath/$file.vst")) must_==
-        readFile(s"/pl/msulima/vistula/transpiler/control/$file.js")
+        readFile(s"/pl/msulima/vistula/transpiler/$basePath/$file.js")
     }
   }
 }

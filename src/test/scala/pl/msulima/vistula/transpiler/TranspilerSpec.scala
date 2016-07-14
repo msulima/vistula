@@ -11,7 +11,6 @@ class TranspilerSpec extends Specification {
     }
   }
 
-  test("attribute")
   test("change")
   test("expression")
   test("if")
@@ -20,6 +19,4 @@ class TranspilerSpec extends Specification {
   test("method")
   test("primitives")
   test("templates")
-  test("scope/dereference")
-  test("scope/mutable")
 }

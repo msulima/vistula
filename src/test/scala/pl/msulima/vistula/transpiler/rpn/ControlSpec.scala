@@ -8,4 +8,5 @@ class ControlSpec extends Specification with TranspilerSpecification {
   def test = transpileAndCompare("control") _
 
   test("generator")
+  test("function_def")
 }
