@@ -9,7 +9,6 @@ class OperationDereferencer(scope: Scope) {
   def apply(operation: Operation): Token = {
     val (op, observables) = ExtractObservables(operation)
 
-    // FIXME hacky as fuck
     if (op.operator == Reference) {
       reference(op, observables)
     } else if (op.operator == Dereference) {
@@ -20,15 +19,15 @@ class OperationDereferencer(scope: Scope) {
   }
 
   private def reference(operation: Operation, observables: Seq[Token]): Token = {
-    if (operation.inputs.isEmpty) {
-      reference(operation.output.asInstanceOf[Constant].value)
-    } else {
-      operation.inputs.head match {
-        case observable: Observable =>
-          map(operation, observables)
-        case _ =>
-          operation.copy(output = operation.output.asInstanceOf[Observable].token)
-      }
+    val field = operation.output.asInstanceOf[Constant]
+
+    operation.inputs.headOption match {
+      case Some(observable: Observable) =>
+        map(operation.copy(output = Observable(field)), observables)
+      case Some(_) =>
+        operation
+      case None =>
+        reference(field.value)
     }
   }
 
