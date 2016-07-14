@@ -6,13 +6,11 @@ import pl.msulima.vistula.transpiler.rpn.{Tokenizer, _}
 case object FunctionCall extends Operator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
-    case Ast.expr.Call(Ast.expr.Name(Ast.identifier(func), Ast.expr_context.Load), args, _, _, _) =>
-      Operation(FunctionCall, Constant(func) +: args.map(expr => Tokenizer.boxed(expr)), Observable(Tokenizer.Ignored))
     case Ast.expr.Call(func, args, _, _, _) =>
-      Operation(FunctionCall, Tokenizer.apply(func) +: args.map(expr => Tokenizer.boxed(expr)), Observable(Tokenizer.Ignored))
+      Operation(FunctionCall, args.map(Tokenizer.apply), Tokenizer.apply(func))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(s"${operands.head.value}(${operands.tail.map(_.value).mkString(", ")})")
+    Constant(s"${output.value}(${operands.map(_.value).mkString(", ")})")
   }
 }

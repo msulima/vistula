@@ -11,5 +11,6 @@ class ReferenceSpec extends Specification with TranspilerSpecification {
   test("dereference")
   test("expression")
   test("function_call")
+  test("method")
   test("mutable")
 }
