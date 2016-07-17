@@ -3,11 +3,12 @@ package pl.msulima.vistula.transpiler.rpn
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.rpn.expression.control.Return
 import pl.msulima.vistula.transpiler.rpn.expression.reference.Declare
-import pl.msulima.vistula.transpiler.{Scope, rpn}
+import pl.msulima.vistula.transpiler.{Scope, ScopedResult, rpn}
 
-case class ScopedResult(scope: Scope, program: Seq[Token])
 
 object Transformer {
+
+  private val EmptyScope = Scope(Seq(), Seq())
 
   def wrapAndReturnLast(program: Seq[Ast.stmt]): Token = {
     val result = scoped(program)
@@ -41,7 +42,7 @@ object Transformer {
   }
 
   def scoped(program: Seq[Ast.stmt]): Seq[Token] = {
-    program.foldLeft(ScopedResult(pl.msulima.vistula.transpiler.Transpiler.EmptyScope, Seq()))((acc, stmt) => {
+    program.foldLeft(ScopedResult(EmptyScope, Seq()))((acc, stmt) => {
       val result = apply(acc.scope)(stmt)
 
       result.copy(program = acc.program ++ result.program)

@@ -8,7 +8,7 @@ class TranspilerSpec extends Specification {
 
   def test(file: String) = {
     file in {
-      Vistula.toJavaScriptRpn(readFile(s"/pl/msulima/vistula/transpiler/$file.vst")) must_== readFile(s"/pl/msulima/vistula/transpiler/$file.js")
+      Vistula.toJavaScript(readFile(s"/pl/msulima/vistula/transpiler/$file.vst")) must_== readFile(s"/pl/msulima/vistula/transpiler/$file.js")
     }
   }
 

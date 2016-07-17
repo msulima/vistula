@@ -12,7 +12,7 @@ class RpnSpec extends Specification {
         |X.F(Y)
       """.stripMargin
 
-    Vistula.toJavaScriptRpn(program) must_==
+    Vistula.toJavaScript(program) must_==
       """F(vistula.constantObservable(1));
         |X.rxFlatMap($arg => ($arg.F)).rxFlatMap($arg => ($arg(Y)));""".stripMargin
   }
@@ -30,7 +30,7 @@ class RpnSpec extends Specification {
         |Y + 3 - a(Z + 1, 3);
       """.stripMargin
 
-    Vistula.toJavaScriptRpn(program) must_==
+    Vistula.toJavaScript(program) must_==
       """A.rxMap($arg => ($arg + 2));
         |vistula.zip([
         |    A,

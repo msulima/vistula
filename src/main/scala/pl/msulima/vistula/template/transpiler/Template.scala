@@ -55,13 +55,13 @@ object Template {
 
   private def apply: PartialFunction[parser.Node, String] = {
     case parser.ObservableNode(identifier) =>
-      s"vistula.dom.textObservable(${VistulaTranspiler(Ast.stmt.Expr(identifier)).dropRight(1)})";
+      s"vistula.dom.textObservable(${VistulaTranspiler(identifier)})";
     case parser.IfNode(expr, body, elseBody) =>
-      s"vistula.ifChangedArrays(${VistulaTranspiler(Ast.stmt.Expr(expr))}, ${ToArray(apply(body))}, ${ToArray(apply(elseBody))})";
+      s"vistula.ifChangedArrays(${VistulaTranspiler(expr)}, ${ToArray(apply(body))}, ${ToArray(apply(elseBody))})";
     case parser.TextNode(text) =>
       s"""vistula.dom.textNode(${escape(text)})""";
     case parser.ForNode(identifier, expression, body) =>
-      val source = VistulaTranspiler(Ast.stmt.Expr(expression))
+      val source = VistulaTranspiler(expression)
 
       val map =
         s"""return vistula.zipAndFlatten($$arg.map(function (${identifier.name}) {

@@ -2,15 +2,11 @@ package pl.msulima.vistula
 
 import fastparse.all._
 import pl.msulima.vistula.parser.Statements
-import pl.msulima.vistula.transpiler.{Transpiler, rpn}
+import pl.msulima.vistula.transpiler.rpn
 
 object Vistula {
 
   def toJavaScript(input: String): String = {
-    Transpiler(parse(input))
-  }
-
-  def toJavaScriptRpn(input: String): String = {
     rpn.Transpiler.scoped(parse(input))
   }
 

@@ -27,10 +27,6 @@ package object testutil {
     def toProgram = {
       (Statements.file_input ~ End).parse(code).get.value
     }
-
-    def toJavaScript = {
-      Vistula.toJavaScript(code)
-    }
   }
 
 }
