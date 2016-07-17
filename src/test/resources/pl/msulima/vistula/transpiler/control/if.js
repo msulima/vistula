@@ -10,3 +10,8 @@ vistula.ifStatement(
         vistula.constantObservable(3)
     )
 );
+vistula.ifStatement(
+    vistula.constantObservable(true),
+    X,
+    vistula.constantObservable(1)
+);

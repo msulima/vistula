@@ -10,8 +10,8 @@ case object If extends Operator {
     case Ast.stmt.If(testExpr, body, orElse) =>
       Operation(If, Seq(
         Tokenizer.boxed(testExpr),
-        Transformer.wrapAndReturnLast(body),
-        Transformer.wrapAndReturnLast(orElse)
+        Box(Transformer.wrapAndReturnLast(body)),
+        Box(Transformer.wrapAndReturnLast(orElse))
       ), Observable(Tokenizer.Ignored))
   }
 

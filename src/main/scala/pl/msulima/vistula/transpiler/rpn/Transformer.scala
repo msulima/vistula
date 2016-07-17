@@ -19,14 +19,14 @@ object Transformer {
       result.init :+ Operation(Return, Seq(result.last), Tokenizer.Ignored)
     }
 
-    Box(checkObservable(result.last, body))
+    checkObservable(result.last, body)
   }
 
   private def checkObservable(token: Token, body: Seq[Token]) = {
-    val useFlatMap = token.isInstanceOf[Observable]
+    val isObservable = token.isInstanceOf[Observable]
     val operation = Operation(WrapScope, body, Tokenizer.Ignored)
 
-    if (useFlatMap) {
+    if (isObservable) {
       Observable(operation)
     } else {
       operation

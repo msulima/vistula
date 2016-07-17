@@ -4,7 +4,6 @@ import pl.msulima.vistula.parser.Ast
 
 
 object Transpiler {
-
   def scoped(program: Seq[Ast.stmt]): String = {
     toJavaScript(Transformer.scoped(program))
   }

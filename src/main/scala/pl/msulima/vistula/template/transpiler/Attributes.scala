@@ -2,6 +2,7 @@ package pl.msulima.vistula.template.transpiler
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
+import pl.msulima.vistula.transpiler.rpn.Transpiler
 import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler}
 import pl.msulima.vistula.util.ToArray
 
@@ -17,7 +18,7 @@ object Attributes {
         val arguments = Ast.arguments(Seq(Ast.expr.Name(Ast.identifier("ev"), Ast.expr_context.Param)), None, None, Seq())
         val function = Ast.stmt.FunctionDef(Ast.identifier(""), arguments, Seq(Ast.stmt.Expr(value)), Seq())
 
-        s"""["($key)", ${VistulaTranspiler(function)}]"""
+        s"""["($key)", ${Transpiler.scoped(Seq(function)).dropRight(1)}]"""
     }))
   }
 }

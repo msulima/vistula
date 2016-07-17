@@ -5,3 +5,8 @@ elif not X < 0:
   X
 else:
   3
+
+if True:
+  X
+else:
+  1
