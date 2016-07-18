@@ -2,7 +2,9 @@ package pl.msulima.vistula.template.transpiler
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
-import pl.msulima.vistula.transpiler.rpn.Transpiler
+import pl.msulima.vistula.transpiler.rpn._
+import pl.msulima.vistula.transpiler.rpn.expression.control.FunctionDef
+import pl.msulima.vistula.transpiler.rpn.expression.data.StaticArray
 import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler}
 import pl.msulima.vistula.util.ToArray
 
@@ -11,14 +13,17 @@ object Attributes {
   def apply(tag: parser.Tag) = {
     ToArray(tag.attributes.map({
       case parser.AttributeValue(key, value) =>
-        s"""["$key", ${VistulaTranspiler(value)}]"""
+        simple(key, Tokenizer.boxed(value))
       case parser.AttributeMarker(key) =>
-        s"""["$key", ${VistulaTranspiler(Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load))}]"""
+        simple(key, Box(Constant("null")))
       case parser.AttributeEvent(key, value) =>
-        val arguments = Ast.arguments(Seq(Ast.expr.Name(Ast.identifier("ev"), Ast.expr_context.Param)), None, None, Seq())
-        val function = Ast.stmt.FunctionDef(Ast.identifier(""), arguments, Seq(Ast.stmt.Expr(value)), Seq())
+        val function = Operation(FunctionDef, Seq(Constant(""), Constant("ev")), Transformer.returnLast(Seq(Ast.stmt.Expr(value))))
 
-        s"""["($key)", ${Transpiler.scoped(Seq(function)).dropRight(1)}]"""
+        simple(s"($key)", function)
     }))
+  }
+
+  private def simple(key: String, body: Token) = {
+    VistulaTranspiler(Operation(StaticArray, Seq(Constant(s""""$key""""), body), Tokenizer.Ignored))
   }
 }

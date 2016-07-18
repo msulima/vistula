@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.rpn.{Box, Observable}
+import pl.msulima.vistula.transpiler.rpn.{Box, Dereferencer, Observable, Token}
 
 object Transpiler {
 
@@ -18,8 +18,15 @@ object Transpiler {
       case x =>
         Box(x)
     }
-    println(toReturn)
 
-    rpn.Transpiler.toJavaScript(Seq(toReturn)).dropRight(1)
+    toJavaScript(toReturn)
+  }
+
+  def apply(token: Token): String = {
+    toJavaScript(Dereferencer(Scope(Seq(), Seq()), token))
+  }
+
+  private def toJavaScript(token: Token): String = {
+    rpn.Transpiler.toJavaScript(Seq(token)).dropRight(1)
   }
 }
