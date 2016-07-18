@@ -3,6 +3,9 @@ package pl.msulima.vistula.template.transpiler
 import fastparse.all._
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
+import pl.msulima.vistula.transpiler.rpn.expression.data.StaticString
+import pl.msulima.vistula.transpiler.rpn.expression.reference.FunctionCall
+import pl.msulima.vistula.transpiler.rpn.{Constant, Operation, Tokenizer}
 import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler}
 import pl.msulima.vistula.util.{Indent, ToArray}
 
@@ -45,9 +48,16 @@ object Template {
       val body = ToArray(children.map(_.body))
 
       tag.id.map(id => {
-        Scoped(variables :+ id, s"""vistula.dom.createBoundElement("${tag.name}", ${id.name}, ${Attributes(tag)}, $body)""")
+        val code = VistulaTranspiler(Operation(FunctionCall, Seq(
+          StaticString(tag.name), Constant(id.name), Attributes(tag), Constant(body)
+        ), Constant("vistula.dom.createBoundElement")))
+        Scoped(variables :+ id, code)
       }).getOrElse({
-        Scoped(variables, s"""vistula.dom.createElement("${tag.name}", ${Attributes(tag)}, $body)""")
+        val code = VistulaTranspiler(Operation(FunctionCall, Seq(
+          StaticString(tag.name), Attributes(tag), Constant(body)
+        ), Constant("vistula.dom.createElement")))
+
+        Scoped(variables, code)
       })
     case other: parser.Node =>
       Scoped(Seq(), apply(other))
@@ -55,7 +65,7 @@ object Template {
 
   private def apply: PartialFunction[parser.Node, String] = {
     case parser.ObservableNode(identifier) =>
-      s"vistula.dom.textObservable(${VistulaTranspiler(identifier)})";
+      VistulaTranspiler(Operation(FunctionCall, Seq(Tokenizer.boxed(identifier)), Constant("vistula.dom.textObservable")))
     case parser.IfNode(expr, body, elseBody) =>
       s"vistula.ifChangedArrays(${VistulaTranspiler(expr)}, ${ToArray(apply(body))}, ${ToArray(apply(elseBody))})";
     case parser.TextNode(text) =>

@@ -9,12 +9,14 @@ object Primitives {
   def apply: PartialFunction[Ast.expr, Token] = {
     case expr: Ast.expr if static.isDefinedAt(expr) =>
       Constant(static(expr))
+    case Ast.expr.Str(x) =>
+      StaticString(x)
     case Ast.expr.List(elts, Ast.expr_context.Load) =>
-      Operation(StaticArray, elts.map(expr => Tokenizer.boxed(expr)), Tokenizer.Ignored)
+      StaticArray(elts.map(expr => Tokenizer.boxed(expr)))
     case Ast.expr.Dict(keys, values) =>
       val dict = keys.zip(values).flatMap({
         case (Ast.expr.Str(key), expr) =>
-          Seq(Constant(s""""$key""""), Tokenizer.boxed(expr))
+          Seq(StaticString(key), Tokenizer.boxed(expr))
       })
       Operation(StaticDict, dict, Tokenizer.Ignored)
   }
@@ -22,8 +24,6 @@ object Primitives {
   private def static: PartialFunction[Ast.expr, String] = {
     case Ast.expr.Num(x) =>
       x.toString
-    case Ast.expr.Str(x) =>
-      s""""$x""""
     case Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load) =>
       "null"
     case Ast.expr.Name(Ast.identifier("False"), Ast.expr_context.Load) =>
@@ -33,7 +33,22 @@ object Primitives {
   }
 }
 
+case object StaticString extends Operator {
+
+  def apply(x: String): Token = {
+    Operation(StaticString, Seq(), Constant(x))
+  }
+
+  def apply(operands: List[Constant], output: Constant): Constant = {
+    Constant( s""""${output.value}"""")
+  }
+}
+
 case object StaticArray extends Operator {
+
+  def apply(elements: Seq[Token]): Token = {
+    Operation(StaticArray, elements, Tokenizer.Ignored)
+  }
 
   def apply(operands: List[Constant], output: Constant): Constant = {
     Constant(ToArray(operands.map(_.value)))
