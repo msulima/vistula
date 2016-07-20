@@ -5,6 +5,6 @@ XS.rxFlatMap(function ($arg) {
                 vistula.dom.textObservable(X)
             ]),
             vistula.dom.textNode("\n")
-        ]);
+        ])
     }))
 })

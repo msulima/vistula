@@ -3,9 +3,10 @@ package pl.msulima.vistula.template.transpiler
 import fastparse.all._
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
+import pl.msulima.vistula.transpiler.rpn._
+import pl.msulima.vistula.transpiler.rpn.expression.control.{FunctionDef, Return}
 import pl.msulima.vistula.transpiler.rpn.expression.data.{StaticArray, StaticString}
-import pl.msulima.vistula.transpiler.rpn.expression.reference.FunctionCall
-import pl.msulima.vistula.transpiler.rpn.{Constant, Operation, Tokenizer}
+import pl.msulima.vistula.transpiler.rpn.expression.reference.{FunctionCall, Reference}
 import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler}
 import pl.msulima.vistula.util.{Indent, ToArray}
 
@@ -60,30 +61,53 @@ object Template {
         Scoped(variables, code)
       })
     case other: parser.Node =>
-      Scoped(Seq(), apply(other))
+      Scoped(Seq(), VistulaTranspiler(apply(other)))
   }
 
-  private def apply: PartialFunction[parser.Node, String] = {
+  private def apply: PartialFunction[parser.Node, Token] = {
     case parser.ObservableNode(identifier) =>
-      VistulaTranspiler(Operation(FunctionCall, Seq(Tokenizer.boxed(identifier)), Constant("vistula.dom.textObservable")))
+      Operation(FunctionCall, Seq(
+        Tokenizer.boxed(identifier)
+      ), Constant("vistula.dom.textObservable"))
     case parser.IfNode(expr, body, elseBody) =>
-      VistulaTranspiler(Operation(FunctionCall, Seq(
+      Operation(FunctionCall, Seq(
         Tokenizer.boxed(expr),
         StaticArray(apply(body).map(Constant.apply)),
         StaticArray(apply(elseBody).map(Constant.apply))
-      ), Constant("vistula.ifChangedArrays")))
+      ), Constant("vistula.ifChangedArrays"))
     case parser.TextNode(text) =>
-      VistulaTranspiler(Operation(FunctionCall, Seq(StaticString(text)), Constant("vistula.dom.textNode")))
+      Operation(FunctionCall, Seq(
+        StaticString(text)
+      ), Constant("vistula.dom.textNode"))
     case parser.ForNode(identifier, expression, body) =>
-      val source = VistulaTranspiler(expression)
+      val x = Operation(FunctionDef, Seq(
+        Constant(""),
+        Constant(identifier.name)
+      ), Operation(Return, Seq(
+        Operation(FunctionCall, Seq(
+          StaticArray(apply(body).map(Constant.apply))
+        ), Constant("vistula.zipAndFlatten"))
+      ), Tokenizer.Ignored))
 
-      val map =
-        s"""return vistula.zipAndFlatten($$arg.map(function (${identifier.name}) {
-            |${Indent.leftPad("return vistula.zipAndFlatten(" + ToArray(apply(body)) + ");")}
-            |}))""".stripMargin
+      val call = Operation(FunctionCall, Seq(
+        x
+      ), Operation(Reference, Seq(
+        Constant("$arg")
+      ), Constant("map")))
 
-      s"""$source.rxFlatMap(function ($$arg) {
-         |${Indent.leftPad(map)}
-         |})""".stripMargin;
+      val map = Operation(FunctionDef, Seq(
+        Constant(""),
+        Constant("$arg")
+      ), Operation(Return, Seq(
+        Operation(FunctionCall, Seq(
+          call
+        ), Constant("vistula.zipAndFlatten"))
+      ), Tokenizer.Ignored))
+
+      Operation(FunctionCall, Seq(
+        map
+      ), Operation(Reference, Seq(
+        Tokenizer.boxed(expression)
+      ), Constant("rxFlatMap")))
   }
 }
