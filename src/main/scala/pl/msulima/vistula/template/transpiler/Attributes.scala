@@ -15,7 +15,7 @@ object Attributes {
       case parser.AttributeMarker(key) =>
         tuple(key, Box(Constant("null")))
       case parser.AttributeEvent(key, value) =>
-        val function = Operation(FunctionDef, Seq(Constant(""), Constant("ev")), Transformer.returnLast(Seq(Ast.stmt.Expr(value))))
+        val function = FunctionDef.anonymous("ev", Transformer.returnLast(Seq(Ast.stmt.Expr(value))))
 
         tuple(s"($key)", function)
     }))

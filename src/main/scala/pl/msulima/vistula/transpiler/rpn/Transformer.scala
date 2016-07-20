@@ -16,7 +16,7 @@ object Transformer {
     val body = if (result.isEmpty || result.size == 1) {
       result
     } else {
-      result.init :+ Operation(Return, Seq(result.last), Tokenizer.Ignored)
+      result.init :+ Return(result.last)
     }
 
     checkObservable(result.last, body)
@@ -36,7 +36,7 @@ object Transformer {
   def returnLast(program: Seq[Ast.stmt]): Token = {
     val result = scoped(program)
 
-    val toReturn = Operation(Return, Seq(result.last), Tokenizer.Ignored)
+    val toReturn = Return(result.last)
 
     Operation(FunctionScope, result.init :+ toReturn, Tokenizer.Ignored)
   }

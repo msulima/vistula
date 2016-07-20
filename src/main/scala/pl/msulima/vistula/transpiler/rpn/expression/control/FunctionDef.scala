@@ -16,6 +16,10 @@ case object FunctionDef extends Operator {
       Operation(FunctionDef, Constant(name.name) +: argumentIds.map(Constant.apply), Transformer.returnLast(body))
   }
 
+  def anonymous(singleArg: String, body: Token): Token = {
+    Operation(FunctionDef, Seq(Constant(""), Constant(singleArg)), body)
+  }
+
   override def apply(operands: List[Constant], output: Constant): Constant = {
     Constant(
       s"""function ${operands.head.value}(${operands.tail.map(_.value).mkString(", ")}) {

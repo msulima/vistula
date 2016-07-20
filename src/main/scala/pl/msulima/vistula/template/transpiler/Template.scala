@@ -80,28 +80,18 @@ object Template {
         StaticString(text)
       ))
     case parser.ForNode(identifier, expression, body) =>
-      val x = Operation(FunctionDef, Seq(
-        Constant(""),
-        Constant(identifier.name)
-      ), Operation(Return, Seq(
+      val x = FunctionDef.anonymous(identifier.name, Return(
         FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
           StaticArray(apply(body).map(Constant.apply))
         ))
-      ), Tokenizer.Ignored))
-
-      val call = FunctionCall(Operation(Reference, Seq(Constant("$arg")), Constant("map")), Seq(x))
-
-      val map = Operation(FunctionDef, Seq(
-        Constant(""),
-        Constant("$arg")
-      ), Operation(Return, Seq(
-        FunctionCall(Constant("vistula.zipAndFlatten"), Seq(call))
-      ), Tokenizer.Ignored))
-
-      FunctionCall(Operation(Reference, Seq(
-        Tokenizer.boxed(expression)
-      ), Constant("rxFlatMap")), Seq(
-        map
       ))
+
+      val map = FunctionDef.anonymous("$arg", Return(
+        FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
+          FunctionCall(Reference(Constant("$arg"), Constant("map")), Seq(x))
+        ))
+      ))
+
+      FunctionCall(Reference(Tokenizer.boxed(expression), Constant("rxFlatMap")), Seq(map))
   }
 }

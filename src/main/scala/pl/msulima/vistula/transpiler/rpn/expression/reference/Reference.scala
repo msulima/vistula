@@ -9,7 +9,11 @@ case object Reference extends Operator {
     case Ast.expr.Name(id, Ast.expr_context.Load) =>
       Operation(Reference, Seq(), Constant(id.name))
     case Ast.expr.Attribute(expr, id, Ast.expr_context.Load) =>
-      Operation(Reference, Seq(Tokenizer.apply(expr)), Constant(id.name))
+      Reference(Tokenizer.apply(expr), Constant(id.name))
+  }
+
+  def apply(source: Token, attribute: Token): Token = {
+    Operation(Reference, Seq(source), attribute)
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
