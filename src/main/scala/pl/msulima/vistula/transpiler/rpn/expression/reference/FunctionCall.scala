@@ -7,7 +7,11 @@ case object FunctionCall extends Operator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Call(func, args, _, _, _) =>
-      Operation(FunctionCall, args.map(Tokenizer.apply), Tokenizer.apply(func))
+      FunctionCall(Tokenizer.apply(func), args.map(Tokenizer.apply))
+  }
+
+  def apply(func: Token, args: Seq[Token]): Token = {
+    Operation(FunctionCall, args, func)
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {

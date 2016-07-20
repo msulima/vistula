@@ -49,14 +49,14 @@ object Template {
       val body = ToArray(children.map(_.body))
 
       tag.id.map(id => {
-        val code = VistulaTranspiler(Operation(FunctionCall, Seq(
+        val code = VistulaTranspiler(FunctionCall(Constant("vistula.dom.createBoundElement"), Seq(
           StaticString(tag.name), Constant(id.name), Attributes(tag), Constant(body)
-        ), Constant("vistula.dom.createBoundElement")))
+        )))
         Scoped(variables :+ id, code)
       }).getOrElse({
-        val code = VistulaTranspiler(Operation(FunctionCall, Seq(
+        val code = VistulaTranspiler(FunctionCall(Constant("vistula.dom.createElement"), Seq(
           StaticString(tag.name), Attributes(tag), Constant(body)
-        ), Constant("vistula.dom.createElement")))
+        )))
 
         Scoped(variables, code)
       })
@@ -66,48 +66,42 @@ object Template {
 
   private def apply: PartialFunction[parser.Node, Token] = {
     case parser.ObservableNode(identifier) =>
-      Operation(FunctionCall, Seq(
+      FunctionCall(Constant("vistula.dom.textObservable"), Seq(
         Tokenizer.boxed(identifier)
-      ), Constant("vistula.dom.textObservable"))
+      ))
     case parser.IfNode(expr, body, elseBody) =>
-      Operation(FunctionCall, Seq(
+      FunctionCall(Constant("vistula.ifChangedArrays"), Seq(
         Tokenizer.boxed(expr),
         StaticArray(apply(body).map(Constant.apply)),
         StaticArray(apply(elseBody).map(Constant.apply))
-      ), Constant("vistula.ifChangedArrays"))
+      ))
     case parser.TextNode(text) =>
-      Operation(FunctionCall, Seq(
+      FunctionCall(Constant("vistula.dom.textNode"), Seq(
         StaticString(text)
-      ), Constant("vistula.dom.textNode"))
+      ))
     case parser.ForNode(identifier, expression, body) =>
       val x = Operation(FunctionDef, Seq(
         Constant(""),
         Constant(identifier.name)
       ), Operation(Return, Seq(
-        Operation(FunctionCall, Seq(
+        FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
           StaticArray(apply(body).map(Constant.apply))
-        ), Constant("vistula.zipAndFlatten"))
+        ))
       ), Tokenizer.Ignored))
 
-      val call = Operation(FunctionCall, Seq(
-        x
-      ), Operation(Reference, Seq(
-        Constant("$arg")
-      ), Constant("map")))
+      val call = FunctionCall(Operation(Reference, Seq(Constant("$arg")), Constant("map")), Seq(x))
 
       val map = Operation(FunctionDef, Seq(
         Constant(""),
         Constant("$arg")
       ), Operation(Return, Seq(
-        Operation(FunctionCall, Seq(
-          call
-        ), Constant("vistula.zipAndFlatten"))
+        FunctionCall(Constant("vistula.zipAndFlatten"), Seq(call))
       ), Tokenizer.Ignored))
 
-      Operation(FunctionCall, Seq(
-        map
-      ), Operation(Reference, Seq(
+      FunctionCall(Operation(Reference, Seq(
         Tokenizer.boxed(expression)
-      ), Constant("rxFlatMap")))
+      ), Constant("rxFlatMap")), Seq(
+        map
+      ))
   }
 }
