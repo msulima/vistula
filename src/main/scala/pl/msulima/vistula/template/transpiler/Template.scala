@@ -3,7 +3,7 @@ package pl.msulima.vistula.template.transpiler
 import fastparse.all._
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
-import pl.msulima.vistula.transpiler.rpn.expression.data.StaticString
+import pl.msulima.vistula.transpiler.rpn.expression.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.rpn.expression.reference.FunctionCall
 import pl.msulima.vistula.transpiler.rpn.{Constant, Operation, Tokenizer}
 import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler}
@@ -67,9 +67,13 @@ object Template {
     case parser.ObservableNode(identifier) =>
       VistulaTranspiler(Operation(FunctionCall, Seq(Tokenizer.boxed(identifier)), Constant("vistula.dom.textObservable")))
     case parser.IfNode(expr, body, elseBody) =>
-      s"vistula.ifChangedArrays(${VistulaTranspiler(expr)}, ${ToArray(apply(body))}, ${ToArray(apply(elseBody))})";
+      VistulaTranspiler(Operation(FunctionCall, Seq(
+        Tokenizer.boxed(expr),
+        StaticArray(apply(body).map(Constant.apply)),
+        StaticArray(apply(elseBody).map(Constant.apply))
+      ), Constant("vistula.ifChangedArrays")))
     case parser.TextNode(text) =>
-      s"""vistula.dom.textNode(${escape(text)})""";
+      VistulaTranspiler(Operation(FunctionCall, Seq(StaticString(text)), Constant("vistula.dom.textNode")))
     case parser.ForNode(identifier, expression, body) =>
       val source = VistulaTranspiler(expression)
 
@@ -82,7 +86,4 @@ object Template {
          |${Indent.leftPad(map)}
          |})""".stripMargin;
   }
-
-  private def escape(text: String) =s""""${text.replaceAll("\n", """\\\n""")}""""
-
 }

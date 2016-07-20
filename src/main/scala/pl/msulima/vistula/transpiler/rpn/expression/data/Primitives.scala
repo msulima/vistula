@@ -40,7 +40,11 @@ case object StaticString extends Operator {
   }
 
   def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant( s""""${output.value}"""")
+    Constant(escape(output.value))
+  }
+
+  private def escape(text: String) = {
+    s""""${text.replaceAll("\n", """\\\n""")}""""
   }
 }
 
