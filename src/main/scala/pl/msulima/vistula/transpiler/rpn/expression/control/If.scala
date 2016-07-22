@@ -2,28 +2,16 @@ package pl.msulima.vistula.transpiler.rpn.expression.control
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.rpn._
-import pl.msulima.vistula.util.Indent
+import pl.msulima.vistula.transpiler.rpn.expression.reference.FunctionCall
 
-case object If extends Operator {
+case object If {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.If(testExpr, body, orElse) =>
-      Operation(If, Seq(
+      FunctionCall(Observable(Constant("vistula.ifStatement")), Seq(
         Tokenizer.boxed(testExpr),
         Box(Transformer.wrapAndReturnLast(body)),
         Box(Transformer.wrapAndReturnLast(orElse))
-      ), Observable(Tokenizer.Ignored))
-  }
-
-  override def apply(operands: List[Constant], output: Constant): Constant = {
-    val transpiled =
-      s"""${operands.head.value},
-         |${operands(1).value},
-         |${operands(2).value}""".stripMargin
-
-    Constant(
-      s"""vistula.ifStatement(
-          |${Indent.leftPad(transpiled)}
-          |)""".stripMargin)
+      ))
   }
 }
