@@ -1,46 +1,5 @@
 "use strict";
 
-function arrayPush(Dest, Elem) {
-    return Dest.rxMap(dest => {
-        var copy = [].concat(dest);
-        copy.push(Elem);
-        return copy;
-    });
-}
-
-function arrayDiff(Dest, Elems) {
-    const Obs = new vistula.ObservableImpl();
-
-    vistula.zip([Dest, Elems]).rxForEachOnce($args => {
-        const dest = $args[0];
-        const elems = $args[1];
-
-        Obs.rxPush(dest.filter(x => elems.indexOf(x) < 0)); // FIXME what if pointers?
-    });
-
-    return Obs;
-}
-
-function arraySize(Dest) {
-    return Dest.rxMap(function ($args) {
-        return $args.length;
-    });
-}
-
-function arrayFilter(Dests, predicate) {
-    return Dests.rxFlatMap(dests => {
-        return vistula.zipAndFlatten(dests.map(Dest => {
-            return predicate(Dest).rxMap($result => {
-                if ($result) {
-                    return [Dest];
-                } else {
-                    return [];
-                }
-            });
-        }));
-    });
-}
-
 function appendChild(Target, Observables) {
     let currentChildren = [];
 
@@ -80,11 +39,7 @@ const stdlib = vistula.toObservable({
     },
     storage: require("./storage"),
     ajaxGet: ajaxGet,
-    appendChild: appendChild,
-    arrayDiff: arrayDiff,
-    arrayFilter: arrayFilter,
-    arrayPush: arrayPush,
-    arraySize: arraySize
+    appendChild: appendChild
 });
 
 // FIXME
