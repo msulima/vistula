@@ -1,7 +1,5 @@
 "use strict";
 
-const Seq = require("./Seq");
-
 function getOrDefault(Key, Default) {
     return Key.rxFlatMap(key => {
         const storage = localStorage[key];

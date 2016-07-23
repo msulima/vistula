@@ -167,25 +167,18 @@ describe("Observable", function () {
                 return a.B;
             })
         });
-        const IsList = Obs.rxFlatMap((obj) => {
-            return obj.D.rxMap((list) => {
-                return Array.isArray(list);
-            });
-        });
         const List = Obs.rxFlatMap((obj) => {
             return obj.D.rxFlatMap((list) => {
-                return list[0];
+                return list.elements[0];
             });
         });
         const flatProbe = new Probe(Flat);
         const nestedProbe = new Probe(Nested);
-        const isListProbe = new Probe(IsList);
         const listProbe = new Probe(List);
 
         // then
         flatProbe.expect([2]);
         nestedProbe.expect([1]);
-        isListProbe.expect([true]);
         listProbe.expect([3]);
     });
 

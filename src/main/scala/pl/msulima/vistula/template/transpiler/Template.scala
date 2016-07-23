@@ -79,7 +79,7 @@ object Template {
       FunctionCall(Constant("vistula.dom.textNode"), Seq(
         StaticString(text)
       ))
-    case parser.ForNode(identifier, expression, body) =>
+    case parser.LoopNode(identifier, expression, body) =>
       val x = FunctionDef.anonymous(identifier.name, Return(
         FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
           StaticArray(apply(body).map(Constant.apply))
@@ -92,6 +92,10 @@ object Template {
         ))
       ))
 
-      FunctionCall(Reference(Tokenizer.boxed(expression), Constant("rxFlatMap")), Seq(map))
+      val iterable = Box(FunctionCall(Reference(
+        Tokenizer.apply(expression), Constant("toArray")
+      ), Seq()))
+
+      FunctionCall(Reference(iterable, Constant("rxFlatMap")), Seq(map))
   }
 }

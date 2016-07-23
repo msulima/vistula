@@ -41,7 +41,9 @@ def updateTodos(allTodos, action):
 
 let storageName = "todos-vistula"
 
-let allTodos = (Seq() or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
+let allTodos = (stdlib.storage.getOrDefault(storageName, []) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
+
+let bar = stdlib.storage.set(storageName, allTodos)
 
 def isVisible(todo):
   if filter == "all":
@@ -82,7 +84,7 @@ def clearCompleted():
 def removeTodo(todo):
   submitTasks = {
     "isAdd": False,
-    "todos": Seq(todo)
+    "todos": [todo]
   }
 
 def editTodo(todo, formField):
@@ -110,6 +112,7 @@ def toggleAll():
 '''# javascript
 
 foo.rxForEach(() => {});
+bar.rxForEach(() => {});
 
 function toggleAll() {
   leftTodosCount.rxForEachOnce(leftTodosCount => {

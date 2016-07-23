@@ -1,4 +1,4 @@
-XS.rxFlatMap(function ($arg) {
+XS.rxFlatMap($arg => ($arg.toArray)).rxFlatMap($arg => ($arg())).rxFlatMap(function ($arg) {
     return vistula.zipAndFlatten($arg.map(function (X) {
         return vistula.zipAndFlatten([
             vistula.dom.createElement("tr", [], [

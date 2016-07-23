@@ -2,6 +2,7 @@
 
 const ObservableImpl = require("./observable").ObservableImpl;
 const zip = require("./zip");
+const Seq = require("./Seq");
 const constantObservable = require("./constantObservable");
 
 function delayedObservable(value, delay) {
@@ -52,7 +53,7 @@ function toObservable(value) {
 }
 
 function arrayToObservable(obj) {
-    return constantObservable.constantObservable(obj.map(toObservable));
+    return Seq.apply(...obj.map(toObservable));
 }
 
 function objectToObservable(obj) {
@@ -67,7 +68,7 @@ function objectToObservable(obj) {
 
 function fromObservable(Value) {
     return Value.rxFlatMap(value => {
-        if (Array.isArray(value)) {
+        if (value instanceof Seq.ArrayBuffer) {
             return arrayFromObservable(value);
         } else if (typeof value == "object") {
             return objectFromObservable(value);
@@ -78,7 +79,7 @@ function fromObservable(Value) {
 }
 
 function arrayFromObservable(values) {
-    return zip.zip(values.map(fromObservable));
+    return zip.zip(values.elements.map(fromObservable));
 }
 
 function objectFromObservable(value) {

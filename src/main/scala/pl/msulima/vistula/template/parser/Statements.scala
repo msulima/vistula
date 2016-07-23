@@ -20,7 +20,7 @@ object Statements {
     P(ifStart ~ document ~ elseStatement ~ endIf).map(IfNode.tupled)
   }
 
-  val forStatement: Parser[ForNode] = {
+  val forStatement: Parser[LoopNode] = {
     val identifier = P(Lexical.kw("for") ~/ Lexical.identifier)
     val expression = P(Lexical.kw("in") ~/ Lexical.expression)
 
@@ -28,7 +28,7 @@ object Statements {
 
     val endFor = Expressions.block(Lexical.kw("endfor"))
 
-    P(startFor ~ document ~ endFor).map(ForNode.tupled)
+    P(startFor ~ document ~ endFor).map(LoopNode.tupled)
   }
 
   val variable =

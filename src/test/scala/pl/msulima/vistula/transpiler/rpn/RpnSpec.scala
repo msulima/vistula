@@ -36,12 +36,7 @@ class RpnSpec extends Specification {
         |    A,
         |    B
         |]).rxMap($args => ($args[0] + 2 + $args[1] + false));
-        |const A = vistula.constantObservable([
-        |    vistula.constantObservable(1),
-        |    vistula.constantObservable(2 + 3),
-        |    B,
-        |    C.rxMap($arg => ($arg - 4))
-        |]);
+        |const A = vistula.Seq.apply(vistula.constantObservable(1), vistula.constantObservable(2 + 3), B, C.rxMap($arg => ($arg - 4)));
         |A.rxFlatMap($arg => ($arg.B));
         |F(A, vistula.constantObservable(3));
         |F(A, vistula.constantObservable(3)).rxFlatMap($arg => ($arg.B));
