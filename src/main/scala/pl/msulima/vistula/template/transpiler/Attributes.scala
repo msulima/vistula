@@ -2,9 +2,9 @@ package pl.msulima.vistula.template.transpiler
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
-import pl.msulima.vistula.transpiler.rpn._
-import pl.msulima.vistula.transpiler.rpn.expression.control.FunctionDef
-import pl.msulima.vistula.transpiler.rpn.expression.data.{StaticArray, StaticString}
+import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.expression.control.FunctionDef
+import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
 
 object Attributes {
 

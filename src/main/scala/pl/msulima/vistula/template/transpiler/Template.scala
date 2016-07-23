@@ -3,11 +3,10 @@ package pl.msulima.vistula.template.transpiler
 import fastparse.all._
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
-import pl.msulima.vistula.transpiler.rpn._
-import pl.msulima.vistula.transpiler.rpn.expression.control.{FunctionDef, Return}
-import pl.msulima.vistula.transpiler.rpn.expression.data.{StaticArray, StaticString}
-import pl.msulima.vistula.transpiler.rpn.expression.reference.{FunctionCall, Reference}
-import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler}
+import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, Return}
+import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
+import pl.msulima.vistula.transpiler.expression.reference.{FunctionCall, Reference}
+import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler, _}
 import pl.msulima.vistula.util.{Indent, ToArray}
 
 case class Scoped(variables: Seq[Ast.identifier], body: String)
