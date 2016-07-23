@@ -19,15 +19,13 @@ class OperationDereferencer(scope: Scope) {
   }
 
   private def reference(operation: Operation, observables: Seq[Token]): Token = {
-    val field = operation.output.asInstanceOf[Constant]
-
     operation.inputs.headOption match {
       case Some(observable: Observable) =>
-        map(operation.copy(output = Observable(field)), observables)
+        map(operation.copy(output = Observable(operation.output)), observables)
       case Some(_) =>
         operation
       case None =>
-        reference(field.value)
+        reference(operation.output.asInstanceOf[Constant].value)
     }
   }
 
