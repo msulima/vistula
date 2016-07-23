@@ -42,9 +42,13 @@ object Transformer {
 
   def scoped(program: Seq[Ast.stmt]): Seq[Token] = {
     program.foldLeft(ScopedResult(EmptyScope, Seq()))((acc, stmt) => {
-      val result = apply(acc.scope)(stmt)
+      if (stmt == Ast.stmt.Pass) {
+        acc
+      } else {
+        val result = apply(acc.scope)(stmt)
 
-      result.copy(program = acc.program ++ result.program)
+        result.copy(program = acc.program ++ result.program)
+      }
     }).program
   }
 
