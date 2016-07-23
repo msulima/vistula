@@ -3,7 +3,7 @@ package pl.msulima.vistula.transpiler.expression.reference
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.{Operation, _}
 
-object Declare {
+object Declare extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.DeclareStmt(identifier, stmt, mutable) =>
@@ -15,13 +15,10 @@ object Declare {
         Operation(Dereference, Seq(), body)
       }
 
-      Operation(Declare(identifier, mutable), Seq(), value)
+      Introduce(Variable(identifier, Type(mutable)), Operation(Declare, Seq(Constant(identifier.name)), value))
   }
-}
-
-case class Declare(identifier: Ast.identifier, mutable: Boolean) extends Operator {
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(s"const ${identifier.name} = ${output.value}")
+    Constant(s"const ${operands.head.value} = ${output.value}")
   }
 }

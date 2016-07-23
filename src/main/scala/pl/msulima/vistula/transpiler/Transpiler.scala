@@ -6,7 +6,7 @@ import pl.msulima.vistula.parser.Ast
 object Transpiler {
 
   def apply(token: Token): String = {
-    toJavaScript(Dereferencer(Scope(Seq(), Seq()), token))
+    toJavaScript(Dereferencer(Scope(Seq()), token))
   }
 
   private def toJavaScript(token: Token): String = {
@@ -14,7 +14,7 @@ object Transpiler {
   }
 
   def scoped(program: Seq[Ast.stmt]): String = {
-    toJavaScript(Transformer.scoped(program))
+    toJavaScript(Transformer.transform(program))
   }
 
   def toJavaScript(program: Seq[Token]): String = {
@@ -36,6 +36,8 @@ object Transpiler {
         )
       case Operation(operation, operands, output) =>
         operation.apply(operands.map(toConstant).toList, toConstant(output))
+      case Introduce(variable, body) => // FIXME
+        toConstant(body)
       case x: Constant => x
     }
   }

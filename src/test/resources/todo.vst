@@ -104,9 +104,10 @@ let foo = stdlib.dom.appendChild("todoapp", app)
 def toggleAll():
   const x = leftTodosCount
 
-  for todo in todos:
-    todo.completed = x != 0
+  let y = for todo in todos:
+      todo.completed = x != 0
 
+  pass
   *y
 
 '''# javascript
@@ -114,15 +115,4 @@ def toggleAll():
 foo.rxForEach(() => {});
 bar.rxForEach(() => {});
 
-function toggleAll() {
-  leftTodosCount.rxForEachOnce(leftTodosCount => {
-    todos.rxForEachOnce(todos => {
-      todos.elements.forEach(Todo => {
-        Todo.rxForEachOnce(todo => {
-          todo.completed.rxPush(leftTodosCount != 0);
-        });
-      });
-    });
-  });
-};
 '''

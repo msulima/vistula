@@ -21,6 +21,8 @@ case class Box(token: Token) extends Token
 
 case class Constant(value: String) extends Token
 
+case class Introduce(variable: Variable, body: Token) extends Token
+
 trait Operator {
 
   def apply(inputs: List[Constant], output: Constant): Constant

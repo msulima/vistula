@@ -31,6 +31,7 @@ object Tokenizer {
       .orElse(If.apply)
       .orElse(Return.apply)
       .orElse(Loop.apply)
+      .orElse(Pass.apply)
   }
 
   def apply: PartialFunction[Ast.expr, Token] = {

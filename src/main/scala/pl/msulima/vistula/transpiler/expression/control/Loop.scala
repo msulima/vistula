@@ -8,7 +8,7 @@ object Loop {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.For(Ast.expr.Name(name, Ast.expr_context.Load), iterExpr, body, _) =>
-      Loop(iterExpr, name, Observable(Transformer.returnLast(body)))
+      Loop(iterExpr, name, Observable(FunctionScope(body)))
   }
 
   def apply(iterable: Ast.expr, argument: Ast.identifier, body: Token) = {

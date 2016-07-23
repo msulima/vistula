@@ -13,7 +13,7 @@ case object FunctionDef extends Operator {
           id.name
       })
 
-      Operation(FunctionDef, Constant(name.name) +: argumentIds.map(Constant.apply), Transformer.returnLast(body))
+      Operation(FunctionDef, Constant(name.name) +: argumentIds.map(Constant.apply), FunctionScope(body))
   }
 
   def anonymous(singleArg: String, body: Token): Token = {
@@ -25,5 +25,18 @@ case object FunctionDef extends Operator {
       s"""function ${operands.head.value}(${operands.tail.map(_.value).mkString(", ")}) {
           |${Indent.leftPad(output.value)}
           |}""".stripMargin)
+  }
+}
+
+case object FunctionScope extends Operator {
+
+  def apply(program: Seq[Ast.stmt]): Token = {
+    val body = program.map(Tokenizer.applyStmt)
+
+    Operation(FunctionScope, body.init :+ Box(body.last), Tokenizer.Ignored)
+  }
+
+  override def apply(operands: List[Constant], output: Constant): Constant = {
+    Constant(Transpiler.toJavaScript(operands))
   }
 }

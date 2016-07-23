@@ -1,25 +1,32 @@
 package pl.msulima.vistula.transpiler
 
+import pl.msulima.vistula.transpiler.expression.control.{FunctionScope, Return}
 import pl.msulima.vistula.transpiler.expression.reference.FunctionCall
 
 object Dereferencer {
   def apply(scope: Scope, token: Token): Token = {
-    new Dereferencer(new OperationDereferencer(scope)).apply(token)
+    new Dereferencer(scope).apply(token)
   }
 }
 
-class Dereferencer(operationDereferencer: OperationDereferencer) {
+case class Dereferencer(scope: Scope) {
+
+  private val operationDereferencer = new OperationDereferencer(scope)
 
   def apply(token: Token): Token = {
     token match {
       case x: Constant =>
         x
+      case Introduce(variable, body) =>
+        copy(scope.addToScope(variable)).apply(body)
       case Box(boxToken) =>
         unbox(boxToken)
       case observable: Observable =>
         Observable(apply(observable.token))
-      case operation@Operation(FunctionScope, _, _) =>
-        operation
+      case operation@Operation(FunctionScope, program, _) =>
+        val result = Transformer.scoped(program, scope)
+
+        Operation(FunctionScope, result.init :+ Return(result.last), Tokenizer.Ignored)
       case operation@Operation(WrapScope, _, _) =>
         operation
       case Operation(FunctionCall, arguments, callee) =>

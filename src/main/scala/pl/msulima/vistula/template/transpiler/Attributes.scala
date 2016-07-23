@@ -3,7 +3,7 @@ package pl.msulima.vistula.template.transpiler
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.expression.control.FunctionDef
+import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, FunctionScope}
 import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
 
 object Attributes {
@@ -15,7 +15,7 @@ object Attributes {
       case parser.AttributeMarker(key) =>
         tuple(key, Box(Constant("null")))
       case parser.AttributeEvent(key, value) =>
-        val function = FunctionDef.anonymous("ev", Transformer.returnLast(Seq(Ast.stmt.Expr(value))))
+        val function = FunctionDef.anonymous("ev", FunctionScope(Seq(Ast.stmt.Expr(value))))
 
         tuple(s"($key)", function)
     }))

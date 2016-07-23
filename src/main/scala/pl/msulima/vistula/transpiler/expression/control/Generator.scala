@@ -28,7 +28,7 @@ case object Generator extends Operator {
     case Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)) =>
       Operation(Generator,
         Seq(Constant(source.name), Constant(acc.name), Tokenizer.boxed(initial)),
-        Observable(Transformer.returnLast(Seq(body)))
+        Observable(FunctionScope(Seq(body)))
       )
   }
 

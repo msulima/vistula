@@ -2,15 +2,14 @@ package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.expression.control.Return
-import pl.msulima.vistula.transpiler.expression.reference.Declare
 
 
 object Transformer {
 
-  private val EmptyScope = Scope(Seq(), Seq())
+  private val EmptyScope = Scope(Seq())
 
   def wrapAndReturnLast(program: Seq[Ast.stmt]): Token = {
-    val result = scoped(program)
+    val result = transform(program)
 
     val body = if (result.isEmpty || result.size == 1) {
       result
@@ -32,23 +31,15 @@ object Transformer {
     }
   }
 
-  def returnLast(program: Seq[Ast.stmt]): Token = {
-    val result = scoped(program)
-
-    val toReturn = Return(result.last)
-
-    Operation(FunctionScope, result.init :+ toReturn, Tokenizer.Ignored)
+  def transform(program: Seq[Ast.stmt]): Seq[Token] = {
+    scoped(program.map(Tokenizer.applyStmt), EmptyScope)
   }
 
-  def scoped(program: Seq[Ast.stmt]): Seq[Token] = {
-    program.foldLeft(ScopedResult(EmptyScope, Seq()))((acc, stmt) => {
-      if (stmt == Ast.stmt.Pass) {
-        acc
-      } else {
-        val result = apply(acc.scope)(stmt)
+  def scoped(program: Seq[Token], scope: Scope): Seq[Token] = {
+    program.foldLeft(ScopedResult(scope, Seq()))((acc, stmt) => {
+      val result = run(acc.scope)(stmt)
 
-        result.copy(program = acc.program ++ result.program)
-      }
+      result.copy(program = acc.program ++ result.program)
     }).program
   }
 
@@ -61,21 +52,12 @@ object Transformer {
   }
 
   private def run(scope: Scope)(token: Token): ScopedResult = {
-    extractScope(scope, Dereferencer(scope, token))
-  }
-
-  private def extractScope(currentScope: Scope, token: Token) = {
-    val nextScope = token match {
-      case Operation(Declare(identifier, mutable), _, _) =>
-        if (mutable) {
-          currentScope.copy(observables = currentScope.observables :+ identifier)
-        } else {
-          currentScope.copy(variables = currentScope.variables :+ identifier)
-        }
+    token match {
+      case Introduce(variable, body) =>
+        val ns = scope.copy(variables = scope.variables :+ variable)
+        ScopedResult(ns, Seq(Dereferencer(ns, body)))
       case _ =>
-        currentScope
+        ScopedResult(scope, Seq(Dereferencer(scope, token)))
     }
-
-    ScopedResult(nextScope, Seq(token))
   }
 }

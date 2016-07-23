@@ -8,4 +8,4 @@ const e = 2 + 2
 
 def F(A, B):
   const a = A
-  a.x()
+  a.x() + e
