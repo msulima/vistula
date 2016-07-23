@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --recursive src/test/javascript",
-    "browserify": "browserify src/main/javascript/pl/msulima/vistula/observable/module.js --s vistula -o target/vistula.js && browserify src/main/javascript/pl/msulima/vistula/browser/stdlib.js --s stdlib -o target/stdlib.js"
+    "browserify": "browserify src/main/javascript/pl/msulima/vistula/observable/module.js --s vistula -o target/vistula.js && browserify src/main/javascript/pl/msulima/vistula/browser/stdlib.js --s stdlib -o target/stdlib.js && browserify src/main/javascript/pl/msulima/vistula/browser/Seq.js --s Seq -o target/Seq.js"
   },
   "author": "",
   "license": "ISC",

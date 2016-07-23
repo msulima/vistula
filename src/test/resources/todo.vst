@@ -31,19 +31,17 @@ let filter = currentFilter(stdlib.location.hash)
 
 def updateTodos(allTodos, action):
   if action.isAdd:
-    stdlib.arrayPush(allTodos, {
+    allTodos.append({
       "title": action.form.title,
       "completed": False,
       "editing": False
     })
   else:
-    stdlib.arrayDiff(allTodos, action.todos)
+    allTodos.diff(action.todos)
 
 let storageName = "todos-vistula"
 
-let allTodos = (stdlib.storage.getOrDefault(storageName, []) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
-
-let bar = stdlib.storage.set(storageName, allTodos)
+let allTodos = (Seq() or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
 
 def isVisible(todo):
   if filter == "all":
@@ -53,7 +51,7 @@ def isVisible(todo):
   else:
     not todo.completed
 
-let todos = stdlib.arrayFilter(allTodos, lambda todo: isVisible(todo))
+let todos = allTodos.filter(lambda todo: isVisible(todo))
 
 def classForIsCompleted(todo):
   if todo.completed:
@@ -73,7 +71,7 @@ def classForFilter(label):
   else:
     ""
 
-let completed = stdlib.arrayFilter(allTodos, lambda todo: todo.completed)
+let completed = allTodos.filter(lambda todo: todo.completed)
 
 def clearCompleted():
   submitTasks = {
@@ -84,7 +82,7 @@ def clearCompleted():
 def removeTodo(todo):
   submitTasks = {
     "isAdd": False,
-    "todos": [todo]
+    "todos": Seq(todo)
   }
 
 def editTodo(todo, formField):
@@ -95,7 +93,7 @@ def editTodo(todo, formField):
 def finishEditingTodo(todo):
   todo.editing = False
 
-let leftTodosCount = stdlib.arraySize(allTodos) - stdlib.arraySize(completed)
+let leftTodosCount = allTodos.size() - completed.size()
 
 let app = '''# html:/todo.vst.html'''
 
@@ -112,12 +110,11 @@ def toggleAll():
 '''# javascript
 
 foo.rxForEach(() => {});
-bar.rxForEach(() => {});
 
 function toggleAll() {
   leftTodosCount.rxForEachOnce(leftTodosCount => {
     todos.rxForEachOnce(todos => {
-      todos.forEach(Todo => {
+      todos.elements.forEach(Todo => {
         Todo.rxForEachOnce(todo => {
           todo.completed.rxPush(leftTodosCount != 0);
         });

@@ -64,17 +64,11 @@ function ajaxGet(Url) {
                 value.rxForEach(obs.rxPush.bind(obs));
             }
         };
-        request.open('GET', url, true);
+        request.open("GET", url, true);
         request.send(null);
 
         return obs;
     });
-}
-
-function focus(Element) {
-    Element.rxForEachOnce(element => {
-        element.focus();
-    })
 }
 
 const stdlib = vistula.toObservable({
@@ -90,8 +84,7 @@ const stdlib = vistula.toObservable({
     arrayDiff: arrayDiff,
     arrayFilter: arrayFilter,
     arrayPush: arrayPush,
-    arraySize: arraySize,
-    focus: focus
+    arraySize: arraySize
 });
 
 // FIXME
