@@ -12,7 +12,7 @@ case object Return extends Operator {
   }
 
   def apply(body: Token): Token = {
-    Operation(Return, Seq(body), Tokenizer.Ignored)
+    Operation(Return, Seq(body))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {

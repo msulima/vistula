@@ -19,7 +19,7 @@ object Primitives {
         case (Ast.expr.Str(key), expr) =>
           Seq(StaticString(key), Tokenizer.boxed(expr))
       })
-      Operation(StaticDict, dict, Tokenizer.Ignored)
+      Operation(StaticDict, dict)
   }
 
   private def static: PartialFunction[Ast.expr, String] = {
@@ -52,7 +52,7 @@ case object StaticString extends Operator {
 case object StaticArray extends Operator {
 
   def apply(elements: Seq[Token]): Token = {
-    Operation(StaticArray, elements, Tokenizer.Ignored)
+    Operation(StaticArray, elements)
   }
 
   def apply(operands: List[Constant], output: Constant): Constant = {

@@ -23,7 +23,7 @@ object Transformer {
 
   private def checkObservable(token: Token, body: Seq[Token]) = {
     val isObservable = token.isInstanceOf[Observable]
-    val operation = Operation(WrapScope, body, Tokenizer.Ignored)
+    val operation = Operation(WrapScope, body)
 
     if (isObservable) {
       Observable(operation)

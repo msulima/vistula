@@ -9,7 +9,6 @@ import pl.msulima.vistula.transpiler.expression.reference._
 object Tokenizer {
 
   val Pass = Constant("")
-  val Ignored = Constant("ignored")
 
   def boxed(expr: Ast.expr) = {
     Box(apply(expr))

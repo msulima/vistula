@@ -24,8 +24,6 @@ object Transpiler {
 
   private def toConstant(token: Token): Constant = {
     token match {
-      case Box(op) =>
-        BoxOp(List(), toConstant(op))
       case Observable(op) =>
         toConstant(op)
       case Operation(op@RxMapOp(_), operands, output) =>
@@ -37,8 +35,6 @@ object Transpiler {
         )
       case Operation(operation, operands, output) =>
         operation.apply(operands.map(toConstant).toList, toConstant(output))
-      case Introduce(variable, body) => // FIXME
-        toConstant(body)
       case x: Constant => x
     }
   }

@@ -2,7 +2,7 @@ package pl.msulima.vistula.transpiler.expression.data
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.transpiler.Template
-import pl.msulima.vistula.transpiler.{Noop, _}
+import pl.msulima.vistula.transpiler._
 
 import scala.io.Source
 
@@ -25,6 +25,6 @@ object InlineHtml {
   }
 
   private def toOperation(html: String) = {
-    Operation(Noop, Seq(), Observable(Constant(html)))
+    Observable(Constant(html))
   }
 }

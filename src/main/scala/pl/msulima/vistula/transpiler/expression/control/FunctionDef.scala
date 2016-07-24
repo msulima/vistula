@@ -51,7 +51,7 @@ case object FunctionDef extends Operator {
 case object FunctionScope extends Operator {
 
   private[control] def apply(program: Seq[Token]): Token = {
-    Operation(FunctionScope, program.init :+ Box(program.last), Tokenizer.Ignored)
+    Operation(FunctionScope, program.init :+ Box(program.last))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {

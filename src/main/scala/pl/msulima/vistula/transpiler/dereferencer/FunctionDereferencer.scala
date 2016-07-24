@@ -11,7 +11,7 @@ trait FunctionDereferencer {
     case operation@Operation(FunctionScope, program, _) =>
       val result = Transformer.scoped(program, scope)
 
-      Operation(FunctionScope, result.init :+ Return(result.last), Tokenizer.Ignored)
+      Operation(FunctionScope, result.init :+ Return(result.last))
     case Operation(FunctionCall, arguments, callee) =>
       val dereferencedOutput = dereference(callee)
 

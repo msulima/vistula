@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.expression.data
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.{Noop, _}
+import pl.msulima.vistula.transpiler._
 
 object InlineJavaScript {
 
@@ -11,6 +11,6 @@ object InlineJavaScript {
     case Ast.expr.Str(x) if x.startsWith(MagicInlineJavascriptPrefix) =>
       val content = x.stripPrefix(MagicInlineJavascriptPrefix)
 
-      Operation(Noop, Seq(), Observable(Constant(content)))
+      Constant(content)
   }
 }

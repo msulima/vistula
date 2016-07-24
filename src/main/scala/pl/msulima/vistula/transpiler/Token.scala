@@ -28,6 +28,11 @@ trait Operator {
   def apply(inputs: List[Constant], output: Constant): Constant
 }
 
+case object Operation {
+
+  def apply(operator: Operator, inputs: Seq[Token]): Operation = new Operation(operator, inputs, Constant("ignored"))
+}
+
 case class Operation(operator: Operator, inputs: Seq[Token], output: Token) extends Token {
 
   override def prettyPrint: String = {
