@@ -5,6 +5,6 @@ XS.rxFlatMap($arg => ($arg.toArray)).rxFlatMap($arg => ($arg())).rxFlatMap(funct
                 vistula.dom.textObservable(X)
             ]),
             vistula.dom.textNode("\n")
-        ])
-    }))
+        ]);
+    }));
 })

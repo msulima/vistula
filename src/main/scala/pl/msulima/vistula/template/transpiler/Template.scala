@@ -3,7 +3,7 @@ package pl.msulima.vistula.template.transpiler
 import fastparse.all._
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
-import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, Return}
+import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.expression.reference.{FunctionCall, Reference}
 import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler, _}
@@ -79,23 +79,24 @@ object Template {
         StaticString(text)
       ))
     case parser.LoopNode(identifier, expression, body) =>
-      // FIXME
-      val x = Operation(FunctionDef, Seq(Constant(""), Constant(identifier.name)), Return(
-        FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
-          StaticArray(apply(body).map(Constant.apply))
-        ))
-      ))
-
-      val map = Operation(FunctionDef, Seq(Constant(""), Constant("$arg")), Return(
-        FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
-          FunctionCall(Reference(Constant("$arg"), Constant("map")), Seq(x))
-        ))
-      ))
-
       val iterable = Box(FunctionCall(Reference(
         Tokenizer.apply(expression), Constant("toArray")
       ), Seq()))
 
-      FunctionCall(Reference(iterable, Constant("rxFlatMap")), Seq(map))
+      val inner = FunctionDef.anonymous(identifier, Seq(
+        Observable(FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
+          StaticArray(apply(body).map(Constant.apply))
+        )))
+      ))
+
+      val elementsId = Ast.identifier("$arg")
+
+      val outer = FunctionDef.anonymous(elementsId, Seq(
+        Observable(FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
+          FunctionCall(Reference(Reference(elementsId), Constant("map")), Seq(inner))
+        )))
+      ), mutableArgs = false)
+
+      FunctionCall(Reference(iterable, Constant("rxFlatMap")), Seq(outer))
   }
 }

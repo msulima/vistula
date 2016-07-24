@@ -16,15 +16,11 @@ case object FunctionDef extends Operator {
       FunctionDef(name, argumentIds, body.map(Tokenizer.applyStmt))
   }
 
-  def anonymous(singleArg: Ast.identifier, body: Token): Token = {
-    anonymous(Seq(singleArg), Seq(body), mutableArgs = true)
+  def anonymous(singleArg: Ast.identifier, body: Seq[Token], mutableArgs: Boolean = true): Token = {
+    anonymous(Seq(singleArg), body, mutableArgs = mutableArgs)
   }
 
-  def anonymous(singleArg: Ast.identifier, body: Seq[Token]): Token = {
-    anonymous(Seq(singleArg), body, mutableArgs = true)
-  }
-
-  def anonymous(firstArg: Ast.identifier, secondArg: Ast.identifier, body: Seq[Token], mutableArgs: Boolean = true): Token = {
+  def anonymous(firstArg: Ast.identifier, secondArg: Ast.identifier, body: Seq[Token], mutableArgs: Boolean): Token = {
     anonymous(Seq(firstArg, secondArg), body, mutableArgs)
   }
 
