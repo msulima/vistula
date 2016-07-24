@@ -2,7 +2,7 @@ package pl.msulima.vistula.transpiler.expression.control
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.expression.reference.{Declare, FunctionCall, Reference}
+import pl.msulima.vistula.transpiler.expression.reference.{FunctionCall, Reference}
 
 object GeneratorBody {
 
@@ -26,20 +26,15 @@ case object Generator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)) =>
-      val identifierAcc = Ast.identifier("$acc")
-      val identifierSource = Ast.identifier("$source")
-
       val declarations = Seq(
-        Introduce(Variable(identifierAcc, Type(observable = false)), Constant("")), // FIXME function declaration
-        Introduce(Variable(identifierSource, Type(observable = false)), Constant("")),
-        Declare(acc, mutable = true, Reference(identifierAcc)),
-        Declare(source, mutable = true, Reference(identifierSource))
+        Introduce(Variable(acc, Type(observable = false)), Constant("")),
+        Introduce(Variable(source, Type(observable = false)), Constant(""))
       )
 
       FunctionCall(Reference(Ast.identifier("vistula.aggregate")), Seq(
         Tokenizer.boxed(initial),
         Reference(source),
-        Observable(FunctionDef.anonymous(identifierAcc, identifierSource, FunctionScope(declarations, Seq(body))))
+        Observable(FunctionDef.anonymous(acc, source, FunctionScope(declarations, Seq(body))))
       ))
   }
 }

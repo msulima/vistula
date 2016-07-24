@@ -14,4 +14,5 @@ class ReferenceSpec extends Specification with TranspilerSpecification {
   test("method")
   test("mutable")
   test("mutable_loop")
+  test("scope")
 }

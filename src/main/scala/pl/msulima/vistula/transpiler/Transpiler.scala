@@ -6,7 +6,7 @@ import pl.msulima.vistula.parser.Ast
 object Transpiler {
 
   def apply(token: Token): String = {
-    toJavaScript(Dereferencer(Scope(Seq()), token))
+    toJavaScript(Dereferencer(Scope(Map()), token))
   }
 
   private def toJavaScript(token: Token): String = {

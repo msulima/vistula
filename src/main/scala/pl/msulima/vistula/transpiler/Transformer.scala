@@ -6,7 +6,7 @@ import pl.msulima.vistula.transpiler.expression.control.Return
 
 object Transformer {
 
-  private val EmptyScope = Scope(Seq())
+  private val EmptyScope = Scope(Map())
 
   def wrapAndReturnLast(program: Seq[Ast.stmt]): Token = {
     val result = transform(program)
@@ -54,7 +54,7 @@ object Transformer {
   private def run(scope: Scope)(token: Token): ScopedResult = {
     token match {
       case Introduce(variable, body) =>
-        val ns = scope.copy(variables = scope.variables :+ variable)
+        val ns = scope.addToScope(variable)
         ScopedResult(ns, Seq(Dereferencer(ns, body)))
       case _ =>
         ScopedResult(scope, Seq(Dereferencer(scope, token)))

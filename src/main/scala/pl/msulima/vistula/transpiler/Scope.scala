@@ -8,9 +8,9 @@ case class Variable(id: Ast.identifier, `type`: Type)
 
 case class ScopedResult(scope: Scope, program: Seq[Token])
 
-case class Scope(variables: Seq[Variable]) {
+case class Scope(variables: Map[Ast.identifier, Type]) {
 
   def addToScope(variable: Variable) = {
-    copy(variables :+ variable)
+    copy(variables + (variable.id -> variable.`type`))
   }
 }
