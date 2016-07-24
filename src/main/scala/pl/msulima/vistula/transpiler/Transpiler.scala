@@ -1,12 +1,13 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
 
 
 object Transpiler {
 
   def apply(token: Token): String = {
-    toJavaScript(Dereferencer(Scope(Map()), token))
+    toJavaScript(DereferencerImpl(Scope(Map()), token))
   }
 
   private def toJavaScript(token: Token): String = {

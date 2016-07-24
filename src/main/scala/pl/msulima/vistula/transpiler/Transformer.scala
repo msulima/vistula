@@ -1,6 +1,7 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
 import pl.msulima.vistula.transpiler.expression.control.Return
 
 
@@ -55,9 +56,9 @@ object Transformer {
     token match {
       case Introduce(variable, body) =>
         val ns = scope.addToScope(variable)
-        ScopedResult(ns, Seq(Dereferencer(ns, body)))
+        ScopedResult(ns, Seq(DereferencerImpl(ns, body)))
       case _ =>
-        ScopedResult(scope, Seq(Dereferencer(scope, token)))
+        ScopedResult(scope, Seq(DereferencerImpl(scope, token)))
     }
   }
 }

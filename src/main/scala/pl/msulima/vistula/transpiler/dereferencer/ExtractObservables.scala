@@ -1,4 +1,6 @@
-package pl.msulima.vistula.transpiler
+package pl.msulima.vistula.transpiler.dereferencer
+
+import pl.msulima.vistula.transpiler.{Observable, Operation, RxMapOp}
 
 object ExtractObservables {
 
