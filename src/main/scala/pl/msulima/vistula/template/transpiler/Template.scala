@@ -79,13 +79,14 @@ object Template {
         StaticString(text)
       ))
     case parser.LoopNode(identifier, expression, body) =>
-      val x = FunctionDef.anonymous(identifier.name, Return(
+      // FIXME
+      val x = Operation(FunctionDef, Seq(Constant(""), Constant(identifier.name)), Return(
         FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
           StaticArray(apply(body).map(Constant.apply))
         ))
       ))
 
-      val map = FunctionDef.anonymous("$arg", Return(
+      val map = Operation(FunctionDef, Seq(Constant(""), Constant("$arg")), Return(
         FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
           FunctionCall(Reference(Constant("$arg"), Constant("map")), Seq(x))
         ))

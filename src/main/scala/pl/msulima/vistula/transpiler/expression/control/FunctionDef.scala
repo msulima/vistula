@@ -10,18 +10,38 @@ case object FunctionDef extends Operator {
     case Ast.stmt.FunctionDef(name, arguments, body, _) =>
       val argumentIds = arguments.args.map({
         case Ast.expr.Name(id, Ast.expr_context.Param) =>
-          id.name
+          id
       })
 
-      Operation(FunctionDef, Constant(name.name) +: argumentIds.map(Constant.apply), FunctionScope(body))
+      FunctionDef(name, argumentIds, body.map(Tokenizer.applyStmt))
   }
 
-  def anonymous(singleArg: String, body: Token): Token = {
-    Operation(FunctionDef, Seq(Constant(""), Constant(singleArg)), body)
+  def anonymous(singleArg: Ast.identifier, body: Token): Token = {
+    anonymous(Seq(singleArg), Seq(body), mutableArgs = true)
   }
 
-  def anonymous(firstArg: Ast.identifier, secondArg: Ast.identifier, body: Token): Token = {
-    Operation(FunctionDef, Seq(Constant(""), Constant(firstArg.name), Constant(secondArg.name)), body)
+  def anonymous(singleArg: Ast.identifier, body: Seq[Token]): Token = {
+    anonymous(Seq(singleArg), body, mutableArgs = true)
+  }
+
+  def anonymous(firstArg: Ast.identifier, secondArg: Ast.identifier, body: Seq[Token], mutableArgs: Boolean = true): Token = {
+    anonymous(Seq(firstArg, secondArg), body, mutableArgs)
+  }
+
+  private def anonymous(arguments: Seq[Ast.identifier], body: Seq[Token], mutableArgs: Boolean): Token = {
+    apply(Ast.identifier(""), arguments, body, mutableArgs)
+  }
+
+  def apply(name: Ast.identifier, arguments: Seq[Ast.identifier], body: Seq[Token], mutableArgs: Boolean = true): Token = {
+    val declarations = arguments.map(arg => {
+      Introduce(Variable(arg, Type(observable = mutableArgs)), Constant(""))
+    })
+
+    Operation(
+      FunctionDef,
+      Constant(name.name) +: arguments.map(arg => Constant(arg.name)),
+      FunctionScope(declarations ++ body)
+    )
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
@@ -34,16 +54,8 @@ case object FunctionDef extends Operator {
 
 case object FunctionScope extends Operator {
 
-  def apply(prelude: Seq[Token], program: Seq[Ast.stmt]): Token = {
-    val body = prelude ++ program.map(Tokenizer.applyStmt)
-
-    Operation(FunctionScope, body.init :+ Box(body.last), Tokenizer.Ignored)
-  }
-
-  def apply(program: Seq[Ast.stmt]): Token = {
-    val body = program.map(Tokenizer.applyStmt)
-
-    Operation(FunctionScope, body.init :+ Box(body.last), Tokenizer.Ignored)
+  private[control] def apply(program: Seq[Token]): Token = {
+    Operation(FunctionScope, program.init :+ Box(program.last), Tokenizer.Ignored)
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {

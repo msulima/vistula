@@ -26,15 +26,12 @@ case object Generator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)) =>
-      val declarations = Seq(
-        Introduce(Variable(acc, Type(observable = false)), Constant("")),
-        Introduce(Variable(source, Type(observable = false)), Constant(""))
-      )
+      val innerBody = FunctionDef.anonymous(acc, source, Seq(Tokenizer.applyStmt(body)), mutableArgs = false)
 
       FunctionCall(Reference(Ast.identifier("vistula.aggregate")), Seq(
         Tokenizer.boxed(initial),
         Reference(source),
-        Observable(FunctionDef.anonymous(acc, source, FunctionScope(declarations, Seq(body))))
+        Observable(innerBody)
       ))
   }
 }

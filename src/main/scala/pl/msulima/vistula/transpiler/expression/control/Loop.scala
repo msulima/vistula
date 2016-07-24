@@ -8,12 +8,12 @@ object Loop {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.For(Ast.expr.Name(name, Ast.expr_context.Load), iterExpr, body, _) =>
-      Loop(iterExpr, name, Observable(FunctionScope(body)))
+      Loop(iterExpr, name, body.map(Tokenizer.applyStmt))
   }
 
-  def apply(iterable: Ast.expr, argument: Ast.identifier, body: Token) = {
+  def apply(iterable: Ast.expr, argument: Ast.identifier, body: Seq[Token]) = {
     val iter = Reference(Tokenizer.apply(iterable), Constant("map"))
 
-    FunctionCall(iter, Seq(FunctionDef.anonymous(argument.name, body)))
+    FunctionCall(iter, Seq(Observable(FunctionDef.anonymous(argument, body))))
   }
 }
