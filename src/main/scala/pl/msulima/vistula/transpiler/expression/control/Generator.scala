@@ -2,7 +2,7 @@ package pl.msulima.vistula.transpiler.expression.control
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.util.Indent
+import pl.msulima.vistula.transpiler.expression.reference.{Declare, FunctionCall, Reference}
 
 object GeneratorBody {
 
@@ -22,27 +22,24 @@ object GeneratorSource {
   }
 }
 
-case object Generator extends Operator {
+case object Generator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)) =>
-      Operation(Generator,
-        Seq(Constant(source.name), Constant(acc.name), Tokenizer.boxed(initial)),
-        Observable(FunctionScope(Seq(body)))
+      val identifierAcc = Ast.identifier("$acc")
+      val identifierSource = Ast.identifier("$source")
+
+      val declarations = Seq(
+        Introduce(Variable(identifierAcc, Type(observable = false)), Constant("")), // FIXME function declaration
+        Introduce(Variable(identifierSource, Type(observable = false)), Constant("")),
+        Declare(acc, mutable = true, Reference(identifierAcc)),
+        Declare(source, mutable = true, Reference(identifierSource))
       )
-  }
 
-  override def apply(operands: List[Constant], output: Constant): Constant = {
-    val source = operands.head.value
-    val acc = operands(1).value
-    val initial = operands(2).value
-
-    // FIXME move assignments to inputs
-    Constant(
-      s"""vistula.aggregate($initial, $source, ($$acc, $$source) => {
-          |    const $acc = vistula.constantObservable($$acc);
-          |    const $source = vistula.constantObservable($$source);
-          |${Indent.leftPad(output.value)}
-          |})""".stripMargin)
+      FunctionCall(Reference(Ast.identifier("vistula.aggregate")), Seq(
+        Tokenizer.boxed(initial),
+        Reference(source),
+        Observable(FunctionDef.anonymous(identifierAcc, identifierSource, FunctionScope(declarations, Seq(body))))
+      ))
   }
 }

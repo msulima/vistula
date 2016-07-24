@@ -20,6 +20,10 @@ case object FunctionDef extends Operator {
     Operation(FunctionDef, Seq(Constant(""), Constant(singleArg)), body)
   }
 
+  def anonymous(firstArg: Ast.identifier, secondArg: Ast.identifier, body: Token): Token = {
+    Operation(FunctionDef, Seq(Constant(""), Constant(firstArg.name), Constant(secondArg.name)), body)
+  }
+
   override def apply(operands: List[Constant], output: Constant): Constant = {
     Constant(
       s"""function ${operands.head.value}(${operands.tail.map(_.value).mkString(", ")}) {
@@ -29,6 +33,12 @@ case object FunctionDef extends Operator {
 }
 
 case object FunctionScope extends Operator {
+
+  def apply(prelude: Seq[Token], program: Seq[Ast.stmt]): Token = {
+    val body = prelude ++ program.map(Tokenizer.applyStmt)
+
+    Operation(FunctionScope, body.init :+ Box(body.last), Tokenizer.Ignored)
+  }
 
   def apply(program: Seq[Ast.stmt]): Token = {
     val body = program.map(Tokenizer.applyStmt)

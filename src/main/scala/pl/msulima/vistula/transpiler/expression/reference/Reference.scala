@@ -7,13 +7,13 @@ case object Reference extends Operator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Name(id, Ast.expr_context.Load) =>
-      Reference(Constant(id.name))
+      Reference(id)
     case Ast.expr.Attribute(expr, id, Ast.expr_context.Load) =>
       Reference(Tokenizer.apply(expr), Constant(id.name))
   }
 
-  def apply(target: Token): Token = {
-    Operation(Reference, Seq(), target)
+  def apply(id: Ast.identifier): Token = {
+    Operation(Reference, Seq(), Constant(id.name))
   }
 
   def apply(source: Token, attribute: Token): Token = {

@@ -18,7 +18,7 @@ object Transpiler {
   }
 
   def toJavaScript(program: Seq[Token]): String = {
-    program.map(toConstant).map(_.value).mkString("", ";\n", ";")
+    program.map(toConstant).filterNot(_ == Tokenizer.Pass).map(_.value).mkString("", ";\n", ";")
   }
 
   private def toConstant(token: Token): Constant = {

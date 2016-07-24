@@ -100,8 +100,8 @@ describe("Observable", function () {
 
     it("aggregate", function () {
         // given
-        const Source = new vistula.ObservableImpl();
         const Initial = constantObservable.constantObservable(1);
+        const Source = new vistula.ObservableImpl();
 
         const Obs = util.aggregate(Initial, Source, ($acc, $source) => {
             //noinspection UnnecessaryLocalVariableJS

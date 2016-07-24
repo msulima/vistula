@@ -8,6 +8,7 @@ import pl.msulima.vistula.transpiler.expression.reference._
 
 object Tokenizer {
 
+  val Pass = Constant("")
   val Ignored = Constant("ignored")
 
   def boxed(expr: Ast.expr) = {
@@ -31,7 +32,7 @@ object Tokenizer {
       .orElse(If.apply)
       .orElse(Return.apply)
       .orElse(Loop.apply)
-      .orElse(Pass.apply)
+      .orElse(pl.msulima.vistula.transpiler.expression.control.Pass.apply)
   }
 
   def apply: PartialFunction[Ast.expr, Token] = {

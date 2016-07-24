@@ -1,4 +1,4 @@
-const W = vistula.aggregate(X, Z, ($acc, $source) => {
+const W = vistula.aggregate(X, Z, function ($acc, $source) {
     const Y = vistula.constantObservable($acc);
     const Z = vistula.constantObservable($source);
     return vistula.zip([
