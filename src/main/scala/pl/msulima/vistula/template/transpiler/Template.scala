@@ -66,11 +66,11 @@ object Template {
   private def apply: PartialFunction[parser.Node, Token] = {
     case parser.ObservableNode(identifier) =>
       FunctionCall(Constant("vistula.dom.textObservable"), Seq(
-        Tokenizer.boxed(identifier)
+        Tokenizer.apply(identifier)
       ))
     case parser.IfNode(expr, body, elseBody) =>
       FunctionCall(Constant("vistula.ifChangedArrays"), Seq(
-        Tokenizer.boxed(expr),
+        Tokenizer.apply(expr),
         StaticArray(apply(body).map(Constant.apply)),
         StaticArray(apply(elseBody).map(Constant.apply))
       ))
@@ -84,17 +84,17 @@ object Template {
       ), Seq()))
 
       val inner = FunctionDef.anonymous(identifier, Seq(
-        Observable(FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
+        FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
           StaticArray(apply(body).map(Constant.apply))
-        )))
+        ))
       ))
 
       val elementsId = Ast.identifier("$arg")
 
       val outer = FunctionDef.anonymous(elementsId, Seq(
-        Observable(FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
+        FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
           FunctionCall(Reference(Reference(elementsId), Constant("map")), Seq(inner))
-        )))
+        ))
       ), mutableArgs = false)
 
       FunctionCall(Reference(iterable, Constant("rxFlatMap")), Seq(outer))

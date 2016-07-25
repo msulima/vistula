@@ -10,14 +10,6 @@ object Tokenizer {
 
   val Pass = Constant("")
 
-  def boxed(expr: Ast.expr) = {
-    Box(apply(expr))
-  }
-
-  def boxed(stmt: Ast.stmt) = {
-    Box(applyStmt(stmt))
-  }
-
   private val expr: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.Expr(ex) =>
       apply(ex)

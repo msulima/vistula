@@ -28,10 +28,10 @@ case object Generator {
     case Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)) =>
       val innerBody = FunctionDef.anonymous(acc, source, Seq(Tokenizer.applyStmt(body)), mutableArgs = false)
 
-      FunctionCall(Reference(Ast.identifier("vistula.aggregate")), Seq(
-        Tokenizer.boxed(initial),
+      FunctionCall(Constant("vistula.aggregate"), Seq(
+        Tokenizer.applyStmt(initial),
         Reference(source),
-        Observable(innerBody)
+        innerBody
       ))
   }
 }

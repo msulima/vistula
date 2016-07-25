@@ -11,7 +11,7 @@ object Attributes {
   def apply(tag: parser.Tag) = {
     StaticArray(tag.attributes.map({
       case parser.AttributeValue(key, value) =>
-        tuple(key, Tokenizer.boxed(value))
+        tuple(key, Box(Tokenizer.apply(value)))
       case parser.AttributeMarker(key) =>
         tuple(key, Box(Constant("null")))
       case parser.AttributeEvent(key, value) =>

@@ -17,7 +17,7 @@ trait FunctionDereferencer {
       val dereferencedFunc = dereference(func)
 
       val (resultFunc, dereferencedInputs) = dereferencedFunc match {
-        case t if FunctionScopes.functions.contains(t) =>
+        case t if FunctionSymbols.functions.contains(t) =>
           substitute(t, arguments)
         case Observable(t: Constant) =>
           dereferencedFunc -> (t +: arguments.map(arg => dereference(Box(arg))))
@@ -31,7 +31,7 @@ trait FunctionDereferencer {
   }
 
   private def substitute(func: Token, arguments: Seq[Token]) = {
-    val definition = FunctionScopes.functions(func)
+    val definition = FunctionSymbols.functions(func)
 
     val resultFunc = if (definition.resultIsObservable) {
       Observable(func)
@@ -50,7 +50,7 @@ trait FunctionDereferencer {
         if (argDefinition.observable) {
           dereference(Box(arg))
         } else {
-          ???
+          dereference(arg)
         }
     })
   }
@@ -60,14 +60,27 @@ case class ArgumentDefinition(observable: Boolean)
 
 case class FunctionDefinition(id: Ast.identifier, arguments: Seq[ArgumentDefinition], resultIsObservable: Boolean)
 
-object FunctionScopes {
+object FunctionSymbols {
 
   private val const = ArgumentDefinition(observable = false)
   private val obs = ArgumentDefinition(observable = true)
 
-  val VistulaIfStatement = FunctionDefinition(Ast.identifier("vistula.ifStatement"), Seq(obs, obs, obs), resultIsObservable = true)
+  private def constDef(name: String, arguments: ArgumentDefinition*) = {
+    FunctionDefinition(Ast.identifier(name), arguments, resultIsObservable = false)
+  }
 
-  val functions: Map[Token, FunctionDefinition] = Map(
-    Constant(VistulaIfStatement.id.name) -> VistulaIfStatement
+  private def obsDef(name: String, arguments: ArgumentDefinition*) = {
+    FunctionDefinition(Ast.identifier(name), arguments, resultIsObservable = true)
+  }
+
+  private val definitions = Seq(
+    obsDef("vistula.ifStatement", obs, obs, obs),
+    obsDef("vistula.dom.textObservable", obs),
+    obsDef("vistula.dom.textNode", const),
+    obsDef("vistula.zipAndFlatten", const),
+    obsDef("vistula.aggregate", obs, obs, const),
+    constDef("vistula.ifChangedArrays", obs, const, const)
   )
+
+  val functions: Map[Token, FunctionDefinition] = definitions.map(d => Constant(d.id.name) -> d).toMap
 }
