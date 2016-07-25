@@ -8,10 +8,10 @@ case object If {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.If(testExpr, body, orElse) =>
-      FunctionCall(Observable(Constant("vistula.ifStatement")), Seq(
-        Tokenizer.boxed(testExpr),
-        Box(Transformer.wrapAndReturnLast(body)),
-        Box(Transformer.wrapAndReturnLast(orElse))
+      FunctionCall(Constant("vistula.ifStatement"), Seq(
+        Tokenizer.apply(testExpr),
+        Transformer.wrapAndReturnLast(body),
+        Transformer.wrapAndReturnLast(orElse)
       ))
   }
 }
