@@ -12,18 +12,18 @@ trait FunctionDereferencer {
       val result = Transformer.scoped(program, scope)
 
       Operation(FunctionScope, result.init :+ Return(result.last))
-    case Operation(FunctionCall, arguments, callee) =>
-      val dereferencedOutput = dereference(callee)
+    case Operation(FunctionCall, arguments, func) =>
+      val dereferencedFunc = dereference(func)
 
-      val dereferencedInputs = dereferencedOutput match {
+      val dereferencedInputs = dereferencedFunc match {
         case Observable(t: Constant) =>
           t +: arguments.map(arg => dereference(Box(arg)))
         case _: Observable =>
-          dereferencedOutput +: arguments.map(arg => dereference(Box(arg)))
+          dereferencedFunc +: arguments.map(arg => dereference(Box(arg)))
         case _ =>
-          dereferencedOutput +: arguments.map(dereference)
+          dereferencedFunc +: arguments.map(dereference)
       }
 
-      dereferenceOperation(Operation(FunctionCall, dereferencedInputs, dereferencedOutput))
+      dereferenceOperation(FunctionCall(dereferencedFunc, dereferencedInputs))
   }
 }

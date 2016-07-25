@@ -10,7 +10,7 @@ case object FunctionCall extends Operator {
       FunctionCall(Tokenizer.apply(func), args.map(Tokenizer.apply))
   }
 
-  def apply(func: Token, args: Seq[Token]): Token = {
+  def apply(func: Token, args: Seq[Token]): Operation = {
     Operation(FunctionCall, args, func)
   }
 
