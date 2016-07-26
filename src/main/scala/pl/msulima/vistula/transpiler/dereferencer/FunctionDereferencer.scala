@@ -14,25 +14,27 @@ trait FunctionDereferencer {
 
       Operation(FunctionScope, result.init :+ Return(result.last))
     case Operation(FunctionCall, arguments, func) =>
-      val dereferencedFunc = dereference(func)
+      val dereferencedFunc: Token = dereference(func)
 
-      val (resultFunc, dereferencedInputs) = dereferencedFunc match {
+      val (funcDefinition, function) = dereferencedFunc match {
         case t if FunctionSymbols.functions.contains(t) =>
-          substitute(t, arguments)
+          FunctionSymbols.functions(t) -> t
         case Observable(t: Constant) =>
-          dereferencedFunc -> (t +: arguments.map(arg => dereference(Box(arg))))
+          val definition = FunctionDefinition.adapt(arguments.size, argumentsAreObservable = true, resultIsObservable = true)
+          definition -> t
         case _: Observable =>
-          dereferencedFunc -> (dereferencedFunc +: arguments.map(arg => dereference(Box(arg))))
+          val definition = FunctionDefinition.adapt(arguments.size, argumentsAreObservable = true, resultIsObservable = true)
+          definition -> dereferencedFunc
         case _ =>
-          dereferencedFunc -> (dereferencedFunc +: arguments.map(dereference))
+          val definition = FunctionDefinition.adapt(arguments.size, argumentsAreObservable = false, resultIsObservable = false)
+          definition -> dereferencedFunc
       }
 
+      val (resultFunc, dereferencedInputs) = substitute(funcDefinition, function, arguments)
       dereferenceOperation(FunctionCall(resultFunc, dereferencedInputs))
   }
 
-  private def substitute(func: Token, arguments: Seq[Token]) = {
-    val definition = FunctionSymbols.functions(func)
-
+  private def substitute(definition: FunctionDefinition, func: Token, arguments: Seq[Token]): (Token, Seq[Token]) = {
     val resultFunc = if (definition.resultIsObservable) {
       Observable(func)
     } else {
@@ -43,9 +45,15 @@ trait FunctionDereferencer {
   }
 
   private def handleArguments(definition: FunctionDefinition, arguments: Seq[Token]) = {
-    require(arguments.size == definition.arguments.size, s"Wrong number of arguments: ${arguments.size} expected ${definition.arguments.size}")
+    val args = if (definition.varargs) {
+      FunctionDefinition.adaptArguments(arguments.size, definition.arguments.head.observable)
+    } else {
+      require(arguments.size == definition.arguments.size,
+        s"Wrong number of arguments: given ${arguments.size} expected ${definition.arguments.size}")
+      definition.arguments
+    }
 
-    arguments.zip(definition.arguments).map({
+    arguments.zip(args).map({
       case (arg, argDefinition) =>
         if (argDefinition.observable) {
           dereference(Box(arg))
@@ -58,20 +66,43 @@ trait FunctionDereferencer {
 
 case class ArgumentDefinition(observable: Boolean)
 
-case class FunctionDefinition(id: Ast.identifier, arguments: Seq[ArgumentDefinition], resultIsObservable: Boolean)
+case class FunctionDefinition(id: Ast.identifier, arguments: Seq[ArgumentDefinition], resultIsObservable: Boolean, varargs: Boolean = false)
 
-object FunctionSymbols {
+object FunctionDefinition {
 
-  private val const = ArgumentDefinition(observable = false)
-  private val obs = ArgumentDefinition(observable = true)
+  val const = ArgumentDefinition(observable = false)
+  val obs = ArgumentDefinition(observable = true)
 
-  private def constDef(name: String, arguments: ArgumentDefinition*) = {
+  def adapt(argumentsCount: Int, argumentsAreObservable: Boolean, resultIsObservable: Boolean) = {
+    val argumentDefinition = if (argumentsAreObservable) {
+      obs
+    } else {
+      const
+    }
+    FunctionDefinition(Ast.identifier(""), (1 to argumentsCount).map(_ => argumentDefinition), resultIsObservable = resultIsObservable)
+  }
+
+  def adaptArguments(argumentsCount: Int, argumentsAreObservable: Boolean) = {
+    val argumentDefinition = if (argumentsAreObservable) {
+      obs
+    } else {
+      const
+    }
+    (1 to argumentsCount).map(_ => argumentDefinition)
+  }
+
+  def constDef(name: String, arguments: ArgumentDefinition*) = {
     FunctionDefinition(Ast.identifier(name), arguments, resultIsObservable = false)
   }
 
-  private def obsDef(name: String, arguments: ArgumentDefinition*) = {
+  def obsDef(name: String, arguments: ArgumentDefinition*) = {
     FunctionDefinition(Ast.identifier(name), arguments, resultIsObservable = true)
   }
+}
+
+object FunctionSymbols {
+
+  import FunctionDefinition._
 
   private val definitions = Seq(
     obsDef("vistula.ifStatement", obs, obs, obs),
@@ -79,7 +110,10 @@ object FunctionSymbols {
     obsDef("vistula.dom.textNode", const),
     obsDef("vistula.zipAndFlatten", const),
     obsDef("vistula.aggregate", obs, obs, const),
-    constDef("vistula.ifChangedArrays", obs, const, const)
+    constDef("vistula.ifChangedArrays", obs, const, const),
+    constDef("vistula.dom.createBoundElement", const, const, const, const),
+    constDef("vistula.dom.createElement", const, const, const),
+    FunctionDefinition(Ast.identifier("vistula.Seq.apply"), Seq(obs), resultIsObservable = true, varargs = true)
   )
 
   val functions: Map[Token, FunctionDefinition] = definitions.map(d => Constant(d.id.name) -> d).toMap
