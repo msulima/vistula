@@ -20,8 +20,8 @@ class OperationDereferencer(scope: Scope) {
 
   private def reference(operation: Operation, observables: Seq[Token]): Token = {
     operation.inputs.headOption match {
-      case Some(observable: Observable) =>
-        map(operation.copy(output = Observable(operation.output)), observables)
+      case Some(_: Observable) =>
+        Observable(Operation(RxMapOp(useFlatMap = true), observables, operation))
       case Some(_) =>
         operation
       case None =>
