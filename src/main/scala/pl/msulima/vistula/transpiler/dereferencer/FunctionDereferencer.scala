@@ -110,9 +110,10 @@ object FunctionSymbols {
     obsDef("vistula.dom.textNode", const),
     obsDef("vistula.zipAndFlatten", const),
     obsDef("vistula.aggregate", obs, obs, const),
-    constDef("vistula.ifChangedArrays", obs, const, const),
-    constDef("vistula.dom.createBoundElement", const, const, const, const),
-    constDef("vistula.dom.createElement", const, const, const),
+    obsDef("vistula.dom.createBoundElement", const, const, const, const),
+    obsDef("vistula.dom.createElement", const, const, const),
+    obsDef("vistula.ifChangedArrays", obs, const, const),
+    constDef("vistula.wrap", const),
     FunctionDefinition(Ast.identifier("vistula.Seq.apply"), Seq(obs), resultIsObservable = true, varargs = true)
   )
 

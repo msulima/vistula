@@ -5,11 +5,11 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
 import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
-import pl.msulima.vistula.transpiler.expression.reference.{FunctionCall, Reference}
+import pl.msulima.vistula.transpiler.expression.reference.{Declare, FunctionCall, Reference}
 import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler, _}
-import pl.msulima.vistula.util.{Indent, ToArray}
+import pl.msulima.vistula.util.ToArray
 
-case class Scoped(variables: Seq[Ast.identifier], body: String)
+case class Scoped(variables: Seq[Ast.identifier], body: Token)
 
 object Template {
 
@@ -23,21 +23,25 @@ object Template {
   }
 
   private def apply(program: Seq[parser.Node]): Seq[String] = {
-    program.map(applyScope)
+    program.map(stmt => VistulaTranspiler(applyScope(stmt)))
   }
 
-  private def applyScope(node: parser.Node): String = {
+  private def applyScope(node: parser.Node) = {
     val Scoped(variables, body) = applyWithScope(node)
 
     if (variables.isEmpty) {
       body
     } else {
-      val variableDeclarations = variables.map(variable => s"const ${variable.name} = new vistula.ObservableImpl();")
+      val variableDeclarations = variables.map(variable => {
+        Introduce(
+          Variable(variable, Type(true)),
+          Operation(Declare, Seq(Constant(variable.name)), Constant("new vistula.ObservableImpl()"))
+        )
+      })
 
-      s"""vistula.wrap(() => {
-          |${Indent.leftPad(variableDeclarations)}
-          |${Indent.leftPad("return " + body + ";")}
-          |})""".stripMargin
+      val code = FunctionDef.anonymous(variableDeclarations :+ body)
+
+      FunctionCall(Constant("vistula.wrap"), Seq(code))
     }
   }
 
@@ -45,22 +49,22 @@ object Template {
     case parser.Element(tag, childNodes) =>
       val children = childNodes.map(applyWithScope)
       val variables = children.flatMap(_.variables)
-      val body = ToArray(children.map(_.body))
+      val body = StaticArray(children.map(scoped => Box(scoped.body)))
 
       tag.id.map(id => {
-        val code = VistulaTranspiler(FunctionCall(Constant("vistula.dom.createBoundElement"), Seq(
-          StaticString(tag.name), Constant(id.name), Attributes(tag), Constant(body)
-        )))
+        val code = FunctionCall(Constant("vistula.dom.createBoundElement"), Seq(
+          StaticString(tag.name), Constant(id.name), Attributes(tag), body
+        ))
         Scoped(variables :+ id, code)
       }).getOrElse({
-        val code = VistulaTranspiler(FunctionCall(Constant("vistula.dom.createElement"), Seq(
-          StaticString(tag.name), Attributes(tag), Constant(body)
-        )))
+        val code = FunctionCall(Constant("vistula.dom.createElement"), Seq(
+          StaticString(tag.name), Attributes(tag), body
+        ))
 
         Scoped(variables, code)
       })
     case other: parser.Node =>
-      Scoped(Seq(), VistulaTranspiler(apply(other)))
+      Scoped(Seq(), apply(other))
   }
 
   private def apply: PartialFunction[parser.Node, Token] = {
@@ -97,6 +101,6 @@ object Template {
         ))
       ), mutableArgs = false)
 
-      FunctionCall(Reference(iterable, Constant("rxFlatMap")), Seq(outer))
+      Observable(FunctionCall(Reference(iterable, Constant("rxFlatMap")), Seq(outer)))
   }
 }

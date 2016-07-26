@@ -1,4 +1,4 @@
-vistula.wrap(() => {
+vistula.wrap(function () {
     const inner = new vistula.ObservableImpl();
     const outer = new vistula.ObservableImpl();
     return vistula.dom.createBoundElement("div", outer, [
