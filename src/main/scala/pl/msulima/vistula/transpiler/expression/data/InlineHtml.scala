@@ -19,12 +19,8 @@ object InlineHtml {
       val lines = source.getLines().toList
       source.close()
 
-      toOperation(Template(lines.mkString("\n")))
+      Observable(Template(lines.mkString("\n")))
     case Ast.expr.Str(x) if x.startsWith(MagicInlineHtmlPrefix) =>
-      toOperation(Template(x.stripPrefix(MagicInlineHtmlPrefix)))
-  }
-
-  private def toOperation(html: String) = {
-    Observable(Constant(html))
+      Observable(Template(x.stripPrefix(MagicInlineHtmlPrefix)))
   }
 }

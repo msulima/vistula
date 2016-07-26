@@ -8,7 +8,7 @@ import scala.io.Source
 
 package object testutil {
 
-  def readFile(file: String) = {
+  def readFile(file: String): String = {
     val inputStream = getClass.getResourceAsStream(file)
     require(inputStream != null, s"$file not found")
 

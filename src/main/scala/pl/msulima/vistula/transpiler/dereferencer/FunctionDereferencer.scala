@@ -113,7 +113,7 @@ object FunctionSymbols {
     obsDef("vistula.dom.createBoundElement", const, const, const, const),
     obsDef("vistula.dom.createElement", const, const, const),
     obsDef("vistula.ifChangedArrays", obs, const, const),
-    constDef("vistula.wrap", const),
+    obsDef("vistula.wrap", const),
     FunctionDefinition(Ast.identifier("vistula.Seq.apply"), Seq(obs), resultIsObservable = true, varargs = true)
   )
 

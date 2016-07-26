@@ -1,17 +1,12 @@
 package pl.msulima.vistula.transpiler
 
 import org.specs2.mutable.Specification
-import pl.msulima.vistula.template.transpiler.Template
-import pl.msulima.vistula.testutil.readFile
+import pl.msulima.vistula.testutil.TranspilerSpecification
 
 
-class TemplateSpec extends Specification {
+class TemplateSpec extends Specification with TranspilerSpecification {
 
-  private def test(file: String) = {
-    file in {
-      Template(readFile(s"/pl/msulima/vistula/template/$file.vst.html")) must_== readFile(s"/pl/msulima/vistula/template/$file.js")
-    }
-  }
+  def test = transpileAndCompareHtml("template") _
 
   test("sample")
   test("if")

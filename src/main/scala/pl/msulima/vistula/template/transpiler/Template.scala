@@ -3,27 +3,26 @@ package pl.msulima.vistula.template.transpiler
 import fastparse.all._
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
+import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, FunctionCall, Reference}
-import pl.msulima.vistula.transpiler.{Transpiler => VistulaTranspiler, _}
-import pl.msulima.vistula.util.ToArray
 
 case class Scoped(variables: Seq[Ast.identifier], body: Token)
 
 object Template {
 
-  def apply(program: String): String = {
+  def apply(program: String): Token = {
     val nodes = apply((parser.Statements.document ~ End).parse(program).get.value)
     if (nodes.size == 1) {
       nodes.head
     } else {
-      s"vistula.zipAndFlatten(${ToArray(nodes)})"
+      FunctionCall(Constant("vistula.zipAndFlatten"), Seq(StaticArray(nodes.map(Box))))
     }
   }
 
-  private def apply(program: Seq[parser.Node]): Seq[String] = {
-    program.map(stmt => VistulaTranspiler(applyScope(stmt)))
+  private def apply(program: Seq[parser.Node]) = {
+    program.map(applyScope)
   }
 
   private def applyScope(node: parser.Node) = {
@@ -35,7 +34,7 @@ object Template {
       val variableDeclarations = variables.map(variable => {
         Introduce(
           Variable(variable, Type(true)),
-          Operation(Declare, Seq(Constant(variable.name)), Constant("new vistula.ObservableImpl()"))
+          Operation(Declare, Seq(Constant(variable.name)), Constant("new vistula.ObservableImpl()")) // FIXME
         )
       })
 
@@ -75,8 +74,8 @@ object Template {
     case parser.IfNode(expr, body, elseBody) =>
       FunctionCall(Constant("vistula.ifChangedArrays"), Seq(
         Tokenizer.apply(expr),
-        StaticArray(apply(body).map(Constant.apply)),
-        StaticArray(apply(elseBody).map(Constant.apply))
+        StaticArray(apply(body).map(Box.apply)),
+        StaticArray(apply(elseBody).map(Box.apply))
       ))
     case parser.TextNode(text) =>
       FunctionCall(Constant("vistula.dom.textNode"), Seq(
@@ -89,7 +88,7 @@ object Template {
 
       val inner = FunctionDef.anonymous(identifier, Seq(
         FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
-          StaticArray(apply(body).map(Constant.apply))
+          StaticArray(apply(body).map(Box.apply))
         ))
       ))
 
