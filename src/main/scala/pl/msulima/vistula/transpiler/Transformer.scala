@@ -7,8 +7,6 @@ import pl.msulima.vistula.transpiler.expression.control.Return
 
 object Transformer {
 
-  private val EmptyScope = Scope(Map())
-
   def wrapAndReturnLast(program: Seq[Ast.stmt]): Token = {
     val result = transform(program)
 
@@ -33,7 +31,7 @@ object Transformer {
   }
 
   def transform(program: Seq[Ast.stmt]): Seq[Token] = {
-    scoped(program.map(Tokenizer.applyStmt), EmptyScope)
+    scoped(program.map(Tokenizer.applyStmt), Scope.Empty)
   }
 
   def scoped(program: Seq[Token], scope: Scope): Seq[Token] = {

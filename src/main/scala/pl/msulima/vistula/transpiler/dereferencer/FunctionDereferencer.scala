@@ -1,6 +1,5 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
-import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.control.{FunctionScope, Return}
 import pl.msulima.vistula.transpiler.expression.reference.FunctionCall
@@ -17,8 +16,8 @@ trait FunctionDereferencer {
       val dereferencedFunc: Token = dereference(func)
 
       val (funcDefinition, function) = dereferencedFunc match {
-        case t if FunctionSymbols.functions.contains(t) =>
-          FunctionSymbols.functions(t) -> t
+        case t if scope.functions.contains(t) =>
+          scope.functions(t) -> t
         case Observable(t: Constant) =>
           val definition = FunctionDefinition.adapt(arguments.size, argumentsAreObservable = true, resultIsObservable = true)
           definition -> t
@@ -62,60 +61,4 @@ trait FunctionDereferencer {
         }
     })
   }
-}
-
-case class ArgumentDefinition(observable: Boolean)
-
-case class FunctionDefinition(id: Ast.identifier, arguments: Seq[ArgumentDefinition], resultIsObservable: Boolean, varargs: Boolean = false)
-
-object FunctionDefinition {
-
-  val const = ArgumentDefinition(observable = false)
-  val obs = ArgumentDefinition(observable = true)
-
-  def adapt(argumentsCount: Int, argumentsAreObservable: Boolean, resultIsObservable: Boolean) = {
-    val argumentDefinition = if (argumentsAreObservable) {
-      obs
-    } else {
-      const
-    }
-    FunctionDefinition(Ast.identifier(""), (1 to argumentsCount).map(_ => argumentDefinition), resultIsObservable = resultIsObservable)
-  }
-
-  def adaptArguments(argumentsCount: Int, argumentsAreObservable: Boolean) = {
-    val argumentDefinition = if (argumentsAreObservable) {
-      obs
-    } else {
-      const
-    }
-    (1 to argumentsCount).map(_ => argumentDefinition)
-  }
-
-  def constDef(name: String, arguments: ArgumentDefinition*) = {
-    FunctionDefinition(Ast.identifier(name), arguments, resultIsObservable = false)
-  }
-
-  def obsDef(name: String, arguments: ArgumentDefinition*) = {
-    FunctionDefinition(Ast.identifier(name), arguments, resultIsObservable = true)
-  }
-}
-
-object FunctionSymbols {
-
-  import FunctionDefinition._
-
-  private val definitions = Seq(
-    obsDef("vistula.ifStatement", obs, obs, obs),
-    obsDef("vistula.dom.textObservable", obs),
-    obsDef("vistula.dom.textNode", const),
-    obsDef("vistula.zipAndFlatten", const),
-    obsDef("vistula.aggregate", obs, obs, const),
-    obsDef("vistula.dom.createBoundElement", const, const, const, const),
-    obsDef("vistula.dom.createElement", const, const, const),
-    obsDef("vistula.ifChangedArrays", obs, const, const),
-    obsDef("vistula.wrap", const),
-    FunctionDefinition(Ast.identifier("vistula.Seq.apply"), Seq(obs), resultIsObservable = true, varargs = true)
-  )
-
-  val functions: Map[Token, FunctionDefinition] = definitions.map(d => Constant(d.id.name) -> d).toMap
 }

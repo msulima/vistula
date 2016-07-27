@@ -1,18 +1,9 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
 
 
 object Transpiler {
-
-  def apply(token: Token): String = {
-    toJavaScript(DereferencerImpl(Scope(Map()), token))
-  }
-
-  private def toJavaScript(token: Token): String = {
-    Transpiler.toJavaScript(Seq(token)).dropRight(1)
-  }
 
   def scoped(program: Seq[Ast.stmt]): String = {
     toJavaScript(Transformer.transform(program))

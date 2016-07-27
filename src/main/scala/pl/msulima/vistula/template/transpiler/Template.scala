@@ -33,7 +33,7 @@ object Template {
     } else {
       val variableDeclarations = variables.map(variable => {
         Introduce(
-          Variable(variable, Type(true)),
+          Variable(variable, Identifier(observable = true)),
           Operation(Declare, Seq(Constant(variable.name)), Constant("new vistula.ObservableImpl()")) // FIXME
         )
       })

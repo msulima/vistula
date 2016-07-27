@@ -34,7 +34,7 @@ case object FunctionDef extends Operator {
 
   def apply(name: Ast.identifier, arguments: Seq[Ast.identifier], body: Seq[Token], mutableArgs: Boolean = true): Token = {
     val declarations = arguments.map(arg => {
-      Introduce(Variable(arg, Type(observable = mutableArgs)), Constant(""))
+      Introduce(Variable(arg, Identifier(observable = mutableArgs)), Constant(""))
     })
 
     Operation(
