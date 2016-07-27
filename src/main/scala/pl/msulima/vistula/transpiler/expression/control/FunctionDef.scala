@@ -13,7 +13,10 @@ case object FunctionDef extends Operator {
           id
       })
 
-      FunctionDef(name, argumentIds, body.map(Tokenizer.applyStmt))
+      Introduce(
+        Variable(name, FunctionDefinition.adapt(argumentIds.size, argumentsAreObservable = true, resultIsObservable = true)),
+        FunctionDef(name, argumentIds, body.map(Tokenizer.applyStmt))
+      )
   }
 
   def anonymous(body: Seq[Token]): Token = {

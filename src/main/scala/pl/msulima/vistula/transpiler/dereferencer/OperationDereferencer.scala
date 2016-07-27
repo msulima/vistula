@@ -30,7 +30,7 @@ class OperationDereferencer(scope: Scope) {
   }
 
   private def reference(id: String): Token = {
-    if (scope.variables.get(Ast.identifier(id)).exists(!_.observable)) {
+    if (scope.isKnownStatic(Ast.identifier(id))) {
       Constant(id)
     } else {
       Observable(Constant(id))

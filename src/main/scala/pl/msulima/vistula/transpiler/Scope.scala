@@ -16,6 +16,10 @@ case class ScopedResult(scope: Scope, program: Seq[Token])
 
 case class Scope(variables: Map[Ast.identifier, Identifier], functions: Map[Token, FunctionDefinition]) {
 
+  def isKnownStatic(id: Ast.identifier) = {
+    variables.get(id).exists(!_.observable) || functions.contains(Constant(id.name))
+  }
+
   def addToScope(variable: Variable) = {
     variable.`type` match {
       case t: Identifier =>

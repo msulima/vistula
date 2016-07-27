@@ -1,3 +1,6 @@
+function F(X, Y) {
+    return X;
+};
 F(X, vistula.constantObservable(3));
 F(X, vistula.constantObservable(3)).rxMap($arg => ($arg + 1));
 vistula.zip([
