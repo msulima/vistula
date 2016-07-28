@@ -3,6 +3,7 @@ package pl.msulima.vistula.transpiler
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
 import pl.msulima.vistula.transpiler.expression.control.Return
+import pl.msulima.vistula.transpiler.scope.{Scope, ScopedResult}
 
 
 object Transformer {

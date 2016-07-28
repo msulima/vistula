@@ -4,3 +4,6 @@ const b = x.y()
 const C = *Y
 const D = Y
 let E = *Y
+
+pass # FIXME
+(*Y).z

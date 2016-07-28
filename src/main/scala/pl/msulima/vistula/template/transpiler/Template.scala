@@ -7,6 +7,7 @@ import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, FunctionCall, Reference}
+import pl.msulima.vistula.transpiler.scope.{Identifier, Variable}
 
 case class Scoped(variables: Seq[Ast.identifier], body: Token)
 

@@ -3,8 +3,9 @@ package pl.msulima.vistula.testutil
 import org.specs2.mutable.Specification
 import pl.msulima.vistula.Vistula
 import pl.msulima.vistula.template.transpiler.Template
+import pl.msulima.vistula.transpiler.Transpiler
 import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
-import pl.msulima.vistula.transpiler.{Scope, Transpiler}
+import pl.msulima.vistula.transpiler.scope.Scope
 
 trait TranspilerSpecification {
   this: Specification =>

@@ -1,5 +1,6 @@
 package pl.msulima.vistula.transpiler
 
+import pl.msulima.vistula.transpiler.scope.Variable
 import pl.msulima.vistula.util.Indent
 
 

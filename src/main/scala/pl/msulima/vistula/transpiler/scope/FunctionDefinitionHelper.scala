@@ -1,40 +1,13 @@
-package pl.msulima.vistula.transpiler
+package pl.msulima.vistula.transpiler.scope
 
 import pl.msulima.vistula.parser.Ast
 
-sealed trait Type
+object FunctionDefinitionHelper {
 
-case class Identifier(/*name: String,*/ observable: Boolean) extends Type
+  val const = ArgumentDefinition(observable = false)
+  val obs = ArgumentDefinition(observable = true)
 
-case class ArgumentDefinition(observable: Boolean)
-
-case class FunctionDefinition(arguments: Seq[ArgumentDefinition], resultIsObservable: Boolean, varargs: Boolean = false) extends Type
-
-case class Variable(id: Ast.identifier, `type`: Type)
-
-case class ScopedResult(scope: Scope, program: Seq[Token])
-
-case class Scope(variables: Map[Ast.identifier, Identifier], functions: Map[Token, FunctionDefinition]) {
-
-  def isKnownStatic(id: Ast.identifier) = {
-    variables.get(id).exists(!_.observable) || functions.contains(Constant(id.name))
-  }
-
-  def addToScope(variable: Variable) = {
-    variable.`type` match {
-      case t: Identifier =>
-        copy(variables = variables + (variable.id -> t))
-      case t: FunctionDefinition =>
-        copy(functions = functions + (Constant(variable.id.name) -> t))
-    }
-  }
-}
-
-object Scope {
-
-  import FunctionDefinition._
-
-  private val definitions: Seq[(Ast.identifier, FunctionDefinition)] = Seq(
+  val defaults: Seq[(Ast.identifier, FunctionDefinition)] = Seq(
     obsDef("vistula.ifStatement", obs, obs, obs),
     obsDef("vistula.dom.textObservable", obs),
     obsDef("vistula.dom.textNode", const),
@@ -46,19 +19,6 @@ object Scope {
     obsDef("vistula.wrap", const),
     Ast.identifier("vistula.Seq.apply") -> FunctionDefinition(Seq(obs), resultIsObservable = true, varargs = true)
   )
-
-  val Empty = {
-    Scope(variables = Map(), functions = definitions.map({
-      case (Ast.identifier(name), definition) =>
-        Constant(name) -> definition
-    }).toMap)
-  }
-}
-
-object FunctionDefinition {
-
-  val const = ArgumentDefinition(observable = false)
-  val obs = ArgumentDefinition(observable = true)
 
   def adapt(argumentsCount: Int, argumentsAreObservable: Boolean, resultIsObservable: Boolean) = {
     val argumentDefinition = if (argumentsAreObservable) {
@@ -86,4 +46,3 @@ object FunctionDefinition {
     Ast.identifier(name) -> FunctionDefinition(arguments, resultIsObservable = true)
   }
 }
-

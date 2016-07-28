@@ -2,6 +2,7 @@ package pl.msulima.vistula.transpiler.expression.control
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.scope.{FunctionDefinitionHelper, Identifier, Variable}
 import pl.msulima.vistula.util.Indent
 
 case object FunctionDef extends Operator {
@@ -14,7 +15,7 @@ case object FunctionDef extends Operator {
       })
 
       Introduce(
-        Variable(name, FunctionDefinition.adapt(argumentIds.size, argumentsAreObservable = true, resultIsObservable = true)),
+        Variable(name, FunctionDefinitionHelper.adapt(argumentIds.size, argumentsAreObservable = true, resultIsObservable = true)),
         FunctionDef(name, argumentIds, body.map(Tokenizer.applyStmt))
       )
   }

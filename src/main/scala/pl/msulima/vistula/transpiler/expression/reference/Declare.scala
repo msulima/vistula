@@ -1,6 +1,7 @@
 package pl.msulima.vistula.transpiler.expression.reference
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.transpiler.scope.{Identifier, Variable}
 import pl.msulima.vistula.transpiler.{Operation, _}
 
 object Declare extends Operator {

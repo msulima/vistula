@@ -3,6 +3,7 @@ package pl.msulima.vistula.transpiler.dereferencer
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.reference.{Dereference, Reference}
+import pl.msulima.vistula.transpiler.scope.Scope
 
 class OperationDereferencer(scope: Scope) {
 

@@ -3,6 +3,7 @@ package pl.msulima.vistula.transpiler.dereferencer
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.control.{FunctionScope, Return}
 import pl.msulima.vistula.transpiler.expression.reference.FunctionCall
+import pl.msulima.vistula.transpiler.scope.{FunctionDefinition, FunctionDefinitionHelper}
 
 trait FunctionDereferencer {
   this: Dereferencer =>
@@ -19,13 +20,13 @@ trait FunctionDereferencer {
         case t if scope.functions.contains(t) =>
           scope.functions(t) -> t
         case Observable(t: Constant) =>
-          val definition = FunctionDefinition.adapt(arguments.size, argumentsAreObservable = true, resultIsObservable = true)
+          val definition = FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = true, resultIsObservable = true)
           definition -> t
         case _: Observable =>
-          val definition = FunctionDefinition.adapt(arguments.size, argumentsAreObservable = true, resultIsObservable = true)
+          val definition = FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = true, resultIsObservable = true)
           definition -> dereferencedFunc
         case _ =>
-          val definition = FunctionDefinition.adapt(arguments.size, argumentsAreObservable = false, resultIsObservable = false)
+          val definition = FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = false, resultIsObservable = false)
           definition -> dereferencedFunc
       }
 
@@ -45,7 +46,7 @@ trait FunctionDereferencer {
 
   private def handleArguments(definition: FunctionDefinition, arguments: Seq[Token]) = {
     val args = if (definition.varargs) {
-      FunctionDefinition.adaptArguments(arguments.size, definition.arguments.head.observable)
+      FunctionDefinitionHelper.adaptArguments(arguments.size, definition.arguments.head.observable)
     } else {
       require(arguments.size == definition.arguments.size,
         s"Wrong number of arguments: given ${arguments.size} expected ${definition.arguments.size}")

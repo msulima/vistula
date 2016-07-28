@@ -1,6 +1,7 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.scope.Scope
 
 object DereferencerImpl {
 
