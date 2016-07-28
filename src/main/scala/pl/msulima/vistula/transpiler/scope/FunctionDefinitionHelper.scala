@@ -4,8 +4,8 @@ import pl.msulima.vistula.parser.Ast
 
 object FunctionDefinitionHelper {
 
-  val const = ArgumentDefinition(observable = false)
-  val obs = ArgumentDefinition(observable = true)
+  val const = Identifier(observable = false)
+  val obs = Identifier(observable = true)
 
   val defaults: Seq[(Ast.identifier, FunctionDefinition)] = Seq(
     obsDef("vistula.ifStatement", obs, obs, obs),
@@ -38,11 +38,11 @@ object FunctionDefinitionHelper {
     (1 to argumentsCount).map(_ => argumentDefinition)
   }
 
-  def constDef(name: String, arguments: ArgumentDefinition*) = {
+  def constDef(name: String, arguments: Identifier*) = {
     Ast.identifier(name) -> FunctionDefinition(arguments, resultIsObservable = false)
   }
 
-  def obsDef(name: String, arguments: ArgumentDefinition*) = {
+  def obsDef(name: String, arguments: Identifier*) = {
     Ast.identifier(name) -> FunctionDefinition(arguments, resultIsObservable = true)
   }
 }
