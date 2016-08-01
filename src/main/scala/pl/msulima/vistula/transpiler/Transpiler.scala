@@ -17,14 +17,14 @@ object Transpiler {
     token match {
       case Observable(op) =>
         toConstant(op)
-      case Operation(op@RxMapOp(_), operands, output) =>
+      case Operation(op@RxMapOp(_), operands, output, _) =>
         op(operands.map(toConstant).distinct.toList, toConstant(
           SubstituteObservables(
             operands.map(_.asInstanceOf[Observable]).distinct,
             output.asInstanceOf[Operation]
           ))
         )
-      case Operation(operation, operands, output) =>
+      case Operation(operation, operands, output, _) =>
         operation.apply(operands.map(toConstant).toList, toConstant(output))
       case x: Constant => x
     }
