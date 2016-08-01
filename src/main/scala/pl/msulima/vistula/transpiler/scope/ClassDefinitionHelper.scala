@@ -9,6 +9,10 @@ object ClassDefinitionHelper {
 
   val defaults = Seq(
     Vistula -> ClassDefinition(Map(
+      obsDef("aggregate", obs, obs, const),
+      obsDef("zipAndFlatten", const),
+      obsDef("ifChangedArrays", obs, const, const),
+      obsDef("wrap", const),
       obsDef("ifStatement", obs, obs, obs)
     ))
   )

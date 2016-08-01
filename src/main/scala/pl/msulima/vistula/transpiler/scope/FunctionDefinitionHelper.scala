@@ -8,15 +8,10 @@ object FunctionDefinitionHelper {
   val obs = Identifier(observable = true)
 
   val defaults: Seq[(Ast.identifier, FunctionDefinition)] = Seq(
-    obsDef("vistula.ifStatement", obs, obs, obs),
     obsDef("vistula.dom.textObservable", obs),
     obsDef("vistula.dom.textNode", const),
-    obsDef("vistula.zipAndFlatten", const),
-    obsDef("vistula.aggregate", obs, obs, const),
     obsDef("vistula.dom.createBoundElement", const, const, const, const),
     obsDef("vistula.dom.createElement", const, const, const),
-    obsDef("vistula.ifChangedArrays", obs, const, const),
-    obsDef("vistula.wrap", const),
     Ast.identifier("vistula.Seq.apply") -> FunctionDefinition(Seq(obs), resultIsObservable = true, varargs = true)
   )
 

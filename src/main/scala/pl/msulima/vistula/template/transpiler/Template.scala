@@ -18,7 +18,7 @@ object Template {
     if (nodes.size == 1) {
       nodes.head
     } else {
-      FunctionCall(Constant("vistula.zipAndFlatten"), Seq(StaticArray(nodes.map(Box))))
+      FunctionCall("vistula.zipAndFlatten", Seq(StaticArray(nodes.map(Box))))
     }
   }
 
@@ -41,7 +41,7 @@ object Template {
 
       val code = FunctionDef.anonymous(variableDeclarations :+ body)
 
-      FunctionCall(Constant("vistula.wrap"), Seq(code))
+      FunctionCall("vistula.wrap", Seq(code))
     }
   }
 
@@ -73,7 +73,7 @@ object Template {
         Tokenizer.apply(identifier)
       ))
     case parser.IfNode(expr, body, elseBody) =>
-      FunctionCall(Constant("vistula.ifChangedArrays"), Seq(
+      FunctionCall("vistula.ifChangedArrays", Seq(
         Tokenizer.apply(expr),
         StaticArray(apply(body).map(Box.apply)),
         StaticArray(apply(elseBody).map(Box.apply))
@@ -88,7 +88,7 @@ object Template {
       ), Seq()))
 
       val inner = FunctionDef.anonymous(identifier, Seq(
-        FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
+        FunctionCall("vistula.zipAndFlatten", Seq(
           StaticArray(apply(body).map(Box.apply))
         ))
       ))
@@ -96,7 +96,7 @@ object Template {
       val elementsId = Ast.identifier("$arg")
 
       val outer = FunctionDef.anonymous(elementsId, Seq(
-        FunctionCall(Constant("vistula.zipAndFlatten"), Seq(
+        FunctionCall("vistula.zipAndFlatten", Seq(
           FunctionCall(Reference(Reference(elementsId), Constant("map")), Seq(inner))
         ))
       ), mutableArgs = false)

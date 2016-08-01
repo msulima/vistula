@@ -10,6 +10,18 @@ case object FunctionCall extends Operator {
       FunctionCall(Tokenizer.apply(func), args.map(Tokenizer.apply))
   }
 
+  def apply(func: String, args: Seq[Token]): Operation = {
+    val path = func.split("\\.").toSeq
+    val reference = path.tail.foldLeft(Reference(Ast.identifier(path.head)))((acc, pathElement) => {
+      Reference(acc, Constant(pathElement))
+    })
+    Operation(FunctionCall, args, reference)
+  }
+
+  def apply(func: Constant, args: Seq[Token]): Operation = {
+    Operation(FunctionCall, args, func)
+  }
+
   def apply(func: Token, args: Seq[Token]): Operation = {
     Operation(FunctionCall, args, func)
   }
