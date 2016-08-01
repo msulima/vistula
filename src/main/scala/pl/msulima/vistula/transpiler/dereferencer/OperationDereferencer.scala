@@ -30,7 +30,6 @@ class OperationDereferencer(scope: Scope) {
 
         maybeTypedOperation.getOrElse(operation)
       case Some(Constant(id)) =>
-        // FIXME errors if not declared
         val maybeTypedOperation = for {
           id <- scope.variables.get(Ast.identifier(id))
           target <- getType(id, operation.output.asInstanceOf[Constant])
@@ -49,10 +48,9 @@ class OperationDereferencer(scope: Scope) {
   }
 
   private def getType(id: Identifier, output: Constant) = {
-    for {
-      clazz <- scope.classes.get(Constant(id.`type`.name))
-      target <- clazz.fields.get(Ast.identifier(output.value))
-    } yield target
+    val clazz = scope.classes(Constant(id.`type`.name))
+
+    clazz.fields.get(Ast.identifier(output.value))
   }
 
   private def reference(id: String): Token = {

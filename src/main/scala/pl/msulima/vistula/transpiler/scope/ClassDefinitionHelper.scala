@@ -5,11 +5,12 @@ import pl.msulima.vistula.transpiler.scope.FunctionDefinitionHelper._
 
 object ClassDefinitionHelper {
 
-  val Vistula = Ast.identifier("Vistula")
-  val VistulaSeq = Ast.identifier("Vistula.Seq")
-  val VistulaDom = Ast.identifier("Vistula.Dom")
+  val Vistula = Ast.identifier("vistula.Predef")
+  private val VistulaSeq = Ast.identifier("vistula.collection.Seq")
+  private val VistulaDom = Ast.identifier("vistula.dom.Dom")
 
   val defaults = Seq(
+    ClassDefinition.Object -> ClassDefinition(Map()),
     Vistula -> ClassDefinition(Map(
       obsDef("aggregate", obs, obs, const),
       obsDef("zipAndFlatten", const),

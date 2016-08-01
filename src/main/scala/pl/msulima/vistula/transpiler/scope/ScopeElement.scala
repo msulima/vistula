@@ -34,5 +34,5 @@ case class ClassDefinition(fields: Map[Ast.identifier, ScopeElement]) extends Sc
 
 object ClassDefinition {
 
-  val Object = Ast.identifier("Object") // Ast.identifier("vistula.lang.Object")
+  val Object = Ast.identifier("vistula.lang.Object")
 }
