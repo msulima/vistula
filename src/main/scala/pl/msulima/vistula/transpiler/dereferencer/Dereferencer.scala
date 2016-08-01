@@ -16,6 +16,8 @@ trait Dereferencer {
 
   def dereference(token: Token): Token
 
+  def dereference2(token: Token): Expression
+
   def dereferenceOperation(operation: Operation): Token
 }
 
@@ -50,4 +52,6 @@ case class DereferencerImpl(scope: Scope) extends Dereferencer
   override def dereference(token: Token): Token = apply(token)
 
   override def dereferenceOperation(operation: Operation): Token = operationDereferencer(operation)
+
+  override def dereference2(token: Token): Expression = ???
 }
