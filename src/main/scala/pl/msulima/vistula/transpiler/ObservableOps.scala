@@ -1,6 +1,6 @@
 package pl.msulima.vistula.transpiler
 
-import pl.msulima.vistula.util.{Indent, ToArray}
+import pl.msulima.vistula.util.ToArray
 
 case object BoxOp extends Operator {
 
@@ -24,7 +24,8 @@ case object WrapScope extends Operator {
     } else {
       Constant(
         s"""vistula.wrap(() => {
-            |${Indent.leftPad(Transpiler.toJavaScript(operands))}
+//            |{Indent.leftPad(Transpiler.toJavaScript(operands))}
+// FIXME
             |})""".stripMargin)
     }
   }

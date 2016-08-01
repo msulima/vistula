@@ -10,10 +10,10 @@ case class ExpressionConstant(value: String, `type`: ScopeElement) extends Expre
 
 case class ExpressionOperation(operator: Operator, inputs: Seq[Expression], `type`: ScopeElement) extends Expression
 
-case class ExpressionMap(output: Expression) extends Operator {
+case class ExpressionMap(output: ExpressionOperation) extends Operator {
 
   override def apply(inputs: List[Constant], output: Constant): Constant = {
-    Constant(s"$inputs, $output")
+    RxMapOp(useFlatMap = false).apply(inputs, output)
   }
 }
 

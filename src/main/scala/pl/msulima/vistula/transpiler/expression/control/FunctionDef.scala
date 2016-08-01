@@ -63,6 +63,7 @@ case object FunctionScope extends Operator {
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(Transpiler.toJavaScript(operands))
+    //    Constant(Transpiler.toJavaScript(operands))
+    Constant("welp")
   }
 }

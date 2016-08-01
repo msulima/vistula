@@ -1,12 +1,12 @@
 package pl.msulima.vistula.transpiler.scope
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.{Constant, Token}
+import pl.msulima.vistula.transpiler.{Constant, Expression, Token}
 
 
 case class Variable(id: Ast.identifier, `type`: ScopeElement)
 
-case class ScopedResult(scope: Scope, program: Seq[Token])
+case class ScopedResult(scope: Scope, program: Seq[Expression])
 
 case class Scope(variables: Map[Ast.identifier, Identifier], functions: Map[Token, FunctionDefinition],
                  classes: Map[Token, ClassDefinition]) {

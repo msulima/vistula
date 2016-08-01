@@ -20,18 +20,18 @@ case object Reference extends Operator {
   }
 
   def apply(id: Ast.identifier): Token = {
-    Operation(Reference, Seq(), Constant(id.name))
+    Operation(Reference, Seq(Constant(id.name)))
   }
 
   def apply(source: Token, attribute: Token): Token = {
-    Operation(Reference, Seq(source), attribute)
+    Operation(Reference, Seq(attribute, source))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
-    if (operands.isEmpty) {
-      output
+    if (operands.size == 1) {
+      operands.head
     } else {
-      Constant(s"${operands.head.value}.${output.value}")
+      Constant(s"${operands.head.value}.${operands(1).value}")
     }
   }
 }

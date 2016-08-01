@@ -9,24 +9,20 @@ object Transpiler {
     toJavaScript(Transformer.transform(program))
   }
 
-  def toJavaScript(program: Seq[Token]): String = {
+  def toJavaScript(program: Seq[Expression]): String = {
     program.map(toConstant).filterNot(_ == Tokenizer.Pass).map(_.value).mkString("", ";\n", ";")
   }
 
-  private def toConstant(token: Token): Constant = {
+  private def toConstant(token: Expression): Constant = {
     token match {
-      case Observable(op) =>
-        toConstant(op)
-      case Operation(op@RxMapOp(_), operands, output, _) =>
+      case ExpressionOperation(op@ExpressionMap(output), operands, _) =>
         op(operands.map(toConstant).distinct.toList, toConstant(
-          SubstituteObservables(
-            operands.map(_.asInstanceOf[Observable]).distinct,
-            output.asInstanceOf[Operation]
-          ))
+          SubstituteObservables(operands.distinct, output))
         )
-      case Operation(operation, operands, output, _) =>
-        operation.apply(operands.map(toConstant).toList, toConstant(output))
-      case x: Constant => x
+      case ExpressionOperation(operation, operands, _) =>
+        operation.apply(operands.map(toConstant).toList, Constant("FUUUUU"))
+      case ExpressionConstant(value, _) =>
+        Constant(value)
     }
   }
 }

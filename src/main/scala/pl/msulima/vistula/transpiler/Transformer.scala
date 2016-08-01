@@ -9,7 +9,7 @@ import pl.msulima.vistula.transpiler.scope.{Scope, ScopedResult}
 object Transformer {
 
   def wrapAndReturnLast(program: Seq[Ast.stmt]): Token = {
-    val result = transform(program)
+    val result = transform(program).asInstanceOf[Seq[Token]] // FIXME
 
     val body = if (result.isEmpty || result.size == 1) {
       result
@@ -31,11 +31,11 @@ object Transformer {
     }
   }
 
-  def transform(program: Seq[Ast.stmt]): Seq[Token] = {
+  def transform(program: Seq[Ast.stmt]): Seq[Expression] = {
     scoped(program.map(Tokenizer.applyStmt), Scope.Empty)
   }
 
-  def scoped(program: Seq[Token], scope: Scope): Seq[Token] = {
+  def scoped(program: Seq[Token], scope: Scope): Seq[Expression] = {
     program.foldLeft(ScopedResult(scope, Seq()))((acc, stmt) => {
       val result = run(acc.scope)(stmt)
 

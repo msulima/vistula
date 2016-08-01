@@ -1,25 +1,27 @@
 package pl.msulima.vistula.transpiler
 
+import pl.msulima.vistula.transpiler.scope.Identifier
+
 object SubstituteObservables {
 
-  def apply(observables: Seq[Observable], operation: Operation): Token = {
+  def apply(observables: Seq[Expression], operation: ExpressionOperation): Expression = {
     val mapping = createMapping(observables)
 
     apply(mapping, operation)
   }
 
-  private def apply(mapping: Map[Observable, String], operation: Operation): Token = {
+  private def apply(mapping: Map[Expression, String], operation: ExpressionOperation): Expression = {
     operation.copy(inputs = operation.inputs.map({
-      case input: Observable =>
-        Constant(mapping(input))
-      case operation: Operation =>
+      case input@ExpressionConstant(value, id: Identifier) if id.observable =>
+        ExpressionConstant(mapping(input), id)
+      case operation: ExpressionOperation =>
         apply(mapping, operation)
       case input =>
         input
     }))
   }
 
-  private def createMapping(observables: Seq[Observable]): Map[Observable, String] = {
+  private def createMapping(observables: Seq[Expression]): Map[Expression, String] = {
     if (observables.size == 1) {
       Map(observables.head -> "$arg")
     } else {
