@@ -14,18 +14,18 @@ trait FunctionDereferencer {
 
       ExpressionOperation(FunctionScope, result.init :+ Return(result.last), result.last.`type`)
     case Operation(FunctionCall, arguments, func, _) =>
-      val dereferencedFunc = dereference2(func)
-
-      val funcDefinition = dereferencedFunc match {
-        case ExpressionOperation(Reference, _, definition: FunctionDefinition) =>
-          definition
-        case ExpressionConstant(value, definition: FunctionDefinition) =>
-          definition
-        case ExpressionConstant(value, id: Identifier) =>
-          FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = id.observable, resultIsObservable = id.observable)
+      val (function, funcDefinition) = dereference2(func) match {
+        case c@ExpressionOperation(Reference, _, definition: FunctionDefinition) =>
+          c -> definition
+        case c@ExpressionConstant(value, definition: FunctionDefinition) =>
+          c -> definition
+        case c@ExpressionConstant(value, id: Identifier) =>
+          c.copy(`type` = id.copy(observable = false)) ->
+            FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = id.observable, resultIsObservable = id.observable)
       }
 
-      ExpressionOperation(FunctionCall, dereferencedFunc +: handleArguments2(funcDefinition, arguments), funcDefinition)
+      ExpressionOperation(FunctionCall, function +: handleArguments2(funcDefinition, arguments),
+        Identifier(funcDefinition.resultIsObservable))
   }
 
   private def handleArguments2(definition: FunctionDefinition, arguments: Seq[Token]) = {

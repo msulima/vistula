@@ -14,6 +14,8 @@ object SubstituteObservables {
     operation.copy(inputs = operation.inputs.map({
       case input@ExpressionConstant(value, id: Identifier) if id.observable =>
         ExpressionConstant(mapping(input), id)
+      case input@ExpressionOperation(_, _, id: Identifier) if id.observable =>
+        ExpressionConstant(mapping(input), id)
       case operation: ExpressionOperation =>
         apply(mapping, operation)
       case input =>

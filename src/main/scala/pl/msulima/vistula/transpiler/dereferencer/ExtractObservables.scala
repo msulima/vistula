@@ -9,7 +9,7 @@ object ExtractObservables {
     val xs = inputs.map({
       case ExpressionOperation(ExpressionMap(output), expInputs, id: Identifier) if !id.observable =>
         (expInputs, output)
-      case ExpressionOperation(_, input :: Nil, id: Identifier) if id.observable =>
+      case input@ExpressionOperation(_, _, id: Identifier) if id.observable =>
         (Seq(input), input)
       case input@ExpressionConstant(value, id: Identifier) if id.observable =>
         (Seq(input), input)
