@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.expression.reference.FunctionCall2
+import pl.msulima.vistula.transpiler.expression.reference.FunctionCall
 import pl.msulima.vistula.transpiler.scope.Identifier
 
 trait BoxDereferencer {
@@ -27,9 +27,7 @@ trait BoxDereferencer {
         case t@ExpressionOperation(_, _, id: Identifier) if id.observable =>
           t.copy(`type` = id.copy(observable = false))
         case t =>
-          val function = ExpressionConstant("vistula.constantObservable", Identifier(observable = true))
-
-          ExpressionOperation(FunctionCall2(function), Seq(t), t.`type`)
+          dereference2(FunctionCall("vistula.constantObservable", Seq(token)))
       }
   }
 }

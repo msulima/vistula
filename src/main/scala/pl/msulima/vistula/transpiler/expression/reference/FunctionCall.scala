@@ -11,11 +11,7 @@ case object FunctionCall extends Operator {
   }
 
   def apply(func: String, args: Seq[Token]): Operation = {
-    val path = func.split("\\.").toSeq
-    val reference = path.tail.foldLeft(Reference(Ast.identifier(path.head)))((acc, pathElement) => {
-      Reference(acc, Constant(pathElement))
-    })
-    Operation(FunctionCall, args, reference)
+    Operation(FunctionCall, args, Reference(func))
   }
 
   def apply(func: Token, args: Seq[Token]): Operation = {
@@ -27,7 +23,7 @@ case object FunctionCall extends Operator {
   }
 }
 
-case class FunctionCall2(expression: Expression) extends Operator {
+case class FunctionCall2(function: Token) extends Operator {
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
     Constant(s"${operands.head.value}(${operands.tail.map(_.value).mkString(", ")})")
