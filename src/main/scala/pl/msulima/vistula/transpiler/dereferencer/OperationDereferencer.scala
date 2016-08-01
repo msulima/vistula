@@ -35,7 +35,11 @@ class OperationDereferencer(scope: Scope) {
       case Some(_) =>
         operation
       case None =>
-        reference(operation.output.asInstanceOf[Constant].value)
+        if (scope.functions.contains(operation.output)) {
+          operation.copy(`type` = scope.functions(operation.output))
+        } else {
+          reference(operation.output.asInstanceOf[Constant].value)
+        }
     }
   }
 
