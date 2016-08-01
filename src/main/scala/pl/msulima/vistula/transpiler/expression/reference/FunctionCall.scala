@@ -18,10 +18,6 @@ case object FunctionCall extends Operator {
     Operation(FunctionCall, args, reference)
   }
 
-  def apply(func: Constant, args: Seq[Token]): Operation = {
-    Operation(FunctionCall, args, func)
-  }
-
   def apply(func: Token, args: Seq[Token]): Operation = {
     Operation(FunctionCall, args, func)
   }

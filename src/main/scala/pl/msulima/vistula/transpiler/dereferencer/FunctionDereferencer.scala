@@ -17,10 +17,8 @@ trait FunctionDereferencer {
       val dereferencedFunc = dereference(func)
 
       val (funcDefinition, function) = dereferencedFunc match {
-        case t@Operation(Reference, _, _, funcDefinition: FunctionDefinition) =>
-          funcDefinition -> t
-        case t if scope.functions.contains(t) =>
-          scope.functions(t) -> t
+        case t@Operation(Reference, _, _, definition: FunctionDefinition) =>
+          definition -> t
         case Observable(t: Constant) =>
           val definition = FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = true, resultIsObservable = true)
           definition -> t
