@@ -19,6 +19,8 @@ trait FunctionDereferencer {
       val funcDefinition = dereferencedFunc match {
         case ExpressionOperation(Reference, _, definition: FunctionDefinition) =>
           definition
+        case ExpressionConstant(value, definition: FunctionDefinition) =>
+          definition
         case ExpressionConstant(value, id: Identifier) =>
           FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = id.observable, resultIsObservable = id.observable)
       }

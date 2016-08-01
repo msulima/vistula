@@ -7,7 +7,9 @@ object FunctionDefinitionHelper {
   val const = Identifier(observable = false)
   val obs = Identifier(observable = true)
 
-  val defaults: Seq[(Ast.identifier, FunctionDefinition)] = Seq()
+  val defaults: Seq[(Ast.identifier, FunctionDefinition)] = Seq(
+    obsDef("vistula.constantObservable", const)
+  )
 
   def adapt(argumentsCount: Int, argumentsAreObservable: Boolean, resultIsObservable: Boolean) = {
     val argumentDefinition = if (argumentsAreObservable) {
