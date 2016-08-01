@@ -23,6 +23,15 @@ class OperationDereferencer(scope: Scope) {
     operation.inputs.headOption match {
       case Some(_: Observable) =>
         Observable(Operation(RxMapOp(useFlatMap = true), observables, operation))
+      case Some(Constant(id)) =>
+        // FIXME errors if not declared
+        val maybeTypedOperation = for {
+          id <- scope.variables.get(Ast.identifier(id))
+          clazz <- scope.classes.get(Constant(id.`type`.name))
+          target <- clazz.fields.get(Ast.identifier(operation.output.asInstanceOf[Constant].value))
+        } yield operation.copy(`type` = target)
+
+        maybeTypedOperation.getOrElse(operation)
       case Some(_) =>
         operation
       case None =>
@@ -40,7 +49,7 @@ class OperationDereferencer(scope: Scope) {
 
   private def dereference(operation: Operation, observables: Seq[Token]): Token = {
     map(operation, observables) match {
-      case Operation(Dereference, Nil, op) =>
+      case Operation(Dereference, Nil, op, _) =>
         op
       case Observable(op) =>
         op

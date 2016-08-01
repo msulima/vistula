@@ -9,7 +9,7 @@ object ClassDefinitionHelper {
 
   val defaults = Seq(
     Vistula -> ClassDefinition(Map(
-      obsDef("aggregate", obs, obs, const)
+      obsDef("ifStatement", obs, obs, obs)
     ))
   )
 }

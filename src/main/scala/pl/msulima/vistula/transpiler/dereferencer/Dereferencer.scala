@@ -38,7 +38,7 @@ case class DereferencerImpl(scope: Scope) extends Dereferencer
       copy(scope.addToScope(variable)).apply(body)
     case observable: Observable =>
       Observable(apply(observable.token))
-    case operation@Operation(WrapScope, _, _) =>
+    case operation@Operation(WrapScope, _, _, _) =>
       operation
     case operation: Operation =>
       val dereferencedInputs = operation.inputs.map(apply)
