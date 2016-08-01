@@ -11,8 +11,7 @@ object FunctionDefinitionHelper {
     obsDef("vistula.dom.textObservable", obs),
     obsDef("vistula.dom.textNode", const),
     obsDef("vistula.dom.createBoundElement", const, const, const, const),
-    obsDef("vistula.dom.createElement", const, const, const),
-    Ast.identifier("vistula.Seq.apply") -> FunctionDefinition(Seq(obs), resultIsObservable = true, varargs = true)
+    obsDef("vistula.dom.createElement", const, const, const)
   )
 
   def adapt(argumentsCount: Int, argumentsAreObservable: Boolean, resultIsObservable: Boolean) = {

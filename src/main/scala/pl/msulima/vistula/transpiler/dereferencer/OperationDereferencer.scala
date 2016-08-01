@@ -3,7 +3,7 @@ package pl.msulima.vistula.transpiler.dereferencer
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.reference.{Dereference, Reference}
-import pl.msulima.vistula.transpiler.scope.Scope
+import pl.msulima.vistula.transpiler.scope.{Identifier, Scope}
 
 class OperationDereferencer(scope: Scope) {
 
@@ -23,12 +23,17 @@ class OperationDereferencer(scope: Scope) {
     operation.inputs.headOption match {
       case Some(_: Observable) =>
         Observable(Operation(RxMapOp(useFlatMap = true), observables, operation))
+      case Some(Operation(Reference, _, _, id: Identifier)) =>
+        val maybeTypedOperation = for {
+          target <- getType(id, operation.output.asInstanceOf[Constant])
+        } yield operation.copy(`type` = target)
+
+        maybeTypedOperation.getOrElse(operation)
       case Some(Constant(id)) =>
         // FIXME errors if not declared
         val maybeTypedOperation = for {
           id <- scope.variables.get(Ast.identifier(id))
-          clazz <- scope.classes.get(Constant(id.`type`.name))
-          target <- clazz.fields.get(Ast.identifier(operation.output.asInstanceOf[Constant].value))
+          target <- getType(id, operation.output.asInstanceOf[Constant])
         } yield operation.copy(`type` = target)
 
         maybeTypedOperation.getOrElse(operation)
@@ -41,6 +46,13 @@ class OperationDereferencer(scope: Scope) {
           reference(operation.output.asInstanceOf[Constant].value)
         }
     }
+  }
+
+  private def getType(id: Identifier, output: Constant) = {
+    for {
+      clazz <- scope.classes.get(Constant(id.`type`.name))
+      target <- clazz.fields.get(Ast.identifier(output.value))
+    } yield target
   }
 
   private def reference(id: String): Token = {

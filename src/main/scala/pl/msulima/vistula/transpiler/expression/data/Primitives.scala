@@ -13,7 +13,7 @@ object Primitives {
     case Ast.expr.Str(x) =>
       StaticString(x)
     case Ast.expr.List(elts, Ast.expr_context.Load) =>
-      FunctionCall(Constant("vistula.Seq.apply"), elts.map(expr => Tokenizer.apply(expr)))
+      FunctionCall("vistula.Seq.apply", elts.map(expr => Tokenizer.apply(expr)))
     case Ast.expr.Dict(keys, values) =>
       val dict = keys.zip(values).flatMap({
         case (Ast.expr.Str(key), expr) =>
