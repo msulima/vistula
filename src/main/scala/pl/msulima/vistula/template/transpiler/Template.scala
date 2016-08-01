@@ -52,12 +52,12 @@ object Template {
       val body = StaticArray(children.map(scoped => Box(scoped.body)))
 
       tag.id.map(id => {
-        val code = FunctionCall(Constant("vistula.dom.createBoundElement"), Seq(
+        val code = FunctionCall("vistula.dom.createBoundElement", Seq(
           StaticString(tag.name), Constant(id.name), Attributes(tag), body
         ))
         Scoped(variables :+ id, code)
       }).getOrElse({
-        val code = FunctionCall(Constant("vistula.dom.createElement"), Seq(
+        val code = FunctionCall("vistula.dom.createElement", Seq(
           StaticString(tag.name), Attributes(tag), body
         ))
 
@@ -69,7 +69,7 @@ object Template {
 
   private def apply: PartialFunction[parser.Node, Token] = {
     case parser.ObservableNode(identifier) =>
-      FunctionCall(Constant("vistula.dom.textObservable"), Seq(
+      FunctionCall("vistula.dom.textObservable", Seq(
         Tokenizer.apply(identifier)
       ))
     case parser.IfNode(expr, body, elseBody) =>
@@ -79,7 +79,7 @@ object Template {
         StaticArray(apply(elseBody).map(Box.apply))
       ))
     case parser.TextNode(text) =>
-      FunctionCall(Constant("vistula.dom.textNode"), Seq(
+      FunctionCall("vistula.dom.textNode", Seq(
         StaticString(text)
       ))
     case parser.LoopNode(identifier, expression, body) =>
