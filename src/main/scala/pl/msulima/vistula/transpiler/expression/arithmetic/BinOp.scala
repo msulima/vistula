@@ -4,7 +4,7 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.{Tokenizer, _}
 
 
-case object BinOp extends Operator {
+case object BinOp {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.BinOp(x, op, y) =>
@@ -16,13 +16,15 @@ case object BinOp extends Operator {
         case Ast.operator.Mod => "%"
       }
 
-      Operation(BinOp, Seq(Tokenizer.apply(x), Tokenizer.apply(y)), Constant(symbol))
+      Operation(BinOp(symbol), Seq(Tokenizer.apply(x), Tokenizer.apply(y)))
   }
+}
 
+case class BinOp(symbol: String) extends Operator {
   override def apply(operands: List[Constant], output: Constant): Constant = {
     operands match {
       case left :: right :: Nil =>
-        Constant(s"${left.value} ${output.value} ${right.value}")
+        Constant(s"${left.value} $symbol ${right.value}")
     }
   }
 }
