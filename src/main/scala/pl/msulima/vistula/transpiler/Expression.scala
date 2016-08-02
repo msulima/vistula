@@ -17,6 +17,13 @@ case class ExpressionMap(output: ExpressionOperation) extends Operator {
   }
 }
 
+case class ExpressionFlatMap(output: ExpressionOperation) extends Operator {
+
+  override def apply(inputs: List[Constant], output: Constant): Constant = {
+    RxMapOp(useFlatMap = true).apply(inputs, output)
+  }
+}
+
 object ExpressionConstant {
   val Dummy = ExpressionConstant("ignored", Identifier(observable = false))
 }

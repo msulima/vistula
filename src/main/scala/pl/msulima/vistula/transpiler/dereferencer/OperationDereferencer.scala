@@ -17,7 +17,7 @@ trait OperationDereferencer {
       if (observables.isEmpty) {
         body
       } else {
-        ExpressionOperation(ExpressionMap(body), observables, Identifier(observable = useFlatMap))
+        ExpressionOperation(ExpressionMap(body), observables, Identifier(observable = true))
       }
   }
 }

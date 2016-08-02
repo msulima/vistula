@@ -7,7 +7,7 @@ object ExtractObservables {
 
   def apply(inputs: Seq[Expression]): (Seq[Expression], Seq[Expression]) = {
     val xs = inputs.map({
-      case ExpressionOperation(ExpressionMap(output), expInputs, id: Identifier) if !id.observable =>
+      case ExpressionOperation(ExpressionMap(output@ExpressionOperation(_, _, id: Identifier)), expInputs, _) =>
         (expInputs, output)
       case input@ExpressionOperation(_, _, id: Identifier) if id.observable =>
         (Seq(input), input)
