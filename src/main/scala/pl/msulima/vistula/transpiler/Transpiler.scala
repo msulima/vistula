@@ -16,17 +16,19 @@ object Transpiler {
   private def toConstant(token: Expression): Constant = {
     token match {
       case ExpressionOperation(op@ExpressionMap(output), operands, _) =>
-        op(operands.map(toConstant).distinct.toList, toConstant(
-          SubstituteObservables(operands.distinct, output))
-        )
+        mapToConstant(op, output, operands)
       case ExpressionOperation(op@ExpressionFlatMap(output), operands, _) =>
-        op(operands.map(toConstant).distinct.toList, toConstant(
-          SubstituteObservables(operands.distinct, output))
-        )
+        mapToConstant(op, output, operands)
       case ExpressionOperation(operation, operands, _) =>
         operation.apply(operands.map(toConstant).toList, Constant("FUUUUU"))
       case ExpressionConstant(value, _) =>
         Constant(value)
     }
+  }
+
+  private def mapToConstant(operator: Operator, output: ExpressionOperation, operands: Seq[Expression]): Constant = {
+    operator(operands.map(toConstant).distinct.toList, toConstant(
+      SubstituteObservables(operands.distinct, output))
+    )
   }
 }

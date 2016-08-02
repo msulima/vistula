@@ -28,14 +28,18 @@ trait ReferenceDereferencer {
           ExpressionConstant(id, Identifier(observable = true))
         }
       case _ =>
-        dereference2(input)
+        dereference(input)
     }
   }
 
   def referenceField(source: Expression, target: Token): ExpressionOperation = {
     source match {
-      case ExpressionConstant(value, id: Identifier) if id.observable =>
-        val body = ExpressionOperation(Reference, Seq(source, dereference2(target)), id)
+      case ExpressionConstant(_, id: Identifier) if id.observable =>
+        val body = ExpressionOperation(Reference, Seq(source, dereference(target)), id)
+
+        ExpressionOperation(ExpressionFlatMap(body), Seq(source), id)
+      case ExpressionOperation(_, _, id: Identifier) if id.observable =>
+        val body = ExpressionOperation(Reference, Seq(source, dereference(target)), id)
 
         ExpressionOperation(ExpressionFlatMap(body), Seq(source), id)
     }

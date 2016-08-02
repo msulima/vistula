@@ -8,7 +8,7 @@ trait OperationDereferencer {
 
   def operationDereferencer: PartialFunction[Token, Expression] = {
     case operation: Operation =>
-      val (observables, inputs) = ExtractObservables(operation.inputs.map(dereference2))
+      val (observables, inputs) = ExtractObservables(operation.inputs.map(dereference))
 
       val useFlatMap = operation.output.isInstanceOf[Observable]
 

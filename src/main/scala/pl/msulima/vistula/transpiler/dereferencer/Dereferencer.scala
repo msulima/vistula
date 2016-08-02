@@ -14,9 +14,7 @@ trait Dereferencer {
 
   val scope: Scope
 
-  def dereference(token: Token): Token
-
-  def dereference2(token: Token): Expression
+  def dereference(token: Token): Expression
 }
 
 case class DereferencerImpl(scope: Scope) extends Dereferencer
@@ -26,15 +24,15 @@ case class DereferencerImpl(scope: Scope) extends Dereferencer
   with OperationDereferencer {
 
   def apply(token: Token): Expression = {
-    functionDereferencer2
-      .orElse(boxDereferencer2)
+    functionDereferencer
+      .orElse(boxDereferencer)
       .orElse(referenceDereferencer)
       .orElse(operationDereferencer)
-      .orElse(default2)
+      .orElse(default)
       .apply(token)
   }
 
-  private def default2: PartialFunction[Token, Expression] = {
+  private def default: PartialFunction[Token, Expression] = {
     case x: Constant =>
       ExpressionConstant(x.value, Identifier(observable = false))
     case Introduce(variable, body) =>
@@ -48,7 +46,5 @@ case class DereferencerImpl(scope: Scope) extends Dereferencer
     //      operation
   }
 
-  override def dereference(token: Token): Token = ???
-
-  override def dereference2(token: Token): Expression = apply(token)
+  override def dereference(token: Token): Expression = apply(token)
 }

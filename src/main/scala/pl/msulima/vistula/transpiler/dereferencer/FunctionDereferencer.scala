@@ -8,13 +8,13 @@ import pl.msulima.vistula.transpiler.scope.{FunctionDefinition, FunctionDefiniti
 trait FunctionDereferencer {
   this: Dereferencer =>
 
-  def functionDereferencer2: PartialFunction[Token, Expression] = {
+  def functionDereferencer: PartialFunction[Token, Expression] = {
     case operation@Operation(FunctionScope, program, _, _) =>
       val result = Transformer.scoped(program, scope)
 
       ExpressionOperation(FunctionScope, result.init :+ Return(result.last), result.last.`type`)
     case Operation(FunctionCall, arguments, func, _) =>
-      val (function, funcDefinition) = dereference2(func) match {
+      val (function, funcDefinition) = dereference(func) match {
         case c@ExpressionOperation(Reference, _, definition: FunctionDefinition) =>
           c -> definition
         case c@ExpressionConstant(value, definition: FunctionDefinition) =>
@@ -24,11 +24,11 @@ trait FunctionDereferencer {
             FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = id.observable, resultIsObservable = id.observable)
       }
 
-      ExpressionOperation(FunctionCall, function +: handleArguments2(funcDefinition, arguments),
+      ExpressionOperation(FunctionCall, function +: handleArguments(funcDefinition, arguments),
         Identifier(funcDefinition.resultIsObservable))
   }
 
-  private def handleArguments2(definition: FunctionDefinition, arguments: Seq[Token]) = {
+  private def handleArguments(definition: FunctionDefinition, arguments: Seq[Token]) = {
     val args = if (definition.varargs) {
       FunctionDefinitionHelper.adaptArguments(arguments.size, definition.arguments.head.observable)
     } else {
@@ -40,9 +40,9 @@ trait FunctionDereferencer {
     arguments.zip(args).map({
       case (arg, argDefinition) =>
         if (argDefinition.observable) {
-          dereference2(Box(arg))
+          dereference(Box(arg))
         } else {
-          dereference2(arg)
+          dereference(arg)
         }
     })
   }
