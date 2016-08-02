@@ -17,20 +17,6 @@ trait ReferenceDereferencer {
       referenceField(dereferencedSource, target)
   }
 
-  def referenceField(source: Expression, target: Token): ExpressionOperation = {
-    source match {
-      case ExpressionConstant(value, id: Identifier) if id.observable =>
-        val body = ExpressionOperation(Reference, Seq(source, dereference2(target)), id)
-        ExpressionOperation(ExpressionMap(body), Seq(source), id)
-    }
-  }
-
-  private def getType(id: Identifier, output: Constant) = {
-    val clazz = scope.classes(Constant(id.`type`.name))
-
-    clazz.fields.get(Ast.identifier(output.value))
-  }
-
   private def referenceSingle(input: Token): Expression = {
     input match {
       case Constant(id) =>
@@ -44,5 +30,20 @@ trait ReferenceDereferencer {
       case _ =>
         dereference2(input)
     }
+  }
+
+  def referenceField(source: Expression, target: Token): ExpressionOperation = {
+    source match {
+      case ExpressionConstant(value, id: Identifier) if id.observable =>
+        val body = ExpressionOperation(Reference, Seq(source, dereference2(target)), id)
+
+        ExpressionOperation(ExpressionFlatMap(body), Seq(source), id)
+    }
+  }
+
+  private def getType(id: Identifier, output: Constant) = {
+    val clazz = scope.classes(Constant(id.`type`.name))
+
+    clazz.fields.get(Ast.identifier(output.value))
   }
 }

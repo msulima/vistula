@@ -19,6 +19,10 @@ object Transpiler {
         op(operands.map(toConstant).distinct.toList, toConstant(
           SubstituteObservables(operands.distinct, output))
         )
+      case ExpressionOperation(op@ExpressionFlatMap(output), operands, _) =>
+        op(operands.map(toConstant).distinct.toList, toConstant(
+          SubstituteObservables(operands.distinct, output))
+        )
       case ExpressionOperation(operation, operands, _) =>
         operation.apply(operands.map(toConstant).toList, Constant("FUUUUU"))
       case ExpressionConstant(value, _) =>

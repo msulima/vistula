@@ -24,7 +24,7 @@ case object Reference extends Operator {
   }
 
   def apply(source: Token, attribute: Token): Token = {
-    Operation(Reference, Seq(attribute, source))
+    Operation(Reference, Seq(source, attribute))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
