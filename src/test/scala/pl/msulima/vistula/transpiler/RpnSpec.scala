@@ -8,10 +8,16 @@ class RpnSpec extends Specification {
   "test" in {
 
     val program =
-      """let A = [1, 2 + 3, B, C - 4]""".stripMargin
+      """W
+        |let P = Y - 2 + Y
+        |let Q = 2 + 3
+        |let X = 2 + 3 + 4""".stripMargin
 
     Vistula.toJavaScript(program) must_==
-      """const A = vistula.Seq.apply(vistula.constantObservable(1), vistula.constantObservable(2 + 3), B, C.rxMap($arg => ($arg - 4)));""".stripMargin
+      """W;
+        |const P = Y.rxMap($arg => ($arg - 2 + $arg));
+        |const Q = vistula.constantObservable(2 + 3);
+        |const X = vistula.constantObservable(2 + 3 + 4);""".stripMargin
   }
 
   "transpiles generator" in {
