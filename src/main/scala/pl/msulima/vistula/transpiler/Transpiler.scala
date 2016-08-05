@@ -10,7 +10,11 @@ object Transpiler {
   }
 
   def toJavaScript(program: Seq[Expression]): String = {
-    program.map(toConstant).filterNot(_ == Tokenizer.Pass).map(_.value).mkString("", ";\n", ";")
+    toJavaScriptFromTokens(program.map(toConstant))
+  }
+
+  def toJavaScriptFromTokens(program: Seq[Constant]): String = {
+    program.filterNot(_ == Tokenizer.Pass).map(_.value).mkString("", ";\n", ";")
   }
 
   private def toConstant(token: Expression): Constant = {

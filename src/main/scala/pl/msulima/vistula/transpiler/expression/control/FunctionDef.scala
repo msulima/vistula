@@ -43,15 +43,18 @@ case object FunctionDef extends Operator {
 
     Operation(
       FunctionDef,
-      Constant(name.name) +: arguments.map(arg => Constant(arg.name)),
-      FunctionScope(declarations ++ body)
+      Constant(name.name) +: FunctionScope(declarations ++ body) +: arguments.map(arg => Constant(arg.name))
     )
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
+    val name = operands(0)
+    val body = operands(1)
+    val arguments = operands.drop(2)
+
     Constant(
-      s"""function ${operands.head.value}(${operands.tail.map(_.value).mkString(", ")}) {
-          |${Indent.leftPad(output.value)}
+      s"""function ${name.value}(${arguments.map(_.value).mkString(", ")}) {
+          |${Indent.leftPad(body.value)}
           |}""".stripMargin)
   }
 }
@@ -63,7 +66,6 @@ case object FunctionScope extends Operator {
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
-    //    Constant(Transpiler.toJavaScript(operands))
-    Constant("welp")
+    Constant(Transpiler.toJavaScriptFromTokens(operands))
   }
 }
