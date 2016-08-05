@@ -3,20 +3,16 @@ package pl.msulima.vistula.transpiler.expression.control
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 
-case object Lambda extends Operator {
+case object Lambda {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Lambda(Ast.arguments(args, None, None, Seq()), body) =>
       val argsNames = args.map({
-        case Ast.expr.Name(Ast.identifier(x), Ast.expr_context.Param) =>
-          Constant(x)
+        case Ast.expr.Name(id, Ast.expr_context.Param) =>
+          id
       }).toList
       val transpiledBody = Tokenizer.apply(body)
 
-      Operation(Lambda, argsNames, transpiledBody)
-  }
-
-  override def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(s"(${operands.map(_.value).mkString(", ")}) => ${output.value}")
+      FunctionDef.anonymous(argsNames, Seq(transpiledBody), mutableArgs = true)
   }
 }

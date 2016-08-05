@@ -1,1 +1,3 @@
-arrayFilter(XS, (X, Y) => X.rxMap($arg => ($arg + 2)));
+arrayFilter(XS, function (X, Y) {
+    return X.rxMap($arg => ($arg + 2));
+});

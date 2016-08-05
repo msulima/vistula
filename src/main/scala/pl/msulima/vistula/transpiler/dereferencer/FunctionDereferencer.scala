@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.expression.control.{FunctionScope, Return}
+import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, FunctionScope, Return}
 import pl.msulima.vistula.transpiler.expression.reference.{FunctionCall, Reference}
 import pl.msulima.vistula.transpiler.scope.{FunctionDefinition, FunctionDefinitionHelper, Identifier}
 
@@ -9,6 +9,12 @@ trait FunctionDereferencer {
   this: Dereferencer =>
 
   def functionDereferencer: PartialFunction[Token, Expression] = {
+    case operation@Operation(FunctionDef, program, _, _) =>
+      val argumentIds = program.drop(2)
+      val funcDefinition = FunctionDefinitionHelper.adapt(argumentIds.size,
+        argumentsAreObservable = true, resultIsObservable = true)
+
+      ExpressionOperation(FunctionDef, program.map(dereference), funcDefinition)
     case operation@Operation(FunctionScope, program, _, _) =>
       val result = Transformer.scoped(program, scope)
 
