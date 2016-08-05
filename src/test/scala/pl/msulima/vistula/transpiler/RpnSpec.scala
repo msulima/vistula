@@ -8,12 +8,12 @@ class RpnSpec extends Specification {
   "test" in {
 
     val program =
-      """arrayFilter(XS, lambda X, Y: X + 2)""".stripMargin
+      """{"C": "D"}""".stripMargin
 
     Vistula.toJavaScript(program) must_==
-      """arrayFilter(XS, function (X, Y) {
-        |    return X.rxMap($arg => ($arg + 2));
-        |});""".stripMargin
+      """{
+        |    "C": vistula.constantObservable("D")
+        |};""".stripMargin
   }
 
   "transpiles generator" in {

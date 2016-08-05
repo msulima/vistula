@@ -7,10 +7,10 @@ object Tuple extends Operator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Tuple(expr +: _, Ast.expr_context.Load) =>
-      Operation(Tuple, Seq(), Tokenizer.apply(expr))
+      Operation(Tuple, Seq(Tokenizer.apply(expr)))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(s"(${output.value})")
+    Constant(s"(${operands.head.value})")
   }
 }
