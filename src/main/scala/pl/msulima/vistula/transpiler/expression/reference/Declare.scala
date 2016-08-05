@@ -4,7 +4,7 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.scope.{Identifier, Variable}
 import pl.msulima.vistula.transpiler.{Operation, _}
 
-object Declare extends Operator {
+case object Declare extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.DeclareStmt(identifier, stmt, mutable) =>
@@ -17,13 +17,13 @@ object Declare extends Operator {
     val value = if (mutable) {
       Box(body)
     } else {
-      Operation(Dereference, Seq(), body)
+      Operation(Dereference, Seq(body))
     }
 
-    Introduce(Variable(identifier, Identifier(mutable)), Operation(Declare, Seq(Constant(identifier.name)), value))
+    Introduce(Variable(identifier, Identifier(mutable)), Operation(Declare, Seq(Constant(identifier.name), value)))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(s"const ${operands.head.value} = ${output.value}")
+    Constant(s"const ${operands.head.value} = ${operands(1).value}")
   }
 }

@@ -9,7 +9,11 @@ case class Variable(id: Ast.identifier, `type`: ScopeElement)
 case class ScopedResult(scope: Scope, program: Seq[Expression])
 
 case class Scope(variables: Map[Ast.identifier, Identifier], functions: Map[Token, FunctionDefinition],
-                 classes: Map[Token, ClassDefinition]) {
+                 classes: Map[Ast.identifier, ClassDefinition]) {
+
+  def findById(id: Ast.identifier): Option[ScopeElement] = {
+    variables.get(id).orElse(functions.get(Constant(id.name)))
+  }
 
   def isKnownStatic(id: Ast.identifier) = {
     variables.get(id).exists(!_.observable) || functions.contains(Constant(id.name))
@@ -37,8 +41,8 @@ object Scope {
           Constant(name) -> definition
       }).toMap,
       classes = ClassDefinitionHelper.defaults.map({
-        case (Ast.identifier(name), definition) =>
-          Constant(name) -> definition
+        case (name, definition) =>
+          name -> definition
       }).toMap)
   }
 }

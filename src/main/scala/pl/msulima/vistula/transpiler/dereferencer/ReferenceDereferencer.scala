@@ -20,34 +20,31 @@ trait ReferenceDereferencer {
   private def referenceSingle(input: Token): Expression = {
     input match {
       case Constant(id) =>
-        if (scope.functions.contains(input)) {
-          ExpressionConstant(input.asInstanceOf[Constant].value, scope.functions(input))
-        } else if (scope.isKnownStatic(Ast.identifier(id))) {
-          ExpressionConstant(id, Identifier(observable = false))
-        } else {
-          ExpressionConstant(id, Identifier(observable = true))
-        }
+        val scopeElement = scope.findById(Ast.identifier(id))
+        ExpressionConstant(id, scopeElement.getOrElse(Identifier(observable = true)))
       case _ =>
         dereference(input)
     }
   }
 
-  def referenceField(source: Expression, target: Token): ExpressionOperation = {
-    source match {
-      case ExpressionConstant(_, id: Identifier) if id.observable =>
-        val body = ExpressionOperation(Reference, Seq(source, dereference(target)), id)
+  def referenceField(source: Expression, target: Token): Expression = {
+    val sourceType = source.`type`.asInstanceOf[Identifier]
 
-        ExpressionOperation(ExpressionFlatMap(body), Seq(source), id)
-      case ExpressionOperation(_, _, id: Identifier) if id.observable =>
-        val body = ExpressionOperation(Reference, Seq(source, dereference(target)), id)
+    if (sourceType.observable) {
+      val body = ExpressionOperation(Reference, Seq(source, dereference(target)), sourceType)
 
-        ExpressionOperation(ExpressionFlatMap(body), Seq(source), id)
+      ExpressionOperation(ExpressionFlatMap(body), Seq(source), sourceType)
+    } else {
+      val maybeTypedOperation = for {
+        sourceType <- scope.classes.get(sourceType.`type`)
+      } yield {
+        val targetExpr = target.asInstanceOf[Constant]
+        val fieldType = sourceType.fields(Ast.identifier(targetExpr.value))
+
+        ExpressionOperation(Reference, Seq(source, ExpressionConstant(targetExpr.value, fieldType)), fieldType)
+      }
+
+      maybeTypedOperation.getOrElse(source)
     }
-  }
-
-  private def getType(id: Identifier, output: Constant) = {
-    val clazz = scope.classes(Constant(id.`type`.name))
-
-    clazz.fields.get(Ast.identifier(output.value))
   }
 }

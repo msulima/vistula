@@ -37,11 +37,11 @@ object Primitives {
 case object StaticString extends Operator {
 
   def apply(x: String): Token = {
-    Operation(StaticString, Seq(), Constant(x))
+    Operation(StaticString, Seq(Constant(x)))
   }
 
   def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(escape(output.value))
+    Constant(escape(operands.head.value))
   }
 
   private def escape(text: String) = {
