@@ -13,10 +13,11 @@ object ClassDefinitionHelper {
     ClassDefinition.Object -> ClassDefinition(Map()),
     Vistula -> ClassDefinition(Map(
       obsDef("aggregate", obs, obs, const),
-      obsDef("zipAndFlatten", const),
+      obsDef("constantObservable", const),
       obsDef("ifChangedArrays", obs, const, const),
-      obsDef("wrap", const),
       obsDef("ifStatement", obs, obs, obs),
+      obsDef("wrap", const),
+      obsDef("zipAndFlatten", const),
       Ast.identifier("Seq") -> Identifier(observable = false, `type` = VistulaSeq),
       Ast.identifier("dom") -> Identifier(observable = false, `type` = VistulaDom)
     )),

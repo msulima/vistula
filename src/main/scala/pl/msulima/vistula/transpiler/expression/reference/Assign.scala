@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.expression.reference
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.{Operation, _}
+import pl.msulima.vistula.transpiler._
 
 case object Assign extends Operator {
 
