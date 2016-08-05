@@ -20,6 +20,7 @@ trait Dereferencer {
 case class DereferencerImpl(scope: Scope) extends Dereferencer
   with DeclareDereferencer
   with FunctionDereferencer
+  with WrapDereferencer
   with BoxDereferencer
   with ReferenceDereferencer
   with OperationDereferencer {
@@ -27,6 +28,7 @@ case class DereferencerImpl(scope: Scope) extends Dereferencer
   def apply(token: Token): Expression = {
     functionDereferencer
       .orElse(declareDereferencer)
+      .orElse(wrapDereferencer)
       .orElse(boxDereferencer)
       .orElse(referenceDereferencer)
       .orElse(operationDereferencer)

@@ -8,11 +8,7 @@ case object Return extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.Return(Some(value)) =>
-      Return(Tokenizer.apply(value))
-  }
-
-  def apply(body: Token): Token = {
-    Operation(Return, Seq(body))
+      Operation(Return, Seq(Tokenizer.apply(value)))
   }
 
   def apply(body: Expression): Expression = {

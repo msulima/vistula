@@ -2,34 +2,10 @@ package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
-import pl.msulima.vistula.transpiler.expression.control.Return
 import pl.msulima.vistula.transpiler.scope.{Scope, ScopedResult}
 
 
 object Transformer {
-
-  def wrapAndReturnLast(program: Seq[Ast.stmt]): Token = {
-    val result = transform(program).asInstanceOf[Seq[Token]] // FIXME
-
-    val body = if (result.isEmpty || result.size == 1) {
-      result
-    } else {
-      result.init :+ Return(result.last)
-    }
-
-    checkObservable(result.last, body)
-  }
-
-  private def checkObservable(token: Token, body: Seq[Token]) = {
-    val isObservable = token.isInstanceOf[Observable]
-    val operation = Operation(WrapScope, body)
-
-    if (isObservable) {
-      Observable(operation)
-    } else {
-      operation
-    }
-  }
 
   def transform(program: Seq[Ast.stmt]): Seq[Expression] = {
     scoped(program.map(Tokenizer.applyStmt), Scope.Empty)

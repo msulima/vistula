@@ -21,7 +21,6 @@ trait OperationDereferencer {
       }
   }
 
-
   private def extractObservables(inputs: Seq[Token]): (Seq[Expression], Seq[Expression]) = {
     val xs = inputs.map({
       case x: Box =>

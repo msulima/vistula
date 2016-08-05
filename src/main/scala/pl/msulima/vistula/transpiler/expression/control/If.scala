@@ -10,8 +10,8 @@ case object If {
     case Ast.stmt.If(testExpr, body, orElse) =>
       FunctionCall(Reference(Constant("vistula"), Constant("ifStatement")), Seq(
         Tokenizer.apply(testExpr),
-        Transformer.wrapAndReturnLast(body),
-        Transformer.wrapAndReturnLast(orElse)
+        WrapScope(body),
+        WrapScope(orElse)
       ))
   }
 }
