@@ -28,7 +28,7 @@ trait ReferenceDereferencer {
   }
 
   def referenceField(source: Expression, target: Token): Expression = {
-    val sourceElement = source.`type`.asInstanceOf[ScopeElement]
+    val sourceElement = source.`type`
     val sourceType = sourceElement.`type`.asInstanceOf[ClassDefinition]
 
     if (sourceElement.observable) {

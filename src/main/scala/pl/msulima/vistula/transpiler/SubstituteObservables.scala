@@ -12,14 +12,12 @@ object SubstituteObservables {
 
   private def apply(mapping: Map[Expression, String], operation: ExpressionOperation): Expression = {
     operation.copy(inputs = operation.inputs.map({
-      case input@ExpressionOperation(ExpressionFlatMap(body), operands, id) =>
-        mapping.get(input).map(mapped => ExpressionConstant(mapped, id)).getOrElse(input)
       case input@ExpressionOperation(FunctionScope, _, _) =>
         input
-      case input@ExpressionConstant(value, id) if id.observable =>
-        ExpressionConstant(mapping(input), id)
       case input@ExpressionOperation(_, _, id) if id.observable =>
-        ExpressionConstant(mapping(input), id)
+        mapping.get(input).map(mapped => ExpressionConstant(mapped, id)).getOrElse(input)
+      case input@ExpressionConstant(value, id) if id.observable =>
+        mapping.get(input).map(mapped => ExpressionConstant(mapped, id)).getOrElse(input)
       case operation: ExpressionOperation =>
         apply(mapping, operation)
       case input =>

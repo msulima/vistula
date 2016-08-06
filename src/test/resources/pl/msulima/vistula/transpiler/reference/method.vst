@@ -6,3 +6,4 @@ w.x.f(y)
 w.f(y).z
 
 W.F(X.Y)
+W.F(1)

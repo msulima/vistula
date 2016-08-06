@@ -79,9 +79,9 @@ object Template {
         StaticString(text)
       ))
     case parser.LoopNode(identifier, expression, body) =>
-      val iterable = Box(FunctionCall(Reference(
+      val iterable = FunctionCall(Reference(
         Tokenizer.apply(expression), Constant("toArray")
-      ), Seq()))
+      ), Seq())
 
       val inner = FunctionDef.anonymous(identifier, Seq(
         FunctionCall("vistula.zipAndFlatten", Seq(
@@ -97,6 +97,6 @@ object Template {
         ))
       ), mutableArgs = false)
 
-      Observable(FunctionCall(Reference(iterable, Constant("rxFlatMap")), Seq(outer)))
+      Observable(FunctionCall(Reference(Box(iterable), Constant("rxFlatMap")), Seq(outer)))
   }
 }
