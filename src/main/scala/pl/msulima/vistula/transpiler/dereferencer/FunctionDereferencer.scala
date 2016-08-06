@@ -23,6 +23,9 @@ trait FunctionDereferencer {
       val (function, funcDefinition) = dereference(func) match {
         case c@ExpressionOperation(Reference, _, definition: FunctionDefinition) =>
           c -> definition
+        case c@ExpressionOperation(_, _, id: Identifier) if id.observable =>
+          c ->
+            FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = id.observable, resultIsObservable = id.observable)
         case c@ExpressionConstant(value, definition: FunctionDefinition) =>
           c -> definition
         case c@ExpressionConstant(value, id: Identifier) =>
@@ -30,8 +33,15 @@ trait FunctionDereferencer {
             FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = id.observable, resultIsObservable = id.observable)
       }
 
-      ExpressionOperation(FunctionCall, function +: handleArguments(funcDefinition, arguments),
+      val body = ExpressionOperation(FunctionCall, function +: handleArguments(funcDefinition, arguments),
         Identifier(funcDefinition.resultIsObservable))
+
+      function.`type` match {
+        case identifier: Identifier if identifier.observable =>
+          ExpressionOperation(ExpressionFlatMap(body), Seq(function), function.`type`)
+        case _ =>
+          body
+      }
   }
 
   private def handleArguments(definition: FunctionDefinition, arguments: Seq[Token]) = {

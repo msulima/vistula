@@ -1,5 +1,6 @@
 package pl.msulima.vistula.transpiler
 
+import pl.msulima.vistula.transpiler.expression.control.FunctionScope
 import pl.msulima.vistula.transpiler.scope.Identifier
 
 object SubstituteObservables {
@@ -12,6 +13,8 @@ object SubstituteObservables {
 
   private def apply(mapping: Map[Expression, String], operation: ExpressionOperation): Expression = {
     operation.copy(inputs = operation.inputs.map({
+      case input@ExpressionOperation(FunctionScope, _, _) =>
+        input
       case input@ExpressionConstant(value, id: Identifier) if id.observable =>
         ExpressionConstant(mapping(input), id)
       case input@ExpressionOperation(_, _, id: Identifier) if id.observable =>
