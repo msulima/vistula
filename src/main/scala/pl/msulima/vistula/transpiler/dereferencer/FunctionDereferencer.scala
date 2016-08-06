@@ -21,10 +21,18 @@ trait FunctionDereferencer {
       ExpressionOperation(FunctionScope, result.init :+ Return(result.last), result.last.`type`)
     case Operation(FunctionCall, arguments, func, _) =>
       val function = dereferenceFunction(func, arguments)
-
       val funcDefinition = getDefinition(function, arguments)
+      val (observables, inputs) = findSubstitutes(function, funcDefinition, arguments)
 
-      run(function, funcDefinition, handleArguments(funcDefinition, arguments))
+      val body = ExpressionOperation(FunctionCall, inputs, ScopeElement(funcDefinition.resultIsObservable))
+
+      if (observables.isEmpty) {
+        body
+      } else if (function.`type`.observable) {
+        ExpressionOperation(ExpressionFlatMap(body), Seq(function), function.`type`)
+      } else {
+        ExpressionOperation(ExpressionMap(body), observables, ScopeElement(observable = true))
+      }
   }
 
   private def dereferenceFunction(function: Token, arguments: Seq[Token]) = {
@@ -48,32 +56,20 @@ trait FunctionDereferencer {
     }
   }
 
-  private def handleArguments(definition: FunctionDefinition, arguments: Seq[Token]) = {
-    val args = if (definition.varargs) {
-      FunctionDefinitionHelper.adaptArguments(arguments.size, definition.arguments.head.observable)
-    } else {
-      require(arguments.size == definition.arguments.size,
-        s"Wrong number of arguments: given ${arguments.size} expected ${definition.arguments.size}")
-      definition.arguments
-    }
-
-    arguments.zip(args).map({
+  private def findSubstitutes(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Token]): (Seq[Expression], Seq[Expression]) = {
+    val functionSubstitutes = OperationDereferencer.extractObservables(function)
+    val argumentsSubstitutes = arguments.zip(funcDefinition.adapt(arguments)).map({
       case (arg, argDefinition) =>
         if (argDefinition.observable) {
-          Box(arg)
+          Seq() -> dereference(Box(arg))
         } else {
-          arg
+          OperationDereferencer.extractObservables(dereference(arg))
         }
-    }).map(dereference)
-  }
+    })
 
-  def run(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]) = {
-    val body = ExpressionOperation(FunctionCall, function +: arguments, ScopeElement(funcDefinition.resultIsObservable))
+    val observables = functionSubstitutes._1 ++ argumentsSubstitutes.flatMap(_._1)
+    val inputs = functionSubstitutes._2 +: argumentsSubstitutes.map(_._2)
 
-    if (function.`type`.observable) {
-      ExpressionOperation(ExpressionFlatMap(body), Seq(function), function.`type`)
-    } else {
-      body
-    }
+    (observables, inputs)
   }
 }

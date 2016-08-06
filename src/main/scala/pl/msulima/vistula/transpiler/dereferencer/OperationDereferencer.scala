@@ -35,23 +35,6 @@ trait OperationDereferencer {
 
 object OperationDereferencer {
 
-  def substitute(operation: ExpressionOperation): ExpressionOperation = {
-    substitute(operation.operator, operation.inputs.map(extractObservables))
-  }
-
-  def substitute(operator: Operator, xs: Seq[(Seq[Expression], Expression)]): ExpressionOperation = {
-    val observables = xs.flatMap(_._1)
-    val inputs = xs.map(_._2)
-
-    val body = ExpressionOperation(operator, inputs, ScopeElement(observable = true))
-
-    if (observables.isEmpty) {
-      body
-    } else {
-      ExpressionOperation(ExpressionMap(body), observables, ScopeElement(observable = true))
-    }
-  }
-
   def extractObservables(expression: Expression): (Seq[Expression], Expression) = {
     expression match {
       case ExpressionOperation(ExpressionMap(output), expInputs, _) =>

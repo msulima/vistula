@@ -1,6 +1,7 @@
 package pl.msulima.vistula.transpiler.scope
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.transpiler.Token
 
 
 case class ScopeElement(observable: Boolean, `type`: ClassType = ClassDefinition.Object) {
@@ -20,6 +21,16 @@ case object NotExpression extends ClassType
 
 case class FunctionDefinition(arguments: Seq[ScopeElement], resultIsObservable: Boolean, varargs: Boolean = false) extends ClassType {
 
+  def adapt(arguments: Seq[Token]): Seq[ScopeElement] = {
+    if (varargs) {
+      FunctionDefinitionHelper.adaptArguments(arguments.size, this.arguments.head.observable)
+    } else {
+      require(arguments.size == this.arguments.size,
+        s"Wrong number of arguments: given ${arguments.size} expected ${this.arguments.size}")
+      this.arguments
+    }
+  }
+
   override def toString: String = {
     val args = if (varargs) {
       s"${boolToObs(arguments.head.observable)}: ${arguments.head.`type`} ..."
@@ -31,7 +42,7 @@ case class FunctionDefinition(arguments: Seq[ScopeElement], resultIsObservable: 
     val result = boolToObs(resultIsObservable)
 
     s"FunctionDefinition(($args) => $result)"
-    }
+  }
 
   private def boolToObs(observable: Boolean) = {
     if (observable) {
