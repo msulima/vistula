@@ -32,7 +32,7 @@ object Transpiler {
 
   private def mapToConstant(operator: Operator, output: ExpressionOperation, operands: Seq[Expression]): Constant = {
     operator(operands.map(toConstant).distinct.toList, toConstant(
-      SubstituteObservables(operands.distinct, output))
+      SubstituteObservables(output, operands.distinct))
     )
   }
 }

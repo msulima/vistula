@@ -4,7 +4,7 @@ import pl.msulima.vistula.transpiler.expression.control.FunctionScope
 
 object SubstituteObservables {
 
-  def apply(observables: Seq[Expression], operation: ExpressionOperation): Expression = {
+  def apply(operation: ExpressionOperation, observables: Seq[Expression]): Expression = {
     val mapping = createMapping(observables)
 
     apply(mapping, operation)
@@ -12,6 +12,8 @@ object SubstituteObservables {
 
   private def apply(mapping: Map[Expression, String], operation: ExpressionOperation): Expression = {
     operation.copy(inputs = operation.inputs.map({
+      case input@ExpressionOperation(ExpressionFlatMap(body), operands, id) =>
+        mapping.get(input).map(mapped => ExpressionConstant(mapped, id)).getOrElse(input)
       case input@ExpressionOperation(FunctionScope, _, _) =>
         input
       case input@ExpressionConstant(value, id) if id.observable =>

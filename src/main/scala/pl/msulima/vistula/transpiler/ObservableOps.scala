@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.util.{Indent, ToArray}
+import pl.msulima.vistula.util.Indent
 
 case object BoxOp extends Operator {
 
@@ -35,22 +35,3 @@ case object WrapScope extends Operator {
   }
 }
 
-case class RxMapOp(useFlatMap: Boolean) extends Operator {
-
-  override def apply(operands: List[Constant], output: Constant): Constant = {
-    val mapper = if (useFlatMap) {
-      "rxFlatMap"
-    } else {
-      "rxMap"
-    }
-
-    val value = if (operands.isEmpty) {
-      output.value
-    } else if (operands.size == 1) {
-      s"${operands.head.value}.$mapper($$arg => (${output.value}))"
-    } else {
-      s"vistula.zip(${ToArray(operands.map(_.value))}).$mapper($$args => (${output.value}))"
-    }
-    Constant(value)
-  }
-}

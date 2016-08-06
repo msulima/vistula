@@ -22,10 +22,3 @@ case object FunctionCall extends Operator {
     Constant(s"${operands.head.value}(${operands.tail.map(_.value).mkString(", ")})")
   }
 }
-
-case class FunctionCall2(function: Token) extends Operator {
-
-  override def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(s"${operands.head.value}(${operands.tail.map(_.value).mkString(", ")})")
-  }
-}
