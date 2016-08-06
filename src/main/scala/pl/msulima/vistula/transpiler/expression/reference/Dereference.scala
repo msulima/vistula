@@ -7,10 +7,10 @@ case object Dereference extends Operator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Dereference(value) =>
-      Operation(Dereference, Seq(), Tokenizer.apply(value))
+      Operation(Dereference, Seq(Tokenizer.apply(value)))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(s"${output.value}.rxLastValue()")
+    Constant(s"${operands.head.value}.rxLastValue()")
   }
 }

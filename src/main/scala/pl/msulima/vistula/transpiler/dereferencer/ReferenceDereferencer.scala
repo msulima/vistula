@@ -37,14 +37,15 @@ trait ReferenceDereferencer {
     } else {
       val maybeTypedOperation = for {
         sourceType <- scope.classes.get(sourceType.`type`)
+        targetExpr = target.asInstanceOf[Constant]
+        fieldType <- sourceType.fields.get(Ast.identifier(targetExpr.value))
       } yield {
-        val targetExpr = target.asInstanceOf[Constant]
-        val fieldType = sourceType.fields(Ast.identifier(targetExpr.value))
-
         ExpressionOperation(Reference, Seq(source, ExpressionConstant(targetExpr.value, fieldType)), fieldType)
       }
 
-      maybeTypedOperation.getOrElse(source)
+      maybeTypedOperation.getOrElse(
+        ExpressionOperation(Reference, Seq(source, dereference(target)), sourceType)
+      )
     }
   }
 }
