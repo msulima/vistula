@@ -13,7 +13,7 @@ trait DereferenceDereferencer {
 
       dereferenced.`type` match {
         case id: ScopeElement if id.observable =>
-          ExpressionOperation(Dereference, Seq(dereferenced), dereferenced.`type`)
+          ExpressionOperation(Dereference, Seq(dereferenced), dereferenced.`type`.copy(observable = false))
         case _ =>
           dereferenced
       }
