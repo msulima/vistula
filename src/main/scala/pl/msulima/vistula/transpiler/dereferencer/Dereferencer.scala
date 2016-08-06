@@ -44,7 +44,10 @@ case class DereferencerImpl(scope: Scope) extends Dereferencer
     case Introduce(variable, body) =>
       copy(scope.addToScope(variable)).apply(body)
     case observable: Observable =>
-      apply(observable.token)
+      apply(observable.token) match {
+        case c: ExpressionConstant => c.copy(`type` = c.`type`.copy(observable = true))
+        case c: ExpressionOperation => c.copy(`type` = c.`type`.copy(observable = true))
+      }
     //      ExpressionConstant(x.value, ScopeElement(observable = true))
     //    case observable: Observable =>
     //      Observable(apply(observable.token))
