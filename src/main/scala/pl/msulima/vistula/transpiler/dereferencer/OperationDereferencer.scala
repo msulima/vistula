@@ -26,18 +26,40 @@ trait OperationDereferencer {
       case x: Box =>
         (Seq(), dereference(x))
       case x =>
-        dereference(x) match {
-          case ExpressionOperation(ExpressionMap(output@ExpressionOperation(_, _, id: ScopeElement)), expInputs, _) =>
-            (expInputs, output)
-          case input@ExpressionOperation(_, _, id: ScopeElement) if id.observable =>
-            (Seq(input), input)
-          case input@ExpressionConstant(value, id: ScopeElement) if id.observable =>
-            (Seq(input), input)
-          case input =>
-            (Seq(), input)
-        }
+        OperationDereferencer.extractObservables(dereference(x))
     })
 
     (xs.flatMap(_._1), xs.map(_._2))
+  }
+}
+
+object OperationDereferencer {
+
+  def substitute(operation: ExpressionOperation): ExpressionOperation = {
+    substitute(operation.operator, operation.inputs.map(extractObservables))
+  }
+
+  def substitute(operator: Operator, xs: Seq[(Seq[Expression], Expression)]): ExpressionOperation = {
+    val observables = xs.flatMap(_._1)
+    val inputs = xs.map(_._2)
+
+    val body = ExpressionOperation(operator, inputs, ScopeElement(observable = true))
+
+    if (observables.isEmpty) {
+      body
+    } else {
+      ExpressionOperation(ExpressionMap(body), observables, ScopeElement(observable = true))
+    }
+  }
+
+  private def extractObservables(expression: Expression): (Seq[Expression], Expression) = {
+    expression match {
+      case ExpressionOperation(ExpressionMap(output), expInputs, _) =>
+        (expInputs, output)
+      case input if input.`type`.observable =>
+        (Seq(input), input)
+      case input =>
+        (Seq(), input)
+    }
   }
 }

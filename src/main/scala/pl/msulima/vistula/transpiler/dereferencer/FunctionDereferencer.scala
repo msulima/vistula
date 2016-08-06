@@ -24,15 +24,7 @@ trait FunctionDereferencer {
 
       val funcDefinition = getDefinition(function, arguments)
 
-      val body = ExpressionOperation(FunctionCall, function +: handleArguments(funcDefinition, arguments),
-        ScopeElement(funcDefinition.resultIsObservable))
-
-      // hacky
-      if (function.`type`.observable && function.isInstanceOf[ExpressionOperation]) {
-        ExpressionOperation(ExpressionFlatMap(body), Seq(function), function.`type`)
-      } else {
-        body
-      }
+      run(function, funcDefinition, handleArguments(funcDefinition, arguments))
   }
 
   private def getDefinition(function: Expression, arguments: Seq[Token]) = {
@@ -62,5 +54,16 @@ trait FunctionDereferencer {
           arg
         }
     }).map(dereference)
+  }
+
+  def run(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]) = {
+    val body = ExpressionOperation(FunctionCall, function +: arguments, ScopeElement(funcDefinition.resultIsObservable))
+
+    // hacky
+    if (function.`type`.observable && function.isInstanceOf[ExpressionOperation]) {
+      ExpressionOperation(ExpressionFlatMap(body), Seq(function), function.`type`)
+    } else {
+      body
+    }
   }
 }
