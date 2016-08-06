@@ -52,7 +52,7 @@ object OperationDereferencer {
     }
   }
 
-  private def extractObservables(expression: Expression): (Seq[Expression], Expression) = {
+  def extractObservables(expression: Expression): (Seq[Expression], Expression) = {
     expression match {
       case ExpressionOperation(ExpressionMap(output), expInputs, _) =>
         (expInputs, output)

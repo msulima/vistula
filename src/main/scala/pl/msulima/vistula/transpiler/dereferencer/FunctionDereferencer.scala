@@ -20,11 +20,22 @@ trait FunctionDereferencer {
 
       ExpressionOperation(FunctionScope, result.init :+ Return(result.last), result.last.`type`)
     case Operation(FunctionCall, arguments, func, _) =>
-      val function = dereference(func)
+      val function = dereferenceFunction(func, arguments)
 
       val funcDefinition = getDefinition(function, arguments)
 
       run(function, funcDefinition, handleArguments(funcDefinition, arguments))
+  }
+
+  private def dereferenceFunction(function: Token, arguments: Seq[Token]) = {
+    dereference(function) match {
+      case ExpressionConstant(value, ScopeElement(true, clazz: ClassDefinition)) =>
+        val definition = FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = true,
+          resultIsObservable = true)
+        ExpressionConstant(value, ScopeElement(observable = false, definition))
+      case func =>
+        func
+    }
   }
 
   private def getDefinition(function: Expression, arguments: Seq[Token]) = {
@@ -59,8 +70,7 @@ trait FunctionDereferencer {
   def run(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]) = {
     val body = ExpressionOperation(FunctionCall, function +: arguments, ScopeElement(funcDefinition.resultIsObservable))
 
-    // hacky
-    if (function.`type`.observable && function.isInstanceOf[ExpressionOperation]) {
+    if (function.`type`.observable) {
       ExpressionOperation(ExpressionFlatMap(body), Seq(function), function.`type`)
     } else {
       body
