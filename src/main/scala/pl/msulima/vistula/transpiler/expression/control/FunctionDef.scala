@@ -2,7 +2,7 @@ package pl.msulima.vistula.transpiler.expression.control
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.scope.{FunctionDefinitionHelper, Identifier, Variable}
+import pl.msulima.vistula.transpiler.scope.{FunctionDefinitionHelper, ScopeElement, Variable}
 import pl.msulima.vistula.util.Indent
 
 case object FunctionDef extends Operator {
@@ -15,7 +15,7 @@ case object FunctionDef extends Operator {
       })
 
       Introduce(
-        Variable(name, FunctionDefinitionHelper.adapt(argumentIds.size, argumentsAreObservable = true, resultIsObservable = true)),
+        Variable(name, ScopeElement(observable = false, FunctionDefinitionHelper.adapt(argumentIds.size, argumentsAreObservable = true, resultIsObservable = true))),
         FunctionDef(name, argumentIds, body.map(Tokenizer.applyStmt))
       )
   }
@@ -38,7 +38,7 @@ case object FunctionDef extends Operator {
 
   def apply(name: Ast.identifier, arguments: Seq[Ast.identifier], body: Seq[Token], mutableArgs: Boolean = true): Token = {
     val declarations = arguments.map(arg => {
-      Introduce(Variable(arg, Identifier(observable = mutableArgs)), Constant(""))
+      Introduce(Variable(arg, ScopeElement(observable = mutableArgs)), Constant(""))
     })
 
     Operation(

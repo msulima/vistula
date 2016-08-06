@@ -1,6 +1,6 @@
 package pl.msulima.vistula.transpiler
 
-import pl.msulima.vistula.transpiler.scope.{Identifier, ScopeElement}
+import pl.msulima.vistula.transpiler.scope.ScopeElement
 
 sealed trait Expression {
   val `type`: ScopeElement
@@ -25,5 +25,5 @@ case class ExpressionFlatMap(output: ExpressionOperation) extends Operator {
 }
 
 object ExpressionConstant {
-  val Dummy = ExpressionConstant("ignored", Identifier(observable = false))
+  val Dummy = ExpressionConstant("ignored", ScopeElement(observable = false))
 }

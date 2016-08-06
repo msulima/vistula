@@ -3,7 +3,7 @@ package pl.msulima.vistula.transpiler.dereferencer
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.reference.Reference
-import pl.msulima.vistula.transpiler.scope.Identifier
+import pl.msulima.vistula.transpiler.scope.{ClassDefinition, ScopeElement}
 
 trait ReferenceDereferencer {
   this: Dereferencer =>
@@ -21,30 +21,31 @@ trait ReferenceDereferencer {
     input match {
       case Constant(id) =>
         val scopeElement = scope.findById(Ast.identifier(id))
-        ExpressionConstant(id, scopeElement.getOrElse(Identifier(observable = true)))
+        ExpressionConstant(id, scopeElement.getOrElse(ScopeElement(observable = true)))
       case _ =>
         dereference(input)
     }
   }
 
   def referenceField(source: Expression, target: Token): Expression = {
-    val sourceType = source.`type`.asInstanceOf[Identifier]
+    val sourceElement = source.`type`.asInstanceOf[ScopeElement]
+    val sourceType = sourceElement.`type`.asInstanceOf[ClassDefinition]
 
-    if (sourceType.observable) {
-      val body = ExpressionOperation(Reference, Seq(source, dereference(target)), sourceType)
+    if (sourceElement.observable) {
+      val body = ExpressionOperation(Reference, Seq(source, dereference(target)), sourceElement)
 
-      ExpressionOperation(ExpressionFlatMap(body), Seq(source), sourceType)
+      ExpressionOperation(ExpressionFlatMap(body), Seq(source), sourceElement)
     } else {
+      val targetExpr = target.asInstanceOf[Constant]
+
       val maybeTypedOperation = for {
-        sourceType <- scope.classes.get(sourceType.`type`)
-        targetExpr = target.asInstanceOf[Constant]
         fieldType <- sourceType.fields.get(Ast.identifier(targetExpr.value))
       } yield {
         ExpressionOperation(Reference, Seq(source, ExpressionConstant(targetExpr.value, fieldType)), fieldType)
       }
 
       maybeTypedOperation.getOrElse(
-        ExpressionOperation(Reference, Seq(source, dereference(target)), sourceType)
+        ExpressionOperation(Reference, Seq(source, dereference(target)), sourceElement)
       )
     }
   }

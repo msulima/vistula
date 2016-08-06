@@ -2,7 +2,7 @@ package pl.msulima.vistula.transpiler.expression.reference
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.scope.{Identifier, Variable}
+import pl.msulima.vistula.transpiler.scope.{ScopeElement, Variable}
 
 case object Declare extends Operator {
 
@@ -20,7 +20,7 @@ case object Declare extends Operator {
       Operation(Dereference, Seq(body))
     }
 
-    Introduce(Variable(identifier, Identifier(mutable)), Operation(Declare, Seq(Constant(identifier.name), value)))
+    Introduce(Variable(identifier, ScopeElement(mutable)), Operation(Declare, Seq(Constant(identifier.name), value)))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {

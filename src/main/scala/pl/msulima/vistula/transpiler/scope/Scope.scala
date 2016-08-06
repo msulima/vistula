@@ -8,11 +8,13 @@ case class Variable(id: Ast.identifier, `type`: ScopeElement)
 
 case class ScopedResult(scope: Scope, program: Seq[Expression])
 
-case class Scope(variables: Map[Ast.identifier, Identifier], functions: Map[Token, FunctionDefinition],
+case class Scope(variables: Map[Ast.identifier, ScopeElement], functions: Map[Token, FunctionDefinition],
                  classes: Map[Ast.identifier, ClassDefinition]) {
 
   def findById(id: Ast.identifier): Option[ScopeElement] = {
-    variables.get(id).orElse(functions.get(Constant(id.name)))
+    variables.get(id).orElse(functions.get(Constant(id.name)).map(fn => {
+      ScopeElement(observable = false, fn)
+    }))
   }
 
   def isKnownStatic(id: Ast.identifier) = {
@@ -21,10 +23,10 @@ case class Scope(variables: Map[Ast.identifier, Identifier], functions: Map[Toke
 
   def addToScope(variable: Variable) = {
     variable.`type` match {
-      case t: Identifier =>
+      case ScopeElement(false, definition: FunctionDefinition) =>
+        copy(functions = functions + (Constant(variable.id.name) -> definition))
+      case t: ScopeElement =>
         copy(variables = variables + (variable.id -> t))
-      case t: FunctionDefinition =>
-        copy(functions = functions + (Constant(variable.id.name) -> t))
     }
   }
 }
@@ -34,7 +36,7 @@ object Scope {
   val Empty = {
     Scope(
       variables = Map(
-        Ast.identifier("vistula") -> Identifier(observable = false, `type` = ClassDefinitionHelper.Vistula)
+        Ast.identifier("vistula") -> ScopeElement(observable = false, `type` = ClassDefinitionHelper.Vistula)
       ),
       functions = FunctionDefinitionHelper.defaults.map({
         case (Ast.identifier(name), definition) =>

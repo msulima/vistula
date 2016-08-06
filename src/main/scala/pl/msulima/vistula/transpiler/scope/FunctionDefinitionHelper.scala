@@ -4,8 +4,8 @@ import pl.msulima.vistula.parser.Ast
 
 object FunctionDefinitionHelper {
 
-  val const = Identifier(observable = false)
-  val obs = Identifier(observable = true)
+  val const = ScopeElement(observable = false)
+  val obs = ScopeElement(observable = true)
 
   val defaults: Seq[(Ast.identifier, FunctionDefinition)] = Seq(
   )
@@ -28,11 +28,11 @@ object FunctionDefinitionHelper {
     (1 to argumentsCount).map(_ => argumentDefinition)
   }
 
-  def constDef(name: String, arguments: Identifier*) = {
-    Ast.identifier(name) -> FunctionDefinition(arguments, resultIsObservable = false)
+  def constDef(name: String, arguments: ScopeElement*) = {
+    Ast.identifier(name) -> ScopeElement(observable = false, FunctionDefinition(arguments, resultIsObservable = false))
   }
 
-  def obsDef(name: String, arguments: Identifier*) = {
-    Ast.identifier(name) -> FunctionDefinition(arguments, resultIsObservable = true)
+  def obsDef(name: String, arguments: ScopeElement*) = {
+    Ast.identifier(name) -> ScopeElement(observable = false, FunctionDefinition(arguments, resultIsObservable = true))
   }
 }

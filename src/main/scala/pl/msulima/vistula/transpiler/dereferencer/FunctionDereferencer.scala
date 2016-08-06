@@ -2,8 +2,8 @@ package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, FunctionScope, Return}
-import pl.msulima.vistula.transpiler.expression.reference.{FunctionCall, Reference}
-import pl.msulima.vistula.transpiler.scope.{FunctionDefinition, FunctionDefinitionHelper, Identifier}
+import pl.msulima.vistula.transpiler.expression.reference.FunctionCall
+import pl.msulima.vistula.transpiler.scope.{ClassDefinition, FunctionDefinition, FunctionDefinitionHelper, ScopeElement}
 
 trait FunctionDereferencer {
   this: Dereferencer =>
@@ -14,34 +14,35 @@ trait FunctionDereferencer {
       val funcDefinition = FunctionDefinitionHelper.adapt(argumentIds.size,
         argumentsAreObservable = true, resultIsObservable = true)
 
-      ExpressionOperation(FunctionDef, program.map(dereference), funcDefinition)
+      ExpressionOperation(FunctionDef, program.map(dereference), ScopeElement(observable = false, funcDefinition))
     case operation@Operation(FunctionScope, program, _, _) =>
       val result = Transformer.scoped(program, scope)
 
       ExpressionOperation(FunctionScope, result.init :+ Return(result.last), result.last.`type`)
     case Operation(FunctionCall, arguments, func, _) =>
-      val (function, funcDefinition) = dereference(func) match {
-        case c@ExpressionOperation(Reference, _, definition: FunctionDefinition) =>
-          c -> definition
-        case c@ExpressionOperation(_, _, id: Identifier) if id.observable =>
-          c ->
-            FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = id.observable, resultIsObservable = id.observable)
-        case c@ExpressionConstant(value, definition: FunctionDefinition) =>
-          c -> definition
-        case c@ExpressionConstant(value, id: Identifier) =>
-          c.copy(`type` = id.copy(observable = false)) ->
-            FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = id.observable, resultIsObservable = id.observable)
-      }
+      val function = dereference(func)
+
+      val funcDefinition = getDefinition(function, arguments)
 
       val body = ExpressionOperation(FunctionCall, function +: handleArguments(funcDefinition, arguments),
-        Identifier(funcDefinition.resultIsObservable))
+        ScopeElement(funcDefinition.resultIsObservable))
 
-      function.`type` match {
-        case identifier: Identifier if identifier.observable =>
-          ExpressionOperation(ExpressionFlatMap(body), Seq(function), function.`type`)
-        case _ =>
-          body
+      // hacky
+      if (function.`type`.observable && function.isInstanceOf[ExpressionOperation]) {
+        ExpressionOperation(ExpressionFlatMap(body), Seq(function), function.`type`)
+      } else {
+        body
       }
+  }
+
+  private def getDefinition(function: Expression, arguments: Seq[Token]) = {
+    function.`type`.`type` match {
+      case definition: FunctionDefinition =>
+        definition
+      case _: ClassDefinition =>
+        FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = function.`type`.observable,
+          resultIsObservable = function.`type`.observable)
+    }
   }
 
   private def handleArguments(definition: FunctionDefinition, arguments: Seq[Token]) = {
@@ -56,10 +57,10 @@ trait FunctionDereferencer {
     arguments.zip(args).map({
       case (arg, argDefinition) =>
         if (argDefinition.observable) {
-          dereference(Box(arg))
+          Box(arg)
         } else {
-          dereference(arg)
+          arg
         }
-    })
+    }).map(dereference)
   }
 }

@@ -2,7 +2,7 @@ package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.reference.Dereference
-import pl.msulima.vistula.transpiler.scope.Identifier
+import pl.msulima.vistula.transpiler.scope.ScopeElement
 
 trait DereferenceDereferencer {
   this: Dereferencer =>
@@ -12,7 +12,7 @@ trait DereferenceDereferencer {
       val dereferenced = dereference(target)
 
       dereferenced.`type` match {
-        case id: Identifier if id.observable =>
+        case id: ScopeElement if id.observable =>
           ExpressionOperation(Dereference, Seq(dereferenced), dereferenced.`type`)
         case _ =>
           dereferenced

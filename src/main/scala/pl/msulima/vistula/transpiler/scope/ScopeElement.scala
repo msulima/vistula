@@ -2,35 +2,36 @@ package pl.msulima.vistula.transpiler.scope
 
 import pl.msulima.vistula.parser.Ast
 
-sealed trait ScopeElement
 
-case object NotExpression extends ScopeElement
-
-case class Identifier(observable: Boolean, `type`: Ast.identifier = ClassDefinition.Object) extends ScopeElement {
+case class ScopeElement(observable: Boolean, `type`: ClassType = ClassDefinition.Object) {
 
   override def toString: String = {
     if (observable) {
-      s"Obs<${`type`.name}>"
+      s"Obs<${`type`}>"
     } else {
-      s"Val<${`type`.name}>"
+      s"Val<${`type`}>"
     }
   }
 }
 
-case class FunctionDefinition(arguments: Seq[Identifier], resultIsObservable: Boolean, varargs: Boolean = false) extends ScopeElement {
+sealed trait ClassType
+
+case object NotExpression extends ClassType
+
+case class FunctionDefinition(arguments: Seq[ScopeElement], resultIsObservable: Boolean, varargs: Boolean = false) extends ClassType {
 
   override def toString: String = {
     val args = if (varargs) {
-      s"${boolToObs(arguments.head.observable)}: ${arguments.head.`type`.name} ..."
+      s"${boolToObs(arguments.head.observable)}: ${arguments.head.`type`} ..."
     } else {
       arguments.map(arg => {
-        s"${boolToObs(arg.observable)}: ${arg.`type`.name}"
+        s"${boolToObs(arg.observable)}: ${arg.`type`}"
       }).mkString(", ")
     }
     val result = boolToObs(resultIsObservable)
 
     s"FunctionDefinition(($args) => $result)"
-  }
+    }
 
   private def boolToObs(observable: Boolean) = {
     if (observable) {
@@ -41,9 +42,14 @@ case class FunctionDefinition(arguments: Seq[Identifier], resultIsObservable: Bo
   }
 }
 
-case class ClassDefinition(fields: Map[Ast.identifier, ScopeElement]) extends ScopeElement
+case class ClassDefinition(name: Ast.identifier, fields: Map[Ast.identifier, ScopeElement]) extends ClassType {
+
+  override def toString: String = {
+    name.name
+  }
+}
 
 object ClassDefinition {
 
-  val Object = Ast.identifier("vistula.lang.Object")
+  val Object = ClassDefinition(Ast.identifier("vistula.lang.Object"), Map())
 }

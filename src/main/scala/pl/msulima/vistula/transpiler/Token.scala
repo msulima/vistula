@@ -1,6 +1,6 @@
 package pl.msulima.vistula.transpiler
 
-import pl.msulima.vistula.transpiler.scope.{ClassDefinition, Identifier, ScopeElement, Variable}
+import pl.msulima.vistula.transpiler.scope.{ClassDefinition, ScopeElement, Variable}
 import pl.msulima.vistula.util.Indent
 
 
@@ -35,7 +35,7 @@ case object Operation {
 }
 
 case class Operation(operator: Operator, inputs: Seq[Token], output: Token,
-                     `type`: ScopeElement = Identifier(observable = false, `type` = ClassDefinition.Object)) extends Token {
+                     `type`: ScopeElement = ScopeElement(observable = false, `type` = ClassDefinition.Object)) extends Token {
 
   override def prettyPrint: String = {
     val inps = if (inputs.isEmpty) {

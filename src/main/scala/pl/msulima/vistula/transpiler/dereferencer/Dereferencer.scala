@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.scope.{Identifier, Scope}
+import pl.msulima.vistula.transpiler.scope.{Scope, ScopeElement}
 
 object DereferencerImpl {
 
@@ -40,12 +40,12 @@ case class DereferencerImpl(scope: Scope) extends Dereferencer
 
   private def default: PartialFunction[Token, Expression] = {
     case x: Constant =>
-      ExpressionConstant(x.value, Identifier(observable = false))
+      ExpressionConstant(x.value, ScopeElement(observable = false))
     case Introduce(variable, body) =>
       copy(scope.addToScope(variable)).apply(body)
     case observable: Observable =>
       apply(observable.token)
-    //      ExpressionConstant(x.value, Identifier(observable = true))
+    //      ExpressionConstant(x.value, ScopeElement(observable = true))
     //    case observable: Observable =>
     //      Observable(apply(observable.token))
     //    case operation@Operation(WrapScope, _, _, _) =>

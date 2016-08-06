@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.scope.Identifier
+import pl.msulima.vistula.transpiler.scope.ScopeElement
 
 trait OperationDereferencer {
   this: Dereferencer =>
@@ -12,12 +12,12 @@ trait OperationDereferencer {
 
       val useFlatMap = operation.output.isInstanceOf[Observable]
 
-      val body = ExpressionOperation(operation.operator, inputs, Identifier(observable = useFlatMap))
+      val body = ExpressionOperation(operation.operator, inputs, ScopeElement(observable = useFlatMap))
 
       if (observables.isEmpty) {
         body
       } else {
-        ExpressionOperation(ExpressionMap(body), observables, Identifier(observable = true))
+        ExpressionOperation(ExpressionMap(body), observables, ScopeElement(observable = true))
       }
   }
 
@@ -27,11 +27,11 @@ trait OperationDereferencer {
         (Seq(), dereference(x))
       case x =>
         dereference(x) match {
-          case ExpressionOperation(ExpressionMap(output@ExpressionOperation(_, _, id: Identifier)), expInputs, _) =>
+          case ExpressionOperation(ExpressionMap(output@ExpressionOperation(_, _, id: ScopeElement)), expInputs, _) =>
             (expInputs, output)
-          case input@ExpressionOperation(_, _, id: Identifier) if id.observable =>
+          case input@ExpressionOperation(_, _, id: ScopeElement) if id.observable =>
             (Seq(input), input)
-          case input@ExpressionConstant(value, id: Identifier) if id.observable =>
+          case input@ExpressionConstant(value, id: ScopeElement) if id.observable =>
             (Seq(input), input)
           case input =>
             (Seq(), input)
