@@ -7,10 +7,10 @@ case object Assign extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.AssignStmt(expr, value) =>
-      Operation(Assign, Seq(Box(Tokenizer.applyStmt(value))), Tokenizer.apply(expr))
+      Operation(Assign, Seq(Tokenizer.apply(expr), Box(Tokenizer.applyStmt(value))))
   }
 
   override def apply(operands: List[Constant], output: Constant): Constant = {
-    Constant(s"${operands.head.value}.rxForEachOnce($$arg => ${output.value}.rxPush($$arg))")
+    Constant(s"${operands(1).value}.rxForEachOnce($$arg => ${operands(0).value}.rxPush($$arg))")
   }
 }
