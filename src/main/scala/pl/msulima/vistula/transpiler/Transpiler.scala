@@ -19,9 +19,9 @@ object Transpiler {
 
   private def toConstant(token: Expression): Constant = {
     token match {
-      case ExpressionOperation(op@ExpressionMap(output), operands, _) =>
+      case ExpressionOperation(op@RxMap(output), operands, _) =>
         mapToConstant(op, output, operands)
-      case ExpressionOperation(op@ExpressionFlatMap(output), operands, _) =>
+      case ExpressionOperation(op@RxFlatMap(output), operands, _) =>
         mapToConstant(op, output, operands)
       case ExpressionOperation(operation, operands, _) =>
         operation.apply(operands.map(toConstant).toList, Constant("FUUUUU"))

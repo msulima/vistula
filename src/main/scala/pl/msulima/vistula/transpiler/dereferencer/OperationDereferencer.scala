@@ -17,7 +17,7 @@ trait OperationDereferencer {
       if (observables.isEmpty) {
         body
       } else {
-        ExpressionOperation(ExpressionMap(body), observables, ScopeElement(observable = true))
+        ExpressionOperation(RxMap(body), observables, ScopeElement(observable = true))
       }
   }
 
@@ -37,7 +37,7 @@ object OperationDereferencer {
 
   def extractObservables(expression: Expression): (Seq[Expression], Expression) = {
     expression match {
-      case ExpressionOperation(ExpressionMap(output), expInputs, _) =>
+      case ExpressionOperation(RxMap(output), expInputs, _) =>
         (expInputs, output)
       case input if input.`type`.observable =>
         (Seq(input), input)

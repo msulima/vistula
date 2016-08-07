@@ -18,23 +18,23 @@ case class ExpressionOperation(operator: Operator, inputs: Seq[Expression], `typ
         s"FunctionCall(${inputs.head})(${inputs.tail.mkString(".")})"
       case Reference =>
         s"Reference(${inputs.mkString(".")})"
-      case ExpressionMap(body) =>
-        s"Map($body)"
-      case ExpressionFlatMap(body) =>
-        s"FlatMap($body)"
+      case RxMap(body) =>
+        s"RxMap($body)"
+      case RxFlatMap(body) =>
+        s"RxFlatMap($body)"
       case _ =>
         s"ExpressionOperation($operator, $inputs, ${`type`})"
     }
 }
 
-case class ExpressionMap(output: ExpressionOperation) extends Operator {
+case class RxMap(output: ExpressionOperation) extends Operator {
 
   override def apply(inputs: List[Constant], output: Constant): Constant = {
     RxMapOp(useFlatMap = false, inputs, output)
   }
 }
 
-case class ExpressionFlatMap(output: ExpressionOperation) extends Operator {
+case class RxFlatMap(output: ExpressionOperation) extends Operator {
 
   override def apply(inputs: List[Constant], output: Constant): Constant = {
     RxMapOp(useFlatMap = true, inputs, output)

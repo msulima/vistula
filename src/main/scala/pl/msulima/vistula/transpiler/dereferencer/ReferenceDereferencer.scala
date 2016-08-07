@@ -34,7 +34,7 @@ trait ReferenceDereferencer {
     if (sourceElement.observable) {
       val body = ExpressionOperation(Reference, Seq(source, dereference(target)), sourceElement)
 
-      ExpressionOperation(ExpressionFlatMap(body), Seq(source), sourceElement)
+      ExpressionOperation(RxFlatMap(body), Seq(source), sourceElement)
     } else {
       val targetExpr = target.asInstanceOf[Constant]
 

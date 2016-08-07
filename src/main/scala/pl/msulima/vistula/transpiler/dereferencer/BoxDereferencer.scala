@@ -11,9 +11,9 @@ trait BoxDereferencer {
   def boxDereferencer: PartialFunction[Token, Expression] = {
     case Box(token) =>
       dereference(token) match {
-        case t@ExpressionConstant(_, id: ScopeElement) if id.observable =>
+        case t@ExpressionConstant(_, id) if id.observable =>
           t.copy(`type` = id.copy(observable = false))
-        case t@ExpressionOperation(_, _, id: ScopeElement) if id.observable =>
+        case t@ExpressionOperation(_, _, id) if id.observable =>
           t.copy(`type` = id.copy(observable = false))
         case t@ExpressionOperation(FunctionDef, _, ScopeElement(false, _: FunctionDefinition)) =>
           t

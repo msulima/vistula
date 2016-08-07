@@ -6,7 +6,7 @@ import pl.msulima.vistula.transpiler.scope.{Scope, ScopeElement}
 object DereferencerImpl {
 
   def apply(scope: Scope, token: Token): Expression = {
-    new DereferencerImpl(scope).apply(token)
+    new DereferencerImpl(scope).dereference(token)
   }
 }
 
@@ -18,21 +18,23 @@ trait Dereferencer {
 }
 
 case class DereferencerImpl(scope: Scope) extends Dereferencer
-  with DeclareDereferencer
-  with FunctionDereferencer
-  with WrapDereferencer
   with BoxDereferencer
-  with ReferenceDereferencer
+  with DeclareDereferencer
   with DereferenceDereferencer
-  with OperationDereferencer {
+  with FunctionDereferencer
+  with FunctionCallDereferencer
+  with OperationDereferencer
+  with ReferenceDereferencer
+  with WrapDereferencer {
 
-  def apply(token: Token): Expression = {
-    functionDereferencer
-      .orElse(declareDereferencer)
-      .orElse(wrapDereferencer)
+  override def dereference(token: Token): Expression = {
+    declareDereferencer
       .orElse(boxDereferencer)
       .orElse(dereferenceDereferencer)
+      .orElse(functionDereferencer)
+      .orElse(functionCallDereferencer)
       .orElse(referenceDereferencer)
+      .orElse(wrapDereferencer)
       .orElse(operationDereferencer)
       .orElse(default)
       .apply(token)
@@ -42,18 +44,11 @@ case class DereferencerImpl(scope: Scope) extends Dereferencer
     case x: Constant =>
       ExpressionConstant(x.value, ScopeElement(observable = false))
     case Introduce(variable, body) =>
-      copy(scope.addToScope(variable)).apply(body)
+      copy(scope.addToScope(variable)).dereference(body)
     case observable: Observable =>
-      apply(observable.token) match {
+      dereference(observable.token) match {
         case c: ExpressionConstant => c.copy(`type` = c.`type`.copy(observable = true))
         case c: ExpressionOperation => c.copy(`type` = c.`type`.copy(observable = true))
       }
-    //      ExpressionConstant(x.value, ScopeElement(observable = true))
-    //    case observable: Observable =>
-    //      Observable(apply(observable.token))
-    //    case operation@Operation(WrapScope, _, _, _) =>
-    //      operation
   }
-
-  override def dereference(token: Token): Expression = apply(token)
 }
