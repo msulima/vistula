@@ -19,8 +19,8 @@ object InlineHtml {
       val lines = source.getLines().toList
       source.close()
 
-      Observable(Template(lines.mkString("\n")))
+      Template(lines.mkString("\n"))
     case Ast.expr.Str(x) if x.startsWith(MagicInlineHtmlPrefix) =>
-      Observable(Template(x.stripPrefix(MagicInlineHtmlPrefix)))
+      Template(x.stripPrefix(MagicInlineHtmlPrefix))
   }
 }

@@ -10,9 +10,7 @@ trait OperationDereferencer {
     case operation: Operation =>
       val (observables, inputs) = extractObservables(operation.inputs)
 
-      val useFlatMap = operation.output.isInstanceOf[Observable]
-
-      val body = ExpressionOperation(operation.operator, inputs, ScopeElement(observable = useFlatMap))
+      val body = ExpressionOperation(operation.operator, inputs, ScopeElement(observable = false))
 
       if (observables.isEmpty) {
         body

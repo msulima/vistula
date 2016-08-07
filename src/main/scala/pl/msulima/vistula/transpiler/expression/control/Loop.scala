@@ -14,6 +14,6 @@ object Loop {
   def apply(iterable: Ast.expr, argument: Ast.identifier, body: Seq[Token]) = {
     val iter = Reference(Tokenizer.apply(iterable), Constant("map"))
 
-    FunctionCall(iter, Seq(Observable(FunctionDef.anonymous(argument, body))))
+    FunctionCall(iter, Seq(FunctionDef.anonymous(argument, body)))
   }
 }

@@ -9,15 +9,22 @@ trait BoxDereferencer {
   this: Dereferencer =>
 
   def boxDereferencer: PartialFunction[Token, Expression] = {
+    case Observable(token) =>
+      dereference(token) match {
+        case c: ExpressionConstant =>
+          c.copy(`type` = c.`type`.copy(observable = true))
+        case c: ExpressionOperation =>
+          c.copy(`type` = c.`type`.copy(observable = true))
+      }
     case Box(token) =>
       dereference(token) match {
-        case t@ExpressionConstant(_, id) if id.observable =>
-          t.copy(`type` = id.copy(observable = false))
-        case t@ExpressionOperation(_, _, id) if id.observable =>
-          t.copy(`type` = id.copy(observable = false))
-        case t@ExpressionOperation(FunctionDef, _, ScopeElement(false, _: FunctionDefinition)) =>
-          t
-        case t =>
+        case c@ExpressionConstant(_, id) if id.observable =>
+          c.copy(`type` = c.`type`.copy(observable = false))
+        case c@ExpressionOperation(_, _, id) if id.observable =>
+          c.copy(`type` = c.`type`.copy(observable = false))
+        case c@ExpressionOperation(FunctionDef, _, ScopeElement(false, _: FunctionDefinition)) =>
+          c
+        case c =>
           dereference(FunctionCall("vistula.constantObservable", Seq(token)))
       }
   }
