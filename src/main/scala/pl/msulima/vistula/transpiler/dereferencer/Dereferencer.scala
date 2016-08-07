@@ -25,7 +25,7 @@ case class DereferencerImpl(scope: Scope) extends Dereferencer
   with FunctionCallDereferencer
   with OperationDereferencer
   with ReferenceDereferencer
-  with WrapDereferencer {
+  with TupleDereferencer {
 
   override def dereference(token: Token): Expression = {
     declareDereferencer
@@ -34,7 +34,7 @@ case class DereferencerImpl(scope: Scope) extends Dereferencer
       .orElse(functionDereferencer)
       .orElse(functionCallDereferencer)
       .orElse(referenceDereferencer)
-      .orElse(wrapDereferencer)
+      .orElse(tupleDereferencer)
       .orElse(operationDereferencer)
       .orElse(default)
       .apply(token)
