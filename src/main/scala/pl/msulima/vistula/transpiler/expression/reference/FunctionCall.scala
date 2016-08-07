@@ -3,7 +3,7 @@ package pl.msulima.vistula.transpiler.expression.reference
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.{Tokenizer, _}
 
-case object FunctionCall extends Operator {
+object FunctionCall extends Operator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Call(func, args, _, _, _) =>
@@ -11,11 +11,11 @@ case object FunctionCall extends Operator {
   }
 
   def apply(func: String, args: Seq[Token]): Operation = {
-    Operation(FunctionCall, args, Reference(func))
+    Operation(FunctionCall, Reference(func) +: args)
   }
 
   def apply(func: Token, args: Seq[Token]): Operation = {
-    Operation(FunctionCall, args, func)
+    Operation(FunctionCall, func +: args)
   }
 
   override def apply(operands: List[Constant]) = {

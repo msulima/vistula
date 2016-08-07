@@ -7,7 +7,7 @@ trait TupleDereferencer {
   this: Dereferencer =>
 
   def tupleDereferencer: PartialFunction[Token, Expression] = {
-    case Operation(Tuple, program :: Nil, _, _) =>
+    case Operation(Tuple, program :: Nil) =>
       val body = dereference(program)
       if (body.`type`.observable) {
         body

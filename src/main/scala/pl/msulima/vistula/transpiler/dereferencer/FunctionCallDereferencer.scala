@@ -8,7 +8,7 @@ trait FunctionCallDereferencer {
   this: Dereferencer =>
 
   def functionCallDereferencer: PartialFunction[Token, Expression] = {
-    case Operation(FunctionCall, arguments, func, _) =>
+    case Operation(FunctionCall, func +: arguments) =>
       val function = dereferenceFunction(func, arguments)
       val funcDefinition = getDefinition(function, arguments)
       val (observables, inputs) = findSubstitutes(function, funcDefinition, arguments)
