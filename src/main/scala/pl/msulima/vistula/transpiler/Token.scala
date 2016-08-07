@@ -26,7 +26,7 @@ case class Introduce(variable: Variable, body: Token) extends Token
 
 trait Operator {
 
-  def apply(inputs: List[Constant], output: Constant): Constant
+  def apply(inputs: List[Constant]): Constant
 }
 
 case object Operation {

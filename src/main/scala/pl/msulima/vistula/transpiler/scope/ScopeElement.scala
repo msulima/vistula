@@ -17,8 +17,6 @@ case class ScopeElement(observable: Boolean, `type`: ClassType = ClassDefinition
 
 sealed trait ClassType
 
-case object NotExpression extends ClassType
-
 case class FunctionDefinition(arguments: Seq[ScopeElement], resultIsObservable: Boolean, varargs: Boolean = false) extends ClassType {
 
   def adapt(arguments: Seq[Token]): Seq[ScopeElement] = {

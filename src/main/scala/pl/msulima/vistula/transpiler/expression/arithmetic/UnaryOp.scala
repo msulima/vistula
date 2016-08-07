@@ -11,7 +11,7 @@ case object UnaryOp extends Operator {
       Operation(UnaryOp, Seq(Tokenizer.apply(operand)))
   }
 
-  override def apply(operands: List[Constant], output: Constant): Constant = {
+  override def apply(operands: List[Constant]): Constant = {
     Constant(s"!(${operands.head.value})")
   }
 }

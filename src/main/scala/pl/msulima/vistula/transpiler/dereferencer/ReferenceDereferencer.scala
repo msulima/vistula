@@ -27,26 +27,30 @@ trait ReferenceDereferencer {
     }
   }
 
-  def referenceField(source: Expression, target: Token): Expression = {
+  private def referenceField(source: Expression, target: Token): Expression = {
     val sourceElement = source.`type`
-    val sourceType = sourceElement.`type`.asInstanceOf[ClassDefinition]
 
     if (sourceElement.observable) {
       val body = ExpressionOperation(Reference, Seq(source, dereference(target)), sourceElement)
 
       ExpressionOperation(RxFlatMap(body), Seq(source), sourceElement)
     } else {
-      val targetExpr = target.asInstanceOf[Constant]
-
-      val maybeTypedOperation = for {
-        fieldType <- sourceType.fields.get(Ast.identifier(targetExpr.value))
-      } yield {
-        ExpressionOperation(Reference, Seq(source, ExpressionConstant(targetExpr.value, fieldType)), fieldType)
-      }
-
-      maybeTypedOperation.getOrElse(
-        ExpressionOperation(Reference, Seq(source, dereference(target)), sourceElement)
-      )
+      referenceConstantField(source, target, sourceElement)
     }
+  }
+
+  private def referenceConstantField(source: Expression, target: Token, sourceElement: ScopeElement): ExpressionOperation = {
+    val sourceClass = sourceElement.`type`.asInstanceOf[ClassDefinition]
+    val targetExpr = target.asInstanceOf[Constant]
+
+    val maybeTypedOperation = for {
+      fieldType <- sourceClass.fields.get(Ast.identifier(targetExpr.value))
+    } yield {
+      ExpressionOperation(Reference, Seq(source, ExpressionConstant(targetExpr.value, fieldType)), fieldType)
+    }
+
+    maybeTypedOperation.getOrElse(
+      ExpressionOperation(Reference, Seq(source, dereference(target)), sourceElement)
+    )
   }
 }

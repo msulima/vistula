@@ -38,10 +38,7 @@ object Scope {
       variables = Map(
         Ast.identifier("vistula") -> ScopeElement(observable = false, `type` = ClassDefinitionHelper.Vistula)
       ),
-      functions = FunctionDefinitionHelper.defaults.map({
-        case (Ast.identifier(name), definition) =>
-          Constant(name) -> definition
-      }).toMap,
+      functions = Map(),
       classes = ClassDefinitionHelper.defaults.map({
         case (name, definition) =>
           name -> definition

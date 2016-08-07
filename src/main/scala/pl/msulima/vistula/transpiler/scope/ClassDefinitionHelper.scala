@@ -8,6 +8,7 @@ object ClassDefinitionHelper {
   private val VistulaSeq = ClassDefinition(Ast.identifier("vistula.collection.Seq"), Map(
     Ast.identifier("apply") -> ScopeElement(observable = false, FunctionDefinition(Seq(obs), resultIsObservable = true, varargs = true))
   ))
+
   private val VistulaDom = ClassDefinition(Ast.identifier("vistula.dom.Dom"), Map(
     obsDef("textObservable", obs),
     obsDef("textNode", const),
@@ -32,4 +33,12 @@ object ClassDefinitionHelper {
     VistulaSeq.name -> VistulaSeq,
     VistulaDom.name -> VistulaDom
   )
+
+  private def constDef(name: String, arguments: ScopeElement*) = {
+    Ast.identifier(name) -> ScopeElement(observable = false, FunctionDefinition(arguments, resultIsObservable = false))
+  }
+
+  private def obsDef(name: String, arguments: ScopeElement*) = {
+    Ast.identifier(name) -> ScopeElement(observable = false, FunctionDefinition(arguments, resultIsObservable = true))
+  }
 }

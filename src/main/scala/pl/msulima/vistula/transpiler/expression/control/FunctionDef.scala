@@ -47,7 +47,7 @@ case object FunctionDef extends Operator {
     )
   }
 
-  override def apply(operands: List[Constant], output: Constant): Constant = {
+  override def apply(operands: List[Constant]): Constant = {
     val name = operands(0)
     val body = operands(1)
     val arguments = operands.drop(2)
@@ -65,7 +65,7 @@ case object FunctionScope extends Operator {
     Operation(FunctionScope, program.init :+ Box(program.last))
   }
 
-  override def apply(operands: List[Constant], output: Constant): Constant = {
+  override def apply(operands: List[Constant]): Constant = {
     Constant(Transpiler.toJavaScriptFromTokens(operands))
   }
 }

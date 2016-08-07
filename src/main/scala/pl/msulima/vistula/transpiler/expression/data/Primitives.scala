@@ -40,7 +40,7 @@ case object StaticString extends Operator {
     Operation(StaticString, Seq(Constant(x)))
   }
 
-  def apply(operands: List[Constant], output: Constant): Constant = {
+  override def apply(operands: List[Constant]): Constant = {
     Constant(escape(operands.head.value))
   }
 
@@ -55,14 +55,14 @@ case object StaticArray extends Operator {
     Operation(StaticArray, elements)
   }
 
-  def apply(operands: List[Constant], output: Constant): Constant = {
+  override def apply(operands: List[Constant]): Constant = {
     Constant(ToArray(operands.map(_.value)))
   }
 }
 
 case object StaticDict extends Operator {
 
-  def apply(operands: List[Constant], output: Constant): Constant = {
+  override def apply(operands: List[Constant]): Constant = {
     val toSeq: Seq[List[Constant]] = operands.grouped(2).toSeq
 
     Constant(ToArray.toDict(toSeq.map({

@@ -27,7 +27,7 @@ case object Reference extends Operator {
     Operation(Reference, Seq(source, attribute))
   }
 
-  override def apply(operands: List[Constant], output: Constant): Constant = {
+  override def apply(operands: List[Constant]): Constant = {
     if (operands.size == 1) {
       operands.head
     } else {

@@ -29,21 +29,21 @@ case class ExpressionOperation(operator: Operator, inputs: Seq[Expression], `typ
 
 case class RxMap(output: ExpressionOperation) extends Operator {
 
-  override def apply(inputs: List[Constant], output: Constant): Constant = {
-    RxMapOp(useFlatMap = false, inputs, output)
+  override def apply(inputs: List[Constant]): Constant = {
+    RxMapOp(useFlatMap = false, inputs.head, inputs.tail)
   }
 }
 
 case class RxFlatMap(output: ExpressionOperation) extends Operator {
 
-  override def apply(inputs: List[Constant], output: Constant): Constant = {
-    RxMapOp(useFlatMap = true, inputs, output)
+  override def apply(inputs: List[Constant]): Constant = {
+    RxMapOp(useFlatMap = true, inputs.head, inputs.tail)
   }
 }
 
 object RxMapOp {
 
-  def apply(useFlatMap: Boolean, operands: List[Constant], output: Constant): Constant = {
+  def apply(useFlatMap: Boolean, body: Constant, operands: List[Constant]): Constant = {
     val mapper = if (useFlatMap) {
       "rxFlatMap"
     } else {
@@ -51,11 +51,11 @@ object RxMapOp {
     }
 
     val value = if (operands.isEmpty) {
-      output.value
+      body.value
     } else if (operands.size == 1) {
-      s"${operands.head.value}.$mapper($$arg => (${output.value}))"
+      s"${operands.head.value}.$mapper($$arg => (${body.value}))"
     } else {
-      s"vistula.zip(${ToArray(operands.map(_.value))}).$mapper($$args => (${output.value}))"
+      s"vistula.zip(${ToArray(operands.map(_.value))}).$mapper($$args => (${body.value}))"
     }
     Constant(value)
   }

@@ -15,7 +15,7 @@ case object Return extends Operator {
     ExpressionOperation(Return, Seq(body), body.`type`)
   }
 
-  override def apply(operands: List[Constant], output: Constant): Constant = {
+  override def apply(operands: List[Constant]): Constant = {
     Constant(s"return ${operands.head.value}")
   }
 }
