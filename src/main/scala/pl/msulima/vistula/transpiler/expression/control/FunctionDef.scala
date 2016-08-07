@@ -28,10 +28,6 @@ case object FunctionDef extends Operator {
     anonymous(Seq(singleArg), body, mutableArgs = mutableArgs)
   }
 
-  def anonymous(firstArg: Ast.identifier, secondArg: Ast.identifier, body: Seq[Token], mutableArgs: Boolean): Token = {
-    anonymous(Seq(firstArg, secondArg), body, mutableArgs)
-  }
-
   def anonymous(arguments: Seq[Ast.identifier], body: Seq[Token], mutableArgs: Boolean): Token = {
     apply(Ast.identifier(""), arguments, body, mutableArgs)
   }

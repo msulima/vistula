@@ -17,10 +17,6 @@ case class Scope(variables: Map[Ast.identifier, ScopeElement], functions: Map[To
     }))
   }
 
-  def isKnownStatic(id: Ast.identifier) = {
-    variables.get(id).exists(!_.observable) || functions.contains(Constant(id.name))
-  }
-
   def addToScope(variable: Variable) = {
     variable.`type` match {
       case ScopeElement(false, definition: FunctionDefinition) =>
