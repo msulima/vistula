@@ -37,7 +37,7 @@ class Statements(indent: Int) {
     )
   }
 
-  val decorator: P[Ast.expr] = P("@" ~/ dotted_name ~ ("(" ~ arglist ~ ")").? ~~ Lexical.nonewlinewscomment.? ~~ NEWLINE).map {
+  val decorator: P[Ast.expr] = P("@" ~/ dotted_name ~ ("(" ~ FunctionDef.arglist ~ ")").? ~~ Lexical.nonewlinewscomment.? ~~ NEWLINE).map {
     case (name, None) => collapse_dotted_name(name)
     case (name, Some((args, (keywords, starargs, kwargs)))) =>
       val x = collapse_dotted_name(name)

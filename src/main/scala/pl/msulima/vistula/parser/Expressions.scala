@@ -1,6 +1,7 @@
 package pl.msulima.vistula.parser
 
 import fastparse.noApi._
+import pl.msulima.vistula.parser.FunctionDef._
 import pl.msulima.vistula.parser.Lexical.kw
 import pl.msulima.vistula.parser.WsApi._
 
@@ -166,25 +167,6 @@ object Expressions {
     val set_comp = P(test ~ comp_for.rep(1)).map(Ast.expr.SetComp.tupled)
     P(dict_comp | dict | set_comp | set)
   }
-
-  val arglist = {
-    val inits = P((plain_argument ~ !"=").rep(0, ","))
-    val later = P(named_argument.rep(0, ",") ~ ",".? ~ ("*" ~ test).? ~ ",".? ~ ("**" ~ test).?)
-    P(inits ~ ",".? ~ later)
-  }
-
-  val plain_argument = P(test ~ comp_for.rep).map {
-    case (x, Nil) => x
-    case (x, gens) => Ast.expr.GeneratorExp(x, gens)
-  }
-  val named_argument = P(NAME ~ "=" ~ test).map(Ast.keyword.tupled)
-
-  val comp_for: P[Ast.comprehension] = P("for" ~ exprlist ~ "in" ~ or_test ~ comp_if.rep).map {
-    case (targets, test, ifs) => Ast.comprehension(tuplize(targets), test, ifs)
-  }
-  val comp_if: P[Ast.expr] = P("if" ~ test)
-
-  val testlist1: P[Seq[Ast.expr]] = P(test.rep(1, sep = ","))
 
   // not used in grammar, but may appear in "node" passed from Parser to Compiler
   //  val encoding_decl: P0 = P( NAME )

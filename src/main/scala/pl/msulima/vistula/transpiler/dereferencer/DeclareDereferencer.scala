@@ -8,9 +8,9 @@ trait DeclareDereferencer {
   this: Dereferencer =>
 
   def declareDereferencer: PartialFunction[Token, Expression] = {
-    case Operation(Assign, target :: source :: Nil, _, _) =>
+    case Operation(Assign, target :: source :: Nil) =>
       ExpressionOperation(Assign, Seq(dereference(target), dereference(source)), ScopeElement(observable = true))
-    case Operation(Declare, name :: body :: Nil, _, _) =>
+    case Operation(Declare, name :: body :: Nil) =>
       ExpressionOperation(Declare, Seq(dereference(name), dereference(body)), ScopeElement(observable = true))
   }
 }

@@ -9,9 +9,9 @@ trait ReferenceDereferencer {
   this: Dereferencer =>
 
   def referenceDereferencer: PartialFunction[Token, Expression] = {
-    case Operation(Reference, Constant(input) :: Nil, _, _) =>
+    case Operation(Reference, Constant(input) :: Nil) =>
       referenceSingle(Constant(input))
-    case op@Operation(Reference, source :: target :: Nil, _, _) =>
+    case op@Operation(Reference, source :: target :: Nil) =>
       val dereferencedSource = referenceSingle(source)
 
       referenceField(dereferencedSource, target)

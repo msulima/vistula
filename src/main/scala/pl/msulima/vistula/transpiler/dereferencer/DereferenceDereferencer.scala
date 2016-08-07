@@ -7,7 +7,7 @@ trait DereferenceDereferencer {
   this: Dereferencer =>
 
   def dereferenceDereferencer: PartialFunction[Token, Expression] = {
-    case Operation(Dereference, target :: Nil, _, _) =>
+    case Operation(Dereference, target :: Nil) =>
       val dereferenced = dereference(target)
 
       if (dereferenced.`type`.observable) {
