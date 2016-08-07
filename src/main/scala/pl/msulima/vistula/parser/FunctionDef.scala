@@ -2,6 +2,7 @@ package pl.msulima.vistula.parser
 
 import fastparse.noApi._
 import pl.msulima.vistula.parser.Expressions._
+import pl.msulima.vistula.parser.Lexical.kw
 import pl.msulima.vistula.parser.WsApi._
 
 object FunctionDef {
@@ -25,4 +26,21 @@ object FunctionDef {
 
   val testlist1: P[Seq[Ast.expr]] = P(test.rep(1, sep = ","))
 
+  private val varargslist: P[Ast.arguments] = {
+    val named_arg = P(fpdef ~ ("=" ~ test).?)
+    val x = P(named_arg.rep(sep = ",") ~ ",".? ~ ("*" ~ NAME).?).map {
+      case (normal_args, starargs) =>
+        val (args, defaults) = normal_args.unzip
+        Ast.arguments(args, starargs, defaults.flatten)
+    }
+    P(x)
+  }
+  private val parameters: P[Ast.arguments] = P("(" ~ varargslist ~ ")")
+
+  private val fpdef: P[Ast.expr] = P(NAME.map(Ast.expr.Name(_, Ast.expr_context.Param)))
+
+  val lambdef: P[Ast.expr.Lambda] = P(kw("lambda") ~ varargslist ~ ":" ~ test).map(Ast.expr.Lambda.tupled)
+  val funcdef: P[Seq[Ast.expr] => Ast.stmt.FunctionDef] = P(kw("def") ~/ NAME ~ parameters ~ ":" ~~ Statements.suite).map {
+    case (name, args, suite) => Ast.stmt.FunctionDef(name, args, suite, _)
+  }
 }

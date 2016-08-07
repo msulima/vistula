@@ -6,7 +6,7 @@ import pl.msulima.vistula.transpiler._
 case object Lambda {
 
   def apply: PartialFunction[Ast.expr, Token] = {
-    case Ast.expr.Lambda(Ast.arguments(args, None, None, Seq()), body) =>
+    case Ast.expr.Lambda(Ast.arguments(args, None, Seq()), body) =>
       val argsNames = args.map({
         case Ast.expr.Name(id, Ast.expr_context.Param) =>
           id

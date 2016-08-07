@@ -45,17 +45,11 @@ class Statements(indent: Int) {
   }
 
   val decorators = P(decorator.rep)
-  val decorated: P[Ast.stmt] = P(decorators ~ (classdef | funcdef)).map { case (a, b) => b(a) }
+  val decorated: P[Ast.stmt] = P(decorators ~ (classdef | FunctionDef.funcdef)).map { case (a, b) => b(a) }
   val classdef: P[Seq[Ast.expr] => Ast.stmt.ClassDef] =
     P(kw("class") ~/ NAME ~ ("(" ~ testlist.? ~ ")").?.map(_.toSeq.flatten.flatten) ~ ":" ~~ suite).map {
       case (a, b, c) => Ast.stmt.ClassDef(a, b, c, _)
     }
-
-
-  val funcdef: P[Seq[Ast.expr] => Ast.stmt.FunctionDef] = P(kw("def") ~/ NAME ~ parameters ~ ":" ~~ suite).map {
-    case (name, args, suite) => Ast.stmt.FunctionDef(name, args, suite, _)
-  }
-  val parameters: P[Ast.arguments] = P("(" ~ varargslist ~ ")")
 
   val stmt: P[Seq[Ast.stmt]] = P(assign_stmt.map(Seq(_)) | declare_stmt.map(Seq(_)) | compound_stmt.map(Seq(_)) | simple_stmt)
 

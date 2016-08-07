@@ -105,7 +105,7 @@ object Expressions {
     val empty_dict = ("{" ~ "}").map(_ => Ast.expr.Dict(Nil, Nil))
     P(
       deref |
-      empty_tuple |
+        empty_tuple |
         empty_list |
         empty_dict |
         "(" ~ (yield_expr | generator | tuple) ~ ")" |
@@ -124,7 +124,6 @@ object Expressions {
   val list_comp = P(list_comp_contents).map(Ast.expr.ListComp.tupled)
   val generator = P(list_comp_contents).map(Ast.expr.GeneratorExp.tupled)
 
-  val lambdef: P[Ast.expr.Lambda] = P(kw("lambda") ~ varargslist ~ ":" ~ test).map(Ast.expr.Lambda.tupled)
   val trailer: P[Ast.expr => Ast.expr] = {
     val call = P("(" ~ arglist ~ ")").map { case (args, (keywords, starargs, kwargs)) => (lhs: Ast.expr) => Ast.expr.Call(lhs, args, keywords, starargs, kwargs) }
     val slice = P("[" ~ subscriptlist ~ "]").map(args => (lhs: Ast.expr) => Ast.expr.Subscript(lhs, args, Ast.expr_context.Load))
@@ -173,16 +172,4 @@ object Expressions {
 
   val yield_expr: P[Ast.expr.Yield] = P(kw("yield") ~ testlist.map(tuplize).?).map(Ast.expr.Yield)
 
-  val varargslist: P[Ast.arguments] = {
-    val named_arg = P(fpdef ~ ("=" ~ test).?)
-    val x = P(named_arg.rep(sep = ",") ~ ",".? ~ ("*" ~ NAME).? ~ ",".? ~ ("**" ~ NAME).?).map {
-      case (normal_args, starargs, kwargs) =>
-        val (args, defaults) = normal_args.unzip
-        Ast.arguments(args, starargs, kwargs, defaults.flatten)
-    }
-    P(x)
-  }
-
-  val fpdef: P[Ast.expr] = P(NAME.map(Ast.expr.Name(_, Ast.expr_context.Param)) | "(" ~ fplist ~ ")")
-  val fplist: P[Ast.expr] = P(fpdef.rep(sep = ",") ~ ",".?).map(Ast.expr.Tuple(_, Ast.expr_context.Param))
 }
