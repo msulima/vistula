@@ -10,7 +10,7 @@ object Tuple extends Operator {
       Operation(Tuple, Seq(Tokenizer.apply(expr)))
   }
 
-  override def apply(operands: List[Constant]): Constant = {
-    Constant(s"(${operands.head.value})")
+  override def apply(operands: List[Constant]): String = {
+    s"(${operands.head.value})"
   }
 }

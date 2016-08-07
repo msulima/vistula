@@ -23,7 +23,7 @@ case object Declare extends Operator {
     Introduce(Variable(identifier, ScopeElement(mutable)), Operation(Declare, Seq(Constant(identifier.name), value)))
   }
 
-  override def apply(operands: List[Constant]): Constant = {
-    Constant(s"const ${operands(0).value} = ${operands(1).value}")
+  override def apply(operands: List[Constant]): String = {
+    s"const ${operands(0).value} = ${operands(1).value}"
   }
 }

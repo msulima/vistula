@@ -10,7 +10,7 @@ case object Assign extends Operator {
       Operation(Assign, Seq(Tokenizer.apply(expr), Box(Tokenizer.applyStmt(value))))
   }
 
-  override def apply(operands: List[Constant]): Constant = {
-    Constant(s"${operands(1).value}.rxForEachOnce($$arg => ${operands(0).value}.rxPush($$arg))")
+  override def apply(operands: List[Constant]) = {
+    s"${operands(1).value}.rxForEachOnce($$arg => ${operands(0).value}.rxPush($$arg))"
   }
 }

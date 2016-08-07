@@ -27,11 +27,11 @@ case object Reference extends Operator {
     Operation(Reference, Seq(source, attribute))
   }
 
-  override def apply(operands: List[Constant]): Constant = {
+  override def apply(operands: List[Constant]): String = {
     if (operands.size == 1) {
-      operands.head
+      operands.head.value
     } else {
-      Constant(s"${operands.head.value}.${operands(1).value}")
+      s"${operands.head.value}.${operands(1).value}"
     }
   }
 }

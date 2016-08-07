@@ -10,7 +10,7 @@ case object Dereference extends Operator {
       Operation(Dereference, Seq(Tokenizer.apply(value)))
   }
 
-  override def apply(operands: List[Constant]): Constant = {
-    Constant(s"${operands.head.value}.rxLastValue()")
+  override def apply(operands: List[Constant]): String = {
+    s"${operands.head.value}.rxLastValue()"
   }
 }

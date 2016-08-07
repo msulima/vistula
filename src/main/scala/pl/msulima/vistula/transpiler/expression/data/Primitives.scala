@@ -40,8 +40,8 @@ case object StaticString extends Operator {
     Operation(StaticString, Seq(Constant(x)))
   }
 
-  override def apply(operands: List[Constant]): Constant = {
-    Constant(escape(operands.head.value))
+  override def apply(operands: List[Constant]) = {
+    escape(operands.head.value)
   }
 
   private def escape(text: String) = {
@@ -55,19 +55,19 @@ case object StaticArray extends Operator {
     Operation(StaticArray, elements)
   }
 
-  override def apply(operands: List[Constant]): Constant = {
-    Constant(ToArray(operands.map(_.value)))
+  override def apply(operands: List[Constant]): String = {
+    ToArray(operands.map(_.value))
   }
 }
 
 case object StaticDict extends Operator {
 
-  override def apply(operands: List[Constant]): Constant = {
+  override def apply(operands: List[Constant]): String = {
     val toSeq: Seq[List[Constant]] = operands.grouped(2).toSeq
 
-    Constant(ToArray.toDict(toSeq.map({
+    ToArray.toDict(toSeq.map({
       case key :: value :: Nil =>
         (key.value, value.value)
-    })))
+    }))
   }
 }

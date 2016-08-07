@@ -9,14 +9,13 @@ case object WrapScope extends Operator {
     Operation(WrapScope, program.map(Tokenizer.applyStmt))
   }
 
-  override def apply(operands: List[Constant]): Constant = {
+  override def apply(operands: List[Constant]): String = {
     if (operands.size == 1) {
-      operands.head
+      operands.head.value
     } else {
-      Constant(
-        s"""vistula.wrap(() => {
-            |${Indent.leftPad(Transpiler.toJavaScriptFromTokens(operands))}
-            |})""".stripMargin)
+      s"""vistula.wrap(() => {
+          |${Indent.leftPad(Transpiler.toJavaScriptFromTokens(operands))}
+          |})""".stripMargin
     }
   }
 }

@@ -24,7 +24,7 @@ object Transpiler {
       case ExpressionOperation(op@RxFlatMap(output), operands, _) =>
         mapToConstant(op, output, operands)
       case ExpressionOperation(operation, operands, _) =>
-        operation.apply(operands.map(toConstant).toList)
+        Constant(operation.apply(operands.map(toConstant).toList))
       case ExpressionConstant(value, _) =>
         Constant(value)
     }
@@ -33,6 +33,6 @@ object Transpiler {
   private def mapToConstant(operator: Operator, output: ExpressionOperation, operands: Seq[Expression]): Constant = {
     val mappedOutput = toConstant(SubstituteObservables(output, operands.distinct))
     val mappedInputs = operands.map(toConstant).distinct.toList
-    operator(mappedOutput +: mappedInputs)
+    Constant(operator(mappedOutput +: mappedInputs))
   }
 }

@@ -22,10 +22,10 @@ case object BinOp {
 
 case class BinOp(symbol: String) extends Operator {
 
-  override def apply(operands: List[Constant]): Constant = {
+  override def apply(operands: List[Constant]): String = {
     operands match {
       case left :: right :: Nil =>
-        Constant(s"${left.value} $symbol ${right.value}")
+        s"${left.value} $symbol ${right.value}"
     }
   }
 }
