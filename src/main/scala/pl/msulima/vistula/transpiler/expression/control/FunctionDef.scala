@@ -9,10 +9,14 @@ case object FunctionDef extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.FunctionDef(name, arguments, body, _) =>
-      val defaults = arguments.defaults.padTo(arguments.args.size, Ast.expr.Str(ClassReference.Object.name))
-      val argumentIds = arguments.args.zip(defaults).map({
-        case (Ast.expr.Name(id, Ast.expr_context.Param), Ast.expr.Str(className)) =>
-          Variable(id, ScopeElement(observable = className == ClassReference.Object.name, ClassReference(className)))
+      val argumentIds = arguments.args.map({
+        case Ast.argument(id, fancyClassName, _) =>
+          val className = if (fancyClassName.isEmpty) {
+            ClassReference.Object
+          } else {
+            ClassReference(fancyClassName.map(_.name).mkString("."))
+          }
+          Variable(id, ScopeElement(observable = className == ClassReference.Object, className))
       })
 
       Introduce(

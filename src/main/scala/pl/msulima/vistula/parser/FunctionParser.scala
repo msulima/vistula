@@ -5,7 +5,7 @@ import pl.msulima.vistula.parser.Expressions._
 import pl.msulima.vistula.parser.Lexical.kw
 import pl.msulima.vistula.parser.WsApi._
 
-object FunctionDef {
+object FunctionParser {
 
   val arglist = {
     val inits = P((plain_argument ~ !"=").rep(0, ","))
@@ -26,20 +26,16 @@ object FunctionDef {
 
   val testlist1: P[Seq[Ast.expr]] = P(test.rep(1, sep = ","))
 
-  private val fpdef: P[Ast.expr] = P(NAME.map(Ast.expr.Name(_, Ast.expr_context.Param)))
+  private val fpdef: P[Ast.identifier] = P(NAME)
+  private val typedef: P[Seq[Ast.identifier]] = P(NAME.rep(min = 0, sep = "."))
+  private val maybeTypedef: P[Seq[Ast.identifier]] = P((":" ~ typedef).?.map(_.getOrElse(Seq())))
+  private val named_arg: P[Ast.argument] = P(fpdef ~ maybeTypedef ~ ("=" ~ test).?).map(Ast.argument.tupled)
 
-  private val varargslist: P[Ast.arguments] = {
-    val named_arg = P(fpdef ~ ("=" ~ test).?)
-    val x = P(named_arg.rep(sep = ",") ~ ",".? ~ ("*" ~ NAME).?).map {
-      case (normal_args, starargs) =>
-        val (args, defaults) = normal_args.unzip
-        Ast.arguments(args, starargs, defaults.flatten)
-    }
-    P(x)
-  }
+  private val varargslist: P[Ast.arguments] = P(named_arg.rep(sep = ",") ~ ",".? ~ ("*" ~ NAME).?).map(Ast.arguments.tupled)
+
   private val parameters: P[Ast.arguments] = P("(" ~ varargslist ~ ")")
 
-  val lambdef: P[Ast.expr.Lambda] = P(kw("lambda") ~ varargslist ~ ":" ~ test).map(Ast.expr.Lambda.tupled)
+  val lambdef: P[Ast.expr.Lambda] = P(kw("lambda") ~ varargslist ~ "->" ~ test).map(Ast.expr.Lambda.tupled)
   val funcdef: P[Seq[Ast.expr] => Ast.stmt.FunctionDef] = P(kw("def") ~/ NAME ~ parameters ~ ":" ~~ Statements.suite).map {
     case (name, args, suite) => Ast.stmt.FunctionDef(name, args, suite, _)
   }

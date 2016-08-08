@@ -8,7 +8,7 @@ class RpnSpec extends Specification {
   "test" in {
 
     val program =
-      """def a(X = "vistula.Predef"):
+      """def a(X: vistula.Predef):
         |  X.wrap(1)""".stripMargin
 
     Vistula.toJavaScript(program) must_==

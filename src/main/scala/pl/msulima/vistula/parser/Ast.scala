@@ -281,7 +281,9 @@ object Ast {
 
   }
 
-  case class arguments(args: Seq[expr], vararg: Option[identifier], defaults: Seq[expr])
+  case class argument(name: identifier, `type`: Seq[identifier], default: Option[expr])
+
+  case class arguments(args: Seq[argument], vararg: Option[identifier])
 
   // keyword arguments supplied to call
   case class keyword(arg: identifier, value: expr)

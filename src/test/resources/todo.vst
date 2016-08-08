@@ -53,7 +53,7 @@ def isVisible(todo):
   else:
     not todo.completed
 
-let todos = allTodos.filter(lambda todo: isVisible(todo))
+let todos = allTodos.filter(lambda todo -> isVisible(todo))
 
 def classForIsCompleted(todo):
   if todo.completed:
@@ -73,7 +73,7 @@ def classForFilter(label):
   else:
     ""
 
-let completed = allTodos.filter(lambda todo: todo.completed)
+let completed = allTodos.filter(lambda todo -> todo.completed)
 
 def clearCompleted():
   submitTasks = {

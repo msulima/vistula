@@ -37,7 +37,7 @@ class Statements(indent: Int) {
     )
   }
 
-  val decorator: P[Ast.expr] = P("@" ~/ dotted_name ~ ("(" ~ FunctionDef.arglist ~ ")").? ~~ Lexical.nonewlinewscomment.? ~~ NEWLINE).map {
+  val decorator: P[Ast.expr] = P("@" ~/ dotted_name ~ ("(" ~ FunctionParser.arglist ~ ")").? ~~ Lexical.nonewlinewscomment.? ~~ NEWLINE).map {
     case (name, None) => collapse_dotted_name(name)
     case (name, Some((args, (keywords, starargs, kwargs)))) =>
       val x = collapse_dotted_name(name)
@@ -45,7 +45,7 @@ class Statements(indent: Int) {
   }
 
   val decorators = P(decorator.rep)
-  val decorated: P[Ast.stmt] = P(decorators ~ (classdef | FunctionDef.funcdef)).map { case (a, b) => b(a) }
+  val decorated: P[Ast.stmt] = P(decorators ~ (classdef | FunctionParser.funcdef)).map { case (a, b) => b(a) }
   val classdef: P[Seq[Ast.expr] => Ast.stmt.ClassDef] =
     P(kw("class") ~/ NAME ~ ("(" ~ testlist.? ~ ")").?.map(_.toSeq.flatten.flatten) ~ ":" ~~ suite).map {
       case (a, b, c) => Ast.stmt.ClassDef(a, b, c, _)

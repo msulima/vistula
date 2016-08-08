@@ -1,7 +1,7 @@
 package pl.msulima.vistula.parser
 
 import fastparse.noApi._
-import pl.msulima.vistula.parser.FunctionDef._
+import pl.msulima.vistula.parser.FunctionParser._
 import pl.msulima.vistula.parser.Lexical.kw
 import pl.msulima.vistula.parser.WsApi._
 
