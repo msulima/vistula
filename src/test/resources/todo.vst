@@ -76,24 +76,24 @@ def classForFilter(label):
 let completed = allTodos.filter(lambda todo -> todo.completed)
 
 def clearCompleted():
-  submitTasks = {
+  submitTasks <- {
     "isAdd": False,
     "todos": completed
   }
 
 def removeTodo(todo):
-  submitTasks = {
+  submitTasks <- {
     "isAdd": False,
     "todos": [todo]
   }
 
 def editTodo(todo, formField):
-  todo.editing = True
+  todo.editing <- True
   pass
   (*formField).focus()
 
 def finishEditingTodo(todo):
-  todo.editing = False
+  todo.editing <- False
 
 let leftTodosCount = allTodos.size() - completed.size()
 
@@ -105,7 +105,7 @@ def toggleAll():
   const x = leftTodosCount
 
   let y = for todo in todos:
-      todo.completed = x != 0
+      todo.completed <- x != 0
 
   pass
   *y

@@ -51,17 +51,7 @@ class Statements(indent: Int) {
       case (a, b, c) => Ast.stmt.ClassDef(a, b, c, _)
     }
 
-  val stmt: P[Seq[Ast.stmt]] = P(assign_stmt.map(Seq(_)) | declare_stmt.map(Seq(_)) | compound_stmt.map(Seq(_)) | simple_stmt)
-
-  val assign_stmt: P[Ast.stmt] = P(expr ~ "=" ~ (small_stmt | compound_stmt)).map(Ast.stmt.AssignStmt.tupled)
-
-  val declare_stmt: P[Ast.stmt] = P(declare_factory(kw("let"), mutable = true) | declare_factory(kw("const"), mutable = false))
-
-  private def declare_factory(prefix: P[Unit], mutable: Boolean): P[Ast.stmt.DeclareStmt] = {
-    P(prefix ~ Lexical.identifier ~ "=" ~ (small_stmt | compound_stmt)).map({
-      case (target, value) => Ast.stmt.DeclareStmt(target, value, mutable)
-    })
-  }
+  val stmt: P[Seq[Ast.stmt]] = P(DeclareParser.assign_stmt.map(Seq(_)) | DeclareParser.declare_stmt.map(Seq(_)) | compound_stmt.map(Seq(_)) | simple_stmt)
 
   val simple_stmt: P[Seq[Ast.stmt]] = P(small_stmt.rep(1, sep = ";") ~ ";".?)
   val small_stmt: P[Ast.stmt] = P(
