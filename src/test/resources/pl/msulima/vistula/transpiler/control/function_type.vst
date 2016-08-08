@@ -1,2 +1,5 @@
 def a(X: vistula.Predef):
   X.wrap(1)
+
+def b(X: *vistula.Predef):
+  X.wrap(1)

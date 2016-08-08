@@ -281,7 +281,7 @@ object Ast {
 
   }
 
-  case class argument(name: identifier, `type`: Seq[identifier], default: Option[expr])
+  case class argument(name: identifier, observable: Boolean, `type`: Seq[identifier], default: Option[expr])
 
   case class arguments(args: Seq[argument], vararg: Option[identifier])
 

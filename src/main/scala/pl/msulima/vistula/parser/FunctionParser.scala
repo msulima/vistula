@@ -28,8 +28,14 @@ object FunctionParser {
 
   private val fpdef: P[Ast.identifier] = P(NAME)
   private val typedef: P[Seq[Ast.identifier]] = P(NAME.rep(min = 0, sep = "."))
-  private val maybeTypedef: P[Seq[Ast.identifier]] = P((":" ~ typedef).?.map(_.getOrElse(Seq())))
-  private val named_arg: P[Ast.argument] = P(fpdef ~ maybeTypedef ~ ("=" ~ test).?).map(Ast.argument.tupled)
+  private val observableTypedef: P[(Seq[Ast.identifier], Boolean)] = {
+    P("*" ~ typedef).map(_ -> true) | typedef.map(_ -> false)
+  }
+  private val maybeTypedef: P[(Seq[Ast.identifier], Boolean)] = P((":" ~ observableTypedef).?.map(_.getOrElse(Seq() -> true)))
+  private val named_arg: P[Ast.argument] = P(fpdef ~ maybeTypedef ~ ("=" ~ test).?).map({
+    case (name, (className, observable), default) =>
+      Ast.argument(name, observable, className, default)
+  })
 
   private val varargslist: P[Ast.arguments] = P(named_arg.rep(sep = ",") ~ ",".? ~ ("*" ~ NAME).?).map(Ast.arguments.tupled)
 
