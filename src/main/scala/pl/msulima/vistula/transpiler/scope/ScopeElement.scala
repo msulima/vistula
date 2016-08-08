@@ -4,7 +4,7 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.Token
 
 
-case class ScopeElement(observable: Boolean, `type`: ClassType = ClassDefinition.Object) {
+case class ScopeElement(observable: Boolean, `type`: ClassType = ClassReference.Object) {
 
   override def toString: String = {
     if (observable) {
@@ -51,14 +51,11 @@ case class FunctionDefinition(arguments: Seq[ScopeElement], resultIsObservable: 
   }
 }
 
-case class ClassDefinition(name: Ast.identifier, fields: Map[Ast.identifier, ScopeElement]) extends ClassType {
+case class ClassReference(name: String) extends ClassType
 
-  override def toString: String = {
-    name.name
-  }
-}
+case class ClassDefinition(fields: Map[Ast.identifier, ScopeElement])
 
-object ClassDefinition {
+object ClassReference {
 
-  val Object = ClassDefinition(Ast.identifier("vistula.lang.Object"), Map())
+  val Object = ClassReference("vistula.lang.Object")
 }

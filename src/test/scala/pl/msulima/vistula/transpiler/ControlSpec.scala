@@ -9,6 +9,7 @@ class ControlSpec extends Specification with TranspilerSpecification {
 
   test("generator")
   test("function_def")
+  test("function_type")
   test("if")
   test("loop")
   test("pass")

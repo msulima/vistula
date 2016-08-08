@@ -2,7 +2,7 @@ package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.reference.FunctionCall
-import pl.msulima.vistula.transpiler.scope.{ClassDefinition, FunctionDefinition, FunctionDefinitionHelper, ScopeElement}
+import pl.msulima.vistula.transpiler.scope._
 
 trait FunctionCallDereferencer {
   this: Dereferencer =>
@@ -26,7 +26,7 @@ trait FunctionCallDereferencer {
 
   private def dereferenceFunction(function: Token, arguments: Seq[Token]) = {
     dereference(function) match {
-      case ExpressionConstant(value, ScopeElement(true, _: ClassDefinition)) =>
+      case ExpressionConstant(value, ScopeElement(true, _: ClassReference)) =>
         val definition = FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = true,
           resultIsObservable = true)
         ExpressionConstant(value, ScopeElement(observable = false, definition))
@@ -39,7 +39,7 @@ trait FunctionCallDereferencer {
     function.`type`.`type` match {
       case definition: FunctionDefinition =>
         definition
-      case _: ClassDefinition =>
+      case _: ClassReference =>
         FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = function.`type`.observable,
           resultIsObservable = function.`type`.observable)
     }

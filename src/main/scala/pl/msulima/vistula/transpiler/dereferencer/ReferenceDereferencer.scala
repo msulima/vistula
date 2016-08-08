@@ -3,7 +3,7 @@ package pl.msulima.vistula.transpiler.dereferencer
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.reference.Reference
-import pl.msulima.vistula.transpiler.scope.{ClassDefinition, ScopeElement}
+import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement}
 
 trait ReferenceDereferencer {
   this: Dereferencer =>
@@ -40,11 +40,11 @@ trait ReferenceDereferencer {
   }
 
   private def referenceConstantField(source: Expression, target: Token, sourceElement: ScopeElement): ExpressionOperation = {
-    val sourceClass = sourceElement.`type`.asInstanceOf[ClassDefinition]
+    val sourceType = sourceElement.`type`.asInstanceOf[ClassReference]
     val targetExpr = target.asInstanceOf[Constant]
 
     val maybeTypedOperation = for {
-      fieldType <- sourceClass.fields.get(Ast.identifier(targetExpr.value))
+      fieldType <- scope.classes(sourceType).fields.get(Ast.identifier(targetExpr.value))
     } yield {
       ExpressionOperation(Reference, Seq(source, ExpressionConstant(targetExpr.value, fieldType)), fieldType)
     }

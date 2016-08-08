@@ -2,16 +2,17 @@ package pl.msulima.vistula.transpiler.expression.control
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.scope.{FunctionDefinitionHelper, ScopeElement, Variable}
+import pl.msulima.vistula.transpiler.scope._
 import pl.msulima.vistula.util.Indent
 
 case object FunctionDef extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.FunctionDef(name, arguments, body, _) =>
-      val argumentIds = arguments.args.map({
-        case Ast.expr.Name(id, Ast.expr_context.Param) =>
-          id
+      val defaults = arguments.defaults.padTo(arguments.args.size, Ast.expr.Str(ClassReference.Object.name))
+      val argumentIds = arguments.args.zip(defaults).map({
+        case (Ast.expr.Name(id, Ast.expr_context.Param), Ast.expr.Str(className)) =>
+          Variable(id, ScopeElement(observable = className == ClassReference.Object.name, ClassReference(className)))
       })
 
       Introduce(
@@ -28,18 +29,20 @@ case object FunctionDef extends Operator {
     anonymous(Seq(singleArg), body, mutableArgs = mutableArgs)
   }
 
-  def anonymous(arguments: Seq[Ast.identifier], body: Seq[Token], mutableArgs: Boolean): Token = {
-    apply(Ast.identifier(""), arguments, body, mutableArgs)
+  def anonymous(argumentIds: Seq[Ast.identifier], body: Seq[Token], mutableArgs: Boolean): Token = {
+    val arguments = argumentIds.map(arg => Variable(arg, ScopeElement(observable = mutableArgs)))
+
+    apply(Ast.identifier(""), arguments, body)
   }
 
-  def apply(name: Ast.identifier, arguments: Seq[Ast.identifier], body: Seq[Token], mutableArgs: Boolean = true): Token = {
+  def apply(name: Ast.identifier, arguments: Seq[Variable], body: Seq[Token]): Token = {
     val declarations = arguments.map(arg => {
-      Introduce(Variable(arg, ScopeElement(observable = mutableArgs)), Constant(""))
+      Introduce(arg, Constant(""))
     })
 
     Operation(
       FunctionDef,
-      Constant(name.name) +: FunctionScope(declarations ++ body) +: arguments.map(arg => Constant(arg.name))
+      Constant(name.name) +: FunctionScope(declarations ++ body) +: arguments.map(arg => Constant(arg.id.name))
     )
   }
 
