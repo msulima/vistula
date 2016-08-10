@@ -20,7 +20,7 @@ case object FunctionDef extends Operator {
       })
 
       Introduce(
-        Variable(name, ScopeElement(observable = false, FunctionDefinitionHelper.adapt(argumentIds.size, argumentsAreObservable = true, resultIsObservable = true))),
+        Variable(name, ScopeElement(observable = false, FunctionDefinition(argumentIds.map(_.`type`), resultIsObservable = true))),
         FunctionDef(name, argumentIds, body.map(Tokenizer.applyStmt))
       )
   }
