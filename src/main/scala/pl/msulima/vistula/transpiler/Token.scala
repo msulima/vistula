@@ -1,6 +1,6 @@
 package pl.msulima.vistula.transpiler
 
-import pl.msulima.vistula.transpiler.scope.Variable
+import pl.msulima.vistula.transpiler.scope.{ClassDefinition, ClassReference, Variable}
 
 
 sealed trait Token
@@ -12,6 +12,8 @@ case class Box(token: Token) extends Token
 case class Constant(value: String) extends Token
 
 case class Introduce(variable: Variable, body: Token) extends Token
+
+case class IntroduceClass(id: ClassReference, definition: ClassDefinition, constructor: Token) extends Token
 
 trait Operator {
 

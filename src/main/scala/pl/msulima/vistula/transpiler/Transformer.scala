@@ -32,6 +32,9 @@ object Transformer {
       case Introduce(variable, body) =>
         val ns = scope.addToScope(variable)
         ScopedResult(ns, Seq(DereferencerImpl(ns, body)))
+      case IntroduceClass(id, definition, constructor) =>
+        val ns = scope.addToScope(id, definition)
+        ScopedResult(ns, Seq(DereferencerImpl(ns, constructor)))
       case _ =>
         ScopedResult(scope, Seq(DereferencerImpl(scope, token)))
     }

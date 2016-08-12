@@ -53,7 +53,7 @@ case class FunctionDefinition(arguments: Seq[ScopeElement], resultIsObservable: 
 
 case class ClassReference(name: String) extends ClassType
 
-case class ClassDefinition(fields: Map[Ast.identifier, ScopeElement])
+case class ClassDefinition(fields: Map[Ast.identifier, ScopeElement], constructor: Option[FunctionDefinition] = None)
 
 object ClassReference {
 

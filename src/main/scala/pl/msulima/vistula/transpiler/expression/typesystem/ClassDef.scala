@@ -1,34 +1,45 @@
 package pl.msulima.vistula.transpiler.expression.typesystem
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.parser.Ast.stmt
+import pl.msulima.vistula.parser.Ast.{identifier, stmt}
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, Reference}
-import pl.msulima.vistula.transpiler.scope.{ScopeElement, Variable}
+import pl.msulima.vistula.transpiler.scope._
 
 object ClassDef extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.ClassDef(identifier, Nil, body, Nil) =>
-      val constructor: Token = createConstructor(identifier, body)
+      val (fields, constructor) = findFields(identifier, body)
+      val definition = FunctionDefinition(fields.map(_.`type`), resultIsObservable = false)
 
-      constructor
+      val classDefinition = ClassDefinition(fields.map(field => {
+        field.id -> field.`type`
+      }).toMap, Some(definition))
+
+      IntroduceClass(ClassReference(Seq(identifier)), classDefinition, constructor)
   }
 
-  private def createConstructor(classIdentifier: Ast.identifier, body: Seq[stmt]): Token = {
+  private def findFields(classIdentifier: Ast.identifier, body: Seq[stmt]): (Seq[Variable], Token) = {
     body.collectFirst({
       case func@Ast.stmt.FunctionDef(Ast.identifier("__init__"), args, constructorBody, _) =>
         val arguments = FunctionDef.mapArguments(args)
 
-        val introduceThis = Introduce(Variable(Ast.identifier("this"), ScopeElement(observable = false)), Constant(""))
-        val fieldInitialization = arguments.map(arg => {
-          val source = Reference(Reference(Ast.identifier("this")), Constant(arg.id.name))
-          Operation(Declare(declare = false), Seq(source, Reference(arg.id)))
-        })
-
-        FunctionDef(classIdentifier, arguments, (introduceThis +: fieldInitialization) ++ constructorBody.map(Tokenizer.applyStmt))
+        arguments -> createConstructor(classIdentifier, constructorBody, arguments)
     }).get
+  }
+
+  private def createConstructor(classIdentifier: identifier, constructorBody: Seq[stmt], arguments: Seq[Variable]) = {
+    val thisId = Ast.identifier("this")
+
+    val introduceThis = Introduce(Variable(thisId, ScopeElement(observable = false)), Constant(""))
+    val fieldInitialization = arguments.map(arg => {
+      val source = Reference(Reference(thisId), Constant(arg.id.name))
+      Operation(Declare(declare = false), Seq(source, Reference(arg.id)))
+    })
+
+    FunctionDef(classIdentifier, arguments, (introduceThis +: fieldInitialization) ++ constructorBody.map(Tokenizer.applyStmt))
   }
 
   override def apply(inputs: List[Constant]): String = "wat"

@@ -17,13 +17,24 @@ case class Scope(variables: Map[Ast.identifier, ScopeElement], functions: Map[To
     }))
   }
 
-  def addToScope(variable: Variable) = {
+  def findClassConstructor(definition: FunctionDefinition): Option[ClassDefinition] = {
+    classes.find({
+      case (reference, classDefinition) =>
+        classDefinition.constructor.contains(definition)
+    }).map(_._2)
+  }
+
+  def addToScope(variable: Variable): Scope = {
     variable.`type` match {
       case ScopeElement(false, definition: FunctionDefinition) =>
         copy(functions = functions + (Constant(variable.id.name) -> definition))
       case t: ScopeElement =>
         copy(variables = variables + (variable.id -> t))
     }
+  }
+
+  def addToScope(id: ClassReference, classDefinition: ClassDefinition): Scope = {
+    copy(classes = classes + (id -> classDefinition))
   }
 }
 
