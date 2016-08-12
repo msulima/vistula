@@ -55,18 +55,6 @@ def isVisible(todo):
 
 let todos = allTodos.filter(lambda todo -> isVisible(todo))
 
-def classForIsCompleted(todo):
-  if todo.completed:
-    "completed"
-  else:
-    "view"
-
-def classForIsEditing(todo):
-  if todo.editing:
-    "editing"
-  else:
-    ""
-
 def classForFilter(label):
   if filter == label:
     "selected"

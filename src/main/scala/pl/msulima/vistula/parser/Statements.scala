@@ -123,20 +123,7 @@ class Statements(indent: Int) {
   }
   val assert_stmt: P[Ast.stmt.Assert] = P(kw("assert") ~ test ~ ("," ~ test).?).map(Ast.stmt.Assert.tupled)
 
-  val compound_stmt: P[Ast.stmt] = P(if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | decorated)
-  val if_stmt: P[Ast.stmt.If] = {
-    val firstIf = P(kw("if") ~/ test ~ ":" ~~ suite)
-    val elifs = P((space_indents ~~ kw("elif") ~/ test ~ ":" ~~ suite).repX)
-    val lastElse = P((space_indents ~~ kw("else") ~/ ":" ~~ suite).?)
-    P(firstIf ~~ elifs ~~ lastElse).map {
-      case (test, body, elifs, orelse) =>
-        val (init :+ last) = (test, body) +: elifs
-        val (last_test, last_body) = last
-        init.foldRight(Ast.stmt.If(last_test, last_body, orelse.toSeq.flatten)) {
-          case ((test, body), rhs) => Ast.stmt.If(test, body, Seq(rhs))
-        }
-    }
-  }
+  val compound_stmt: P[Ast.stmt] = P(IfParser.if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | decorated)
   val space_indents = P(spaces.repX ~~ " ".repX(indent))
   val while_stmt = P(kw("while") ~/ test ~ ":" ~~ suite ~~ (space_indents ~~ kw("else") ~/ ":" ~~ suite).?.map(_.toSeq.flatten)).map(Ast.stmt.While.tupled)
   val for_stmt: P[Ast.stmt.For] = P(kw("for") ~/ exprlist ~ kw("in") ~ testlist ~ ":" ~~ suite ~~ (space_indents ~ kw("else") ~/ ":" ~~ suite).?).map {

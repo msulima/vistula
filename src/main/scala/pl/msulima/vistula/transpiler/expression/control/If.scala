@@ -10,17 +10,25 @@ case object If {
     case Ast.stmt.If(testExpr, body, orElse) =>
       FunctionCall("vistula.ifStatement", Seq(
         Tokenizer.apply(testExpr),
-        wrapScope(body),
-        wrapScope(orElse)
+        wrapScope(body.map(Tokenizer.applyStmt)),
+        wrapScope(orElse.map(Tokenizer.applyStmt))
       ))
   }
 
-  private def wrapScope(program: Seq[Ast.stmt]): Token = {
-    val body = program.map(Tokenizer.applyStmt)
-    if (body.size == 1) {
-      body.head
+  def applyExpr: PartialFunction[Ast.expr, Token] = {
+    case Ast.expr.IfExp(testExpr, body, orElse) =>
+      FunctionCall("vistula.ifStatement", Seq(
+        Tokenizer.apply(testExpr),
+        wrapScope(Seq(Tokenizer.apply(body))),
+        wrapScope(Seq(Tokenizer.apply(orElse)))
+      ))
+  }
+
+  private def wrapScope(program: Seq[Token]): Token = {
+    if (program.size == 1) {
+      program.head
     } else {
-      FunctionCall("vistula.wrap", Seq(FunctionDef.anonymous(body)))
+      FunctionCall("vistula.wrap", Seq(FunctionDef.anonymous(program)))
     }
   }
 }

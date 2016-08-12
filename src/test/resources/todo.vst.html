@@ -10,7 +10,7 @@
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">
         {% for todo in todos %}
-        <li class="{{ classForIsCompleted(todo) + ' ' + classForIsEditing(todo) }}">
+        <li class="{{ ('completed' if todo.completed else 'view') + ' ' + ('editing' if todo.editing else '') }}">
             <div class="view">
                 <input class="toggle" type="checkbox" checked="{{ todo.completed }}"/>
                 <label (dblclick)="{{ editTodo(todo, editedTodo) }}">{{ todo.title }}</label>
