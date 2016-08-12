@@ -2,25 +2,25 @@ package pl.msulima.vistula.transpiler.expression.reference
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.scope.{ScopeElement, Variable}
+import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement, Variable}
 
 case object Declare extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
-    case Ast.stmt.DeclareStmt(identifier, stmt, mutable) =>
+    case Ast.stmt.DeclareStmt(identifier, stmt, mutable, typedef) =>
       val body = Tokenizer.applyStmt(stmt)
 
-      Declare(identifier, mutable, body)
+      Declare(identifier, mutable, body, ClassReference(typedef))
   }
 
-  def apply(identifier: Ast.identifier, mutable: Boolean, body: Token) = {
+  def apply(identifier: Ast.identifier, mutable: Boolean, body: Token, typedef: ClassReference) = {
     val value = if (mutable) {
       Box(body)
     } else {
       Operation(Dereference, Seq(body))
     }
 
-    Introduce(Variable(identifier, ScopeElement(mutable)), Operation(Declare, Seq(Constant(identifier.name), value)))
+    Introduce(Variable(identifier, ScopeElement(mutable, typedef)), Operation(Declare, Seq(Constant(identifier.name), value)))
   }
 
   override def apply(operands: List[Constant]): String = {

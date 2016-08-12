@@ -11,12 +11,7 @@ case object FunctionDef extends Operator {
     case Ast.stmt.FunctionDef(name, arguments, body, _) =>
       val argumentIds = arguments.args.map({
         case Ast.argument(id, observable, fancyClassName, _) =>
-          val className = if (fancyClassName.isEmpty) {
-            ClassReference.Object
-          } else {
-            ClassReference(fancyClassName.map(_.name).mkString("."))
-          }
-          Variable(id, ScopeElement(observable = observable, className))
+          Variable(id, ScopeElement(observable = observable, ClassReference(fancyClassName)))
       })
 
       Introduce(

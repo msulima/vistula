@@ -27,7 +27,6 @@ object FunctionParser {
   val testlist1: P[Seq[Ast.expr]] = P(test.rep(1, sep = ","))
 
   private val fpdef: P[Ast.identifier] = P(NAME)
-  private val typedef: P[Seq[Ast.identifier]] = P(NAME.rep(min = 0, sep = "."))
   private val observableTypedef: P[(Seq[Ast.identifier], Boolean)] = {
     P("*" ~ typedef).map(_ -> true) | typedef.map(_ -> false)
   }

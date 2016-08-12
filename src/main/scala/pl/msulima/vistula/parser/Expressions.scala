@@ -23,6 +23,8 @@ object Expressions {
   val NUMBER: P[Ast.expr.Num] = P(Lexical.floatnumber | Lexical.longinteger | Lexical.integer | Lexical.imagnumber).map(Ast.expr.Num)
   val STRING: P[Ast.string] = Lexical.stringliteral
 
+  val typedef: P[Seq[Ast.identifier]] = P(NAME.rep(min = 0, sep = "."))
+
   val test: P[Ast.expr] = {
     val ternary = P(or_test ~ (kw("if") ~ or_test ~ kw("else") ~ test).?).map {
       case (x, None) => x

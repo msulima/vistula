@@ -1,0 +1,3 @@
+const X: vistula.dom.Dom = 42
+
+X.textObservable("a")

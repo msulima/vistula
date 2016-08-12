@@ -58,4 +58,12 @@ case class ClassDefinition(fields: Map[Ast.identifier, ScopeElement])
 object ClassReference {
 
   val Object = ClassReference("vistula.lang.Object")
+
+  def apply(typedef: Seq[Ast.identifier]): ClassReference = {
+    if (typedef.isEmpty) {
+      Object
+    } else {
+      ClassReference(typedef.map(_.name).mkString("."))
+    }
+  }
 }
