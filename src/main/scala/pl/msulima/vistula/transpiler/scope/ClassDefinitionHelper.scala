@@ -5,6 +5,7 @@ import pl.msulima.vistula.transpiler.scope.FunctionDefinitionHelper._
 
 object ClassDefinitionHelper {
 
+  private val VistulaSeqFactory = ClassReference("vistula.collection.SeqFactory")
   private val VistulaSeq = ClassReference("vistula.collection.Seq")
   private val VistulaDom = ClassReference("vistula.dom.Dom")
   val Vistula = ClassReference("vistula.Predef")
@@ -19,11 +20,14 @@ object ClassDefinitionHelper {
       obsDef("ifStatement", obs, obs, obs),
       obsDef("wrap", const),
       obsDef("zipAndFlatten", const),
-      Ast.identifier("Seq") -> ScopeElement(observable = false, `type` = VistulaSeq),
+      Ast.identifier("Seq") -> ScopeElement(observable = false, `type` = VistulaSeqFactory),
       Ast.identifier("dom") -> ScopeElement(observable = false, `type` = VistulaDom)
     )),
-    VistulaSeq -> ClassDefinition(Map(
+    VistulaSeqFactory -> ClassDefinition(Map(
       Ast.identifier("apply") -> ScopeElement(observable = false, FunctionDefinition(Seq(obs), resultIsObservable = true, varargs = true))
+    )),
+    VistulaSeq -> ClassDefinition(Map(
+      obsDef("filter", const)
     )),
     VistulaDom -> ClassDefinition(Map(
       obsDef("textObservable", obs),

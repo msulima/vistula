@@ -32,7 +32,7 @@ def updateTodos(allTodos, action):
 
 let storageName = "todos-vistula"
 
-let allTodos = (stdlib.storage.getOrDefault(storageName, []) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
+let allTodos: vistula.collection.Seq = (stdlib.storage.getOrDefault(storageName, []) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
 
 let bar = stdlib.storage.set(storageName, allTodos)
 
@@ -44,7 +44,7 @@ def isVisible(todo):
   else:
     not todo.completed
 
-let todos = allTodos.filter(lambda todo -> isVisible(todo))
+let todos = allTodos.filter(isVisible)
 
 def classForFilter(label):
   if filter == label:
