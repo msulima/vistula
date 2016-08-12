@@ -20,7 +20,8 @@ case object Declare extends Operator {
       Operation(Dereference, Seq(body))
     }
 
-    Introduce(Variable(identifier, ScopeElement(mutable, typedef)), Operation(Declare, Seq(Constant(identifier.name), value)))
+    val variable = Variable(identifier, ScopeElement(mutable, typedef))
+    Introduce(variable, Operation(Declare, Seq(Constant(identifier.name), value)))
   }
 
   override def apply(operands: List[Constant]): String = {

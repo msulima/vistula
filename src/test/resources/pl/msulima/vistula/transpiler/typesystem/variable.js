@@ -1,3 +1,2 @@
-function b(X) {
-    return X.rxFlatMap($arg => ($arg.wrap)).rxFlatMap($arg => ($arg(1)));
-};
+const X = 42;
+X.textObservable(vistula.constantObservable("a"));
