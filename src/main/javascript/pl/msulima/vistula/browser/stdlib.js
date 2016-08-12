@@ -30,6 +30,19 @@ function ajaxGet(Url) {
     });
 }
 
+function formValueFromEvent(_ev) {
+    let ev = _ev.rxLastValue();
+    let elements = ev.srcElement.elements;
+    let formValue = {};
+    Object.keys(elements).forEach(function (key) {
+        formValue[elements[key].name] = vistula.toObservable(elements[key].value);
+    });
+    Object.keys(elements).forEach(function (key) {
+        elements[key].value = "";
+    });
+    return vistula.constantObservable(formValue);
+}
+
 const stdlib = vistula.toObservable({
     dom: {
         appendChild: appendChild
@@ -39,7 +52,8 @@ const stdlib = vistula.toObservable({
     },
     storage: require("./storage"),
     ajaxGet: ajaxGet,
-    appendChild: appendChild
+    appendChild: appendChild,
+    formValueFromEvent: formValueFromEvent,
 });
 
 // FIXME

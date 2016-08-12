@@ -20,7 +20,7 @@ function textObservable(Obs) {
 function createBoundElement(tag, Target, attributes, childNodes) {
     const Obs = createJustElement(tag, attributes, childNodes);
 
-    Target.rxPush(Obs.rxLastValue()[0]);
+    Target.rxPush(Obs.lastValue[0]); // FIXME
 
     return Obs;
 }

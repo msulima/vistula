@@ -1,23 +1,14 @@
 '''# javascript
 const submitTasks = new vistula.ObservableImpl();
-
-function addTask(ev) {
-  ev.preventDefault();
-  let elements = ev.srcElement.elements;
-  let formValue = {};
-  Object.keys(elements).forEach(function (key) {
-    formValue[elements[key].name] = vistula.toObservable(elements[key].value);
-  });
-  Object.keys(elements).forEach(function (key) {
-    elements[key].value = "";
-  });
-
-  submitTasks.rxPush({
-    "isAdd": vistula.constantObservable(true),
-    "form": vistula.constantObservable(formValue)
-  });
-};
 '''
+
+def addTask(ev: vistula.dom.Event):
+  ev.preventDefault()
+
+  submitTasks <- {
+    "isAdd": True,
+    "form": stdlib.formValueFromEvent(ev)
+  }
 
 def currentFilter(hash):
   if hash == "/active":

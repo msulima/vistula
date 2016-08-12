@@ -8,6 +8,7 @@ object ClassDefinitionHelper {
   private val VistulaSeq = ClassReference("vistula.collection.Seq")
   private val VistulaDom = ClassReference("vistula.dom.Dom")
   val Vistula = ClassReference("vistula.Predef")
+  val Event = ClassReference("vistula.dom.Event")
 
   val defaults: Map[ClassReference, ClassDefinition] = Map(
     ClassReference.Object -> ClassDefinition(Map()),
@@ -29,6 +30,9 @@ object ClassDefinitionHelper {
       obsDef("textNode", const),
       obsDef("createBoundElement", const, const, const, const),
       obsDef("createElement", const, const, const)
+    )),
+    Event -> ClassDefinition(Map(
+      constDef("preventDefault")
     ))
   )
 
