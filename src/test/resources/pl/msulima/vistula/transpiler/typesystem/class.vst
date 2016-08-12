@@ -1,0 +1,8 @@
+class M:
+  def __init__(x: vistula.lang.Object, y: *vistula.lang.Object):
+    this
+
+let a = M(1, 2)
+
+a.x
+a.y

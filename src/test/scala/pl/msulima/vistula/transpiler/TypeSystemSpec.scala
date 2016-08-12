@@ -7,6 +7,7 @@ class TypeSystemSpec extends Specification with TranspilerSpecification {
 
   def test = transpileAndCompare("typesystem") _
 
+  test("class")
   test("variable")
   test("function_arguments")
 }

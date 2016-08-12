@@ -5,6 +5,7 @@ import pl.msulima.vistula.transpiler.expression.arithmetic.{BinOp, Compare, Unar
 import pl.msulima.vistula.transpiler.expression.control._
 import pl.msulima.vistula.transpiler.expression.data.{InlineHtml, InlineJavaScript, Primitives, Tuple}
 import pl.msulima.vistula.transpiler.expression.reference._
+import pl.msulima.vistula.transpiler.expression.typesystem.ClassDef
 
 object Tokenizer {
 
@@ -18,6 +19,7 @@ object Tokenizer {
   def applyStmt: PartialFunction[Ast.stmt, Token] = {
     expr
       .orElse(Assign.apply)
+      .orElse(ClassDef.apply)
       .orElse(Declare.apply)
       .orElse(FunctionDef.apply)
       .orElse(If.apply)

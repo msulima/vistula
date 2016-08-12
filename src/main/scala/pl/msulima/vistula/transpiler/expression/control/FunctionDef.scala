@@ -8,16 +8,20 @@ import pl.msulima.vistula.util.Indent
 case object FunctionDef extends Operator {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
-    case Ast.stmt.FunctionDef(name, arguments, body, _) =>
-      val argumentIds = arguments.args.map({
-        case Ast.argument(id, observable, fancyClassName, _) =>
-          Variable(id, ScopeElement(observable = observable, ClassReference(fancyClassName)))
-      })
+    case Ast.stmt.FunctionDef(name, args, body, _) =>
+      val arguments = mapArguments(args)
 
       Introduce(
-        Variable(name, ScopeElement(observable = false, FunctionDefinition(argumentIds.map(_.`type`), resultIsObservable = true))),
-        FunctionDef(name, argumentIds, body.map(Tokenizer.applyStmt))
+        Variable(name, ScopeElement(observable = false, FunctionDefinition(arguments.map(_.`type`), resultIsObservable = true))),
+        FunctionDef(name, arguments, body.map(Tokenizer.applyStmt))
       )
+  }
+
+  def mapArguments(arguments: Ast.arguments) = {
+    arguments.args.map({
+      case Ast.argument(id, observable, fancyClassName, _) =>
+        Variable(id, ScopeElement(observable = observable, ClassReference(fancyClassName)))
+    })
   }
 
   def anonymous(body: Seq[Token]): Token = {

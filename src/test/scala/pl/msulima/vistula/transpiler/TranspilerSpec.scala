@@ -12,7 +12,6 @@ class TranspilerSpec extends Specification {
     }
   }
 
-  test("change")
   test("inline_javascript")
   test("lambda")
   test("primitives")

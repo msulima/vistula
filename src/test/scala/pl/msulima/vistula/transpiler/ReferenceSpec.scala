@@ -8,6 +8,7 @@ class ReferenceSpec extends Specification with TranspilerSpecification {
   def test = transpileAndCompare("reference") _
 
   test("attribute")
+  test("assign")
   test("dereference")
   test("expression")
   test("function_call")
