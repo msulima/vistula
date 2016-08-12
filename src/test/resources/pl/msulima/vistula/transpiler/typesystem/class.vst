@@ -2,7 +2,7 @@ class M:
   def __init__(x: vistula.lang.Object, y: *vistula.lang.Object):
     1
 
-let a = M(1, 2)
+const a = M(1, 2)
 
 a.x
 a.y

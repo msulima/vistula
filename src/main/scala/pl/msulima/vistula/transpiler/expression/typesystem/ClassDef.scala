@@ -12,13 +12,16 @@ object ClassDef extends Operator {
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.ClassDef(identifier, Nil, body, Nil) =>
       val (fields, constructor) = findFields(identifier, body)
-      val definition = FunctionDefinition(fields.map(_.`type`), resultIsObservable = false)
+      val definition = FunctionDefinition(fields.map(_.`type`), resultIsObservable = false, constructor = true)
 
       val classDefinition = ClassDefinition(fields.map(field => {
         field.id -> field.`type`
-      }).toMap, Some(definition))
+      }).toMap)
 
-      IntroduceClass(ClassReference(Seq(identifier)), classDefinition, constructor)
+      IntroduceClass(ClassReference(Seq(identifier)), classDefinition, Introduce(
+        Variable(identifier, ScopeElement(observable = false, definition)),
+        constructor
+      ))
   }
 
   private def findFields(classIdentifier: Ast.identifier, body: Seq[stmt]): (Seq[Variable], Token) = {

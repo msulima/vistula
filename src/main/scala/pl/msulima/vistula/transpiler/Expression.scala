@@ -14,7 +14,7 @@ case class ExpressionOperation(operator: Operator, inputs: Seq[Expression], `typ
 
   override def toString: String =
     operator match {
-      case FunctionCall =>
+      case _: FunctionCall =>
         s"FunctionCall(${inputs.head})(${inputs.tail.mkString(".")})"
       case Reference =>
         s"Reference(${inputs.mkString(".")})"

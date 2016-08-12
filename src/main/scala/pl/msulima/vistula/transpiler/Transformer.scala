@@ -2,7 +2,9 @@ package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
-import pl.msulima.vistula.transpiler.scope.{Scope, ScopedResult}
+import pl.msulima.vistula.transpiler.scope._
+
+import scala.annotation.tailrec
 
 
 object Transformer {
@@ -27,14 +29,15 @@ object Transformer {
     Tokenizer.apply.andThen(run(scope))
   }
 
+  @tailrec
   private def run(scope: Scope)(token: Token): ScopedResult = {
     token match {
       case Introduce(variable, body) =>
         val ns = scope.addToScope(variable)
-        ScopedResult(ns, Seq(DereferencerImpl(ns, body)))
+        run(ns)(body)
       case IntroduceClass(id, definition, constructor) =>
         val ns = scope.addToScope(id, definition)
-        ScopedResult(ns, Seq(DereferencerImpl(ns, constructor)))
+        run(ns)(constructor)
       case _ =>
         ScopedResult(scope, Seq(DereferencerImpl(scope, token)))
     }

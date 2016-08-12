@@ -1,9 +1,9 @@
 package pl.msulima.vistula.transpiler.expression.reference
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.{Tokenizer, _}
+import pl.msulima.vistula.transpiler._
 
-object FunctionCall extends Operator {
+object FunctionCall {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.Call(func, args, _, _, _) =>
@@ -11,14 +11,21 @@ object FunctionCall extends Operator {
   }
 
   def apply(func: String, args: Seq[Token]): Operation = {
-    Operation(FunctionCall, Reference(func) +: args)
+    Operation(FunctionCall(constructor = false), Reference(func) +: args)
   }
 
   def apply(func: Token, args: Seq[Token]): Operation = {
-    Operation(FunctionCall, func +: args)
+    Operation(FunctionCall(constructor = false), func +: args)
   }
+}
 
+case class FunctionCall(constructor: Boolean) extends Operator {
   override def apply(operands: List[Constant]) = {
-    s"${operands.head.value}(${operands.tail.map(_.value).mkString(", ")})"
+    val prefix = if (constructor) {
+      "new "
+    } else {
+      ""
+    }
+    s"$prefix${operands.head.value}(${operands.tail.map(_.value).mkString(", ")})"
   }
 }
