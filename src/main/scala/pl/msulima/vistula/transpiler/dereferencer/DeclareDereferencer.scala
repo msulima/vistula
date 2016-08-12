@@ -10,7 +10,7 @@ trait DeclareDereferencer {
   def declareDereferencer: PartialFunction[Token, Expression] = {
     case Operation(Assign, target :: source :: Nil) =>
       ExpressionOperation(Assign, Seq(dereference(target), dereference(source)), ScopeElement(observable = true))
-    case Operation(Declare, name :: body :: Nil) =>
-      ExpressionOperation(Declare, Seq(dereference(name), dereference(body)), ScopeElement(observable = true))
+    case Operation(dec: Declare, name :: body :: Nil) =>
+      ExpressionOperation(dec, Seq(dereference(name), dereference(body)), ScopeElement(observable = true))
   }
 }

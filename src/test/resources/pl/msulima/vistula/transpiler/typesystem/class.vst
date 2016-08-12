@@ -1,6 +1,6 @@
 class M:
   def __init__(x: vistula.lang.Object, y: *vistula.lang.Object):
-    this
+    1
 
 let a = M(1, 2)
 
