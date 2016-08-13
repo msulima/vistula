@@ -41,7 +41,7 @@ object ClassDef extends Operator {
     val introduceThis = Import(Variable(thisId, ScopeElement(observable = false)))
     val fieldInitialization = arguments.map(arg => {
       val source = Reference(Reference(thisId), Constant(arg.id.name))
-      Operation(Declare(declare = false), Seq(source, Reference(arg.id)))
+      Operation(Declare(declare = false, mutable = arg.`type`.observable), Seq(source, Reference(arg.id)))
     })
 
     FunctionDef(classIdentifier, arguments, (introduceThis +: fieldInitialization) ++ constructorBody.map(Tokenizer.applyStmt))

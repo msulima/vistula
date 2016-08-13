@@ -14,18 +14,13 @@ object Declare {
   }
 
   def apply(identifier: Ast.identifier, mutable: Boolean, body: Token, typedef: ClassReference): Token = {
-    val value = if (mutable) {
-      Box(body)
-    } else {
-      Operation(Dereference, Seq(body))
-    }
-
     val variable = Variable(identifier, ScopeElement(mutable, typedef))
-    Introduce(variable, Operation(Declare(declare = true), Seq(Constant(identifier.name), value)))
+
+    Introduce(variable, Operation(Declare(declare = true, mutable = mutable), Seq(Constant(identifier.name), body)))
   }
 }
 
-case class Declare(declare: Boolean) extends Operator {
+case class Declare(declare: Boolean, mutable: Boolean) extends Operator {
 
   override def apply(operands: List[Constant]): String = {
     val prefix = if (declare) {

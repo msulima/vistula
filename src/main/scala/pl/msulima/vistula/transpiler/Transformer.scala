@@ -33,8 +33,13 @@ object Transformer {
   private def run(scope: Scope)(token: Token): ScopedResult = {
     token match {
       case Introduce(variable, body) =>
-        val ns = scope.addToScope(variable)
-        run(ns)(body)
+        val result = DereferencerImpl(scope, token)
+        val ns = if (variable.`type`.`type` == ClassReference.Object) {
+          scope.addToScope(variable.copy(`type` = variable.`type`.copy(`type` = result.`type`.`type`)))
+        } else {
+          scope.addToScope(variable)
+        }
+        ScopedResult(ns, Seq(result))
       case Import(variable) =>
         val ns = scope.addToScope(variable)
         ScopedResult(ns, Seq())

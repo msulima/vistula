@@ -9,7 +9,9 @@ class RpnSpec extends Specification {
 
     val program =
       """let a = vistula.Seq.apply(1)
-        |a.filter(X)
+        |let b: vistula.collection.Seq = vistula.Seq.apply(1)
+        |a.filter(1)
+        |b.filter(X)
       """.stripMargin
 
     Vistula.toJavaScript(program) must_==
