@@ -38,7 +38,7 @@ object ClassDef extends Operator {
   private def createConstructor(classIdentifier: identifier, constructorBody: Seq[stmt], arguments: Seq[Variable]) = {
     val thisId = Ast.identifier("this")
 
-    val introduceThis = Import(Variable(thisId, ScopeElement(observable = false)))
+    val introduceThis = Import(Variable(thisId, ScopeElement(observable = false, ClassReference(classIdentifier.name))))
     val fieldInitialization = arguments.map(arg => {
       val source = Reference(Reference(thisId), Constant(arg.id.name))
       Operation(Declare(declare = false, mutable = arg.`type`.observable), Seq(source, Reference(arg.id)))

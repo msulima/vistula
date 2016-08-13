@@ -21,7 +21,7 @@ trait ReferenceDereferencer {
     input match {
       case Constant(id) =>
         val scopeElement = scope.findById(Ast.identifier(id))
-        ExpressionConstant(id, scopeElement.getOrElse(ScopeElement(observable = true)))
+        ExpressionConstant(id, scopeElement.getOrElse(ScopeElement.Default))
       case _ =>
         dereference(input)
     }

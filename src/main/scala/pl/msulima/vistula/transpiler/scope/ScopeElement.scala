@@ -4,7 +4,7 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.Token
 
 
-case class ScopeElement(observable: Boolean, `type`: ClassType = ClassReference.Object) {
+case class ScopeElement(observable: Boolean, `type`: ClassType) {
 
   override def toString: String = {
     if (observable) {
@@ -13,6 +13,11 @@ case class ScopeElement(observable: Boolean, `type`: ClassType = ClassReference.
       s"Val<${`type`}>"
     }
   }
+}
+
+object ScopeElement {
+
+  val Default = ScopeElement(observable = true, ClassReference.Object)
 }
 
 sealed trait ClassType

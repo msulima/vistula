@@ -59,7 +59,3 @@ object RxMapOp {
     }
   }
 }
-
-object ExpressionConstant {
-  val Dummy = ExpressionConstant("ignored", ScopeElement(observable = false))
-}

@@ -2,8 +2,8 @@ package pl.msulima.vistula.transpiler.scope
 
 object FunctionDefinitionHelper {
 
-  val const = ScopeElement(observable = false)
-  val obs = ScopeElement(observable = true)
+  val const = ScopeElement(observable = false, ClassReference.Object)
+  val obs = ScopeElement(observable = true, ClassReference.Object)
 
   def adapt(argumentsCount: Int, argumentsAreObservable: Boolean, resultIsObservable: Boolean) = {
     val argumentDefinition = if (argumentsAreObservable) {
@@ -11,7 +11,9 @@ object FunctionDefinitionHelper {
     } else {
       const
     }
-    FunctionDefinition((1 to argumentsCount).map(_ => argumentDefinition), resultType = ScopeElement(resultIsObservable))
+    val resultType = ScopeElement(resultIsObservable, ClassReference.Object)
+
+    FunctionDefinition((1 to argumentsCount).map(_ => argumentDefinition), resultType = resultType)
   }
 
   def adaptArguments(argumentsCount: Int, argumentsAreObservable: Boolean) = {
