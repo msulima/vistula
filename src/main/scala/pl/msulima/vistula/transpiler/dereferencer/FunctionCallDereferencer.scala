@@ -17,10 +17,13 @@ trait FunctionCallDereferencer {
 
       if (observables.isEmpty) {
         body
-      } else if (body.`type`.observable) {
-        ExpressionOperation(RxFlatMap(body), Seq(function), body.`type`)
       } else {
-        ExpressionOperation(RxMap(body), observables, body.`type`)
+        val mapper = if (body.`type`.observable) {
+          RxFlatMap(body)
+        } else {
+          RxMap(body)
+        }
+        ExpressionOperation(mapper, observables, body.`type`)
       }
   }
 

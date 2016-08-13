@@ -1,14 +1,10 @@
-function a(X) {
-    return X.wrap(1);
-};
-function b(X) {
-    return X.rxFlatMap($arg => ($arg.wrap)).rxFlatMap($arg => ($arg(1)));
-};
-function c(X) {
-    return vistula.constantObservable(2);
-};
-function d(X) {
-    return vistula.constantObservable(2);
-};
-c(1);
-d(vistula.constantObservable(1));
+const a = vistula.Seq.apply(vistula.constantObservable(1));
+const b = vistula.Seq.apply(vistula.constantObservable(1));
+vistula.zip([
+    a.rxFlatMap($arg => ($arg.filter)),
+    X
+]).rxFlatMap($args => ($args[0]($args[1])));
+vistula.zip([
+    b.rxFlatMap($arg => ($arg.filter)),
+    X
+]).rxFlatMap($args => ($args[0]($args[1])));

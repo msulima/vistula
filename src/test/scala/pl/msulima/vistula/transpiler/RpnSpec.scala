@@ -9,14 +9,15 @@ class RpnSpec extends Specification {
 
     val program =
       """let a = vistula.Seq.apply(1)
-        |let b: vistula.collection.Seq = vistula.Seq.apply(1)
-        |a.filter(1)
-        |b.filter(X)
+        |a.filter(X)
       """.stripMargin
 
     Vistula.toJavaScript(program) must_==
       """const a = vistula.Seq.apply(vistula.constantObservable(1));
-        |a.rxFlatMap($arg => ($arg.filter)).rxFlatMap($arg => ($arg(X)));""".stripMargin
+        |vistula.zip([
+        |    a.rxFlatMap($arg => ($arg.filter)),
+        |    X
+        |]).rxFlatMap($args => ($args[0]($args[1])));""".stripMargin
   }
 
   "transpiles generator" in {
