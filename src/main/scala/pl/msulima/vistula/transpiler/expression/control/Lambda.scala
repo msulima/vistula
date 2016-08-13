@@ -6,10 +6,9 @@ import pl.msulima.vistula.transpiler._
 case object Lambda {
 
   def apply: PartialFunction[Ast.expr, Token] = {
-    case Ast.expr.Lambda(Ast.arguments(args, None), body) =>
-      val argsNames = args.map(_.name)
+    case Ast.expr.Lambda(args, body) =>
       val transpiledBody = Tokenizer.apply(body)
 
-      FunctionDef.anonymous(argsNames, Seq(transpiledBody), mutableArgs = true)
+      FunctionDef.anonymous(FunctionDef.mapArguments(args), Seq(transpiledBody))
   }
 }

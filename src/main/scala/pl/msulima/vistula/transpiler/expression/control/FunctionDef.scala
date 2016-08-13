@@ -26,20 +26,14 @@ case object FunctionDef extends Operator {
   }
 
   def anonymous(body: Seq[Token]): Token = {
-    anonymous(Seq(), body, mutableArgs = false)
-  }
-
-  def anonymous(singleArg: Ast.identifier, body: Seq[Token], mutableArgs: Boolean = true): Token = {
-    anonymous(Seq(singleArg), body, mutableArgs = mutableArgs)
+    anonymous(Seq(), body)
   }
 
   def anonymous(singleArg: Variable, body: Seq[Token]): Token = {
-    apply(Ast.identifier(""), Seq(singleArg), body)
+    anonymous(Seq(singleArg), body)
   }
 
-  def anonymous(argumentIds: Seq[Ast.identifier], body: Seq[Token], mutableArgs: Boolean): Token = {
-    val arguments = argumentIds.map(arg => Variable(arg, ScopeElement(observable = mutableArgs, ClassReference.Object)))
-
+  def anonymous(arguments: Seq[Variable], body: Seq[Token]): Token = {
     apply(Ast.identifier(""), arguments, body)
   }
 

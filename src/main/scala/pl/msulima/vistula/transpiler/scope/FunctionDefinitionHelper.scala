@@ -2,8 +2,8 @@ package pl.msulima.vistula.transpiler.scope
 
 object FunctionDefinitionHelper {
 
-  val const = ScopeElement(observable = false, ClassReference.Object)
-  val obs = ScopeElement(observable = true, ClassReference.Object)
+  val const = ScopeElement.DefaultConst
+  val obs = ScopeElement.Default
 
   def adapt(argumentsCount: Int, argumentsAreObservable: Boolean, resultIsObservable: Boolean) = {
     val argumentDefinition = if (argumentsAreObservable) {

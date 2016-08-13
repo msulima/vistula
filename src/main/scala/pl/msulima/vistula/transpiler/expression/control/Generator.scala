@@ -3,6 +3,7 @@ package pl.msulima.vistula.transpiler.expression.control
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.reference.{FunctionCall, Reference}
+import pl.msulima.vistula.transpiler.scope.{ScopeElement, Variable}
 
 object GeneratorBody {
 
@@ -26,7 +27,11 @@ case object Generator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     case Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)) =>
-      val innerBody = FunctionDef.anonymous(Seq(acc, source), Seq(Tokenizer.applyStmt(body)), mutableArgs = false)
+      val arguments = Seq(
+        Variable(acc, ScopeElement.DefaultConst),
+        Variable(source, ScopeElement.DefaultConst)
+      )
+      val innerBody = FunctionDef.anonymous(arguments, Seq(Tokenizer.applyStmt(body)))
 
       FunctionCall("vistula.aggregate", Seq(
         Tokenizer.applyStmt(initial),

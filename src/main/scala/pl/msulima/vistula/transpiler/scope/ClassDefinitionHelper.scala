@@ -43,7 +43,7 @@ object ClassDefinitionHelper {
 
   private def constDef(name: String, arguments: ScopeElement*) = {
     Ast.identifier(name) -> ScopeElement(observable = false,
-      FunctionDefinition(arguments, resultType = ScopeElement(observable = false, ClassReference.Object)))
+      FunctionDefinition(arguments, resultType = ScopeElement.DefaultConst))
   }
 
   private def obsDef(name: String, arguments: ScopeElement*) = {

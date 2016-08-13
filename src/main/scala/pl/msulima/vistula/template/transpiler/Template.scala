@@ -7,7 +7,7 @@ import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, FunctionCall, Reference}
-import pl.msulima.vistula.transpiler.scope.ClassReference
+import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement, Variable}
 
 case class Scoped(variables: Seq[Ast.identifier], body: Token)
 
@@ -85,7 +85,7 @@ object Template {
         Tokenizer.apply(expression), Constant("toArray")
       ), Seq())
 
-      val inner = FunctionDef.anonymous(identifier, Seq(
+      val inner = FunctionDef.anonymous(Variable(identifier, ScopeElement.Default), Seq(
         FunctionCall("vistula.zipAndFlatten", Seq(
           StaticArray(apply(body).map(Box.apply))
         ))
@@ -93,11 +93,11 @@ object Template {
 
       val elementsId = Ast.identifier("$arg")
 
-      val outer = FunctionDef.anonymous(elementsId, Seq(
+      val outer = FunctionDef.anonymous(Variable(elementsId, ScopeElement.DefaultConst), Seq(
         FunctionCall("vistula.zipAndFlatten", Seq(
           FunctionCall(Reference(Reference(elementsId), Constant("map")), Seq(inner))
         ))
-      ), mutableArgs = false)
+      ))
 
       Observable(FunctionCall(Reference(Box(iterable), Constant("rxFlatMap")), Seq(outer)))
   }

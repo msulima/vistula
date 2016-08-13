@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement}
+import pl.msulima.vistula.transpiler.scope.ScopeElement
 
 trait OperationDereferencer {
   this: Dereferencer =>
@@ -10,7 +10,7 @@ trait OperationDereferencer {
     case operation: Operation =>
       val (observables, inputs) = extractObservables(operation.inputs)
 
-      val body = ExpressionOperation(operation.operator, inputs, ScopeElement(observable = false, ClassReference.Object))
+      val body = ExpressionOperation(operation.operator, inputs, ScopeElement.DefaultConst)
 
       if (observables.isEmpty) {
         body
