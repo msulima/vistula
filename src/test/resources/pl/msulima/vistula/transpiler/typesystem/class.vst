@@ -4,5 +4,5 @@ class M:
 
 const a = M(1, 2)
 
-a.x
-a.y
+a.x + 1
+a.y + 2

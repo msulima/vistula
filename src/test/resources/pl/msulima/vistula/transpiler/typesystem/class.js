@@ -4,5 +4,5 @@ function M(x, y) {
     return vistula.constantObservable(1);
 };
 const a = new M(1, vistula.constantObservable(2));
-a.rxFlatMap($arg => ($arg.x));
-a.rxFlatMap($arg => ($arg.y));
+a.x + 1;
+a.y.rxMap($arg => ($arg + 2));
