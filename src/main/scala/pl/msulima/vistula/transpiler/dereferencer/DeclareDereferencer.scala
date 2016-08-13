@@ -11,6 +11,7 @@ trait DeclareDereferencer {
     case Operation(Assign, target :: source :: Nil) =>
       ExpressionOperation(Assign, Seq(dereference(target), dereference(source)), ScopeElement(observable = true))
     case Operation(dec: Declare, name :: body :: Nil) =>
-      ExpressionOperation(dec, Seq(dereference(name), dereference(body)), ScopeElement(observable = true))
+      val dereferencedBody = dereference(body)
+      ExpressionOperation(dec, Seq(dereference(name), dereferencedBody), dereferencedBody.`type`)
   }
 }

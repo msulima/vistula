@@ -17,10 +17,10 @@ object Attributes {
         tuple(key, Box(Constant("null")))
       case parser.AttributeEvent(key, value) =>
         val ev = Ast.identifier("ev")
-        val function = FunctionDef.anonymous(ev, Seq(
-          Introduce(Variable(ev, ScopeElement(observable = false, ClassDefinitionHelper.Event)), Constant("")),
-          Tokenizer.apply(value)
-        ))
+        val function = FunctionDef.anonymous(
+          Variable(ev, ScopeElement(observable = false, ClassDefinitionHelper.Event)),
+          Seq(Tokenizer.apply(value))
+        )
 
         tuple(s"($key)", function)
     }))

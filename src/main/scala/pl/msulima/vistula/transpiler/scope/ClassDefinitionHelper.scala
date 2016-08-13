@@ -24,7 +24,8 @@ object ClassDefinitionHelper {
       Ast.identifier("dom") -> ScopeElement(observable = false, `type` = VistulaDom)
     )),
     VistulaSeqFactory -> ClassDefinition(Map(
-      Ast.identifier("apply") -> ScopeElement(observable = false, FunctionDefinition(Seq(obs), resultIsObservable = true, varargs = true))
+      Ast.identifier("apply") -> ScopeElement(observable = false, FunctionDefinition(Seq(obs),
+        resultType = ScopeElement(observable = true, `type` = VistulaSeq), varargs = true))
     )),
     VistulaSeq -> ClassDefinition(Map(
       obsDef("filter", const)
@@ -41,10 +42,10 @@ object ClassDefinitionHelper {
   )
 
   private def constDef(name: String, arguments: ScopeElement*) = {
-    Ast.identifier(name) -> ScopeElement(observable = false, FunctionDefinition(arguments, resultIsObservable = false))
+    Ast.identifier(name) -> ScopeElement(observable = false, FunctionDefinition(arguments, resultType = ScopeElement(observable = false)))
   }
 
   private def obsDef(name: String, arguments: ScopeElement*) = {
-    Ast.identifier(name) -> ScopeElement(observable = false, FunctionDefinition(arguments, resultIsObservable = true))
+    Ast.identifier(name) -> ScopeElement(observable = false, FunctionDefinition(arguments, resultType = ScopeElement(observable = true)))
   }
 }

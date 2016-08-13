@@ -13,6 +13,8 @@ case class Constant(value: String) extends Token
 
 case class Introduce(variable: Variable, body: Token) extends Token
 
+case class Import(variable: Variable) extends Token
+
 case class IntroduceClass(id: ClassReference, definition: ClassDefinition, constructor: Token) extends Token
 
 trait Operator {

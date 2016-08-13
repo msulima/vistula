@@ -17,7 +17,7 @@ case class ScopeElement(observable: Boolean, `type`: ClassType = ClassReference.
 
 sealed trait ClassType
 
-case class FunctionDefinition(arguments: Seq[ScopeElement], resultIsObservable: Boolean,
+case class FunctionDefinition(arguments: Seq[ScopeElement], resultType: ScopeElement,
                               varargs: Boolean = false, constructor: Boolean = false) extends ClassType {
 
   def adapt(arguments: Seq[Token]): Seq[ScopeElement] = {
@@ -38,9 +38,8 @@ case class FunctionDefinition(arguments: Seq[ScopeElement], resultIsObservable: 
         s"${boolToObs(arg.observable)}: ${arg.`type`}"
       }).mkString(", ")
     }
-    val result = boolToObs(resultIsObservable)
 
-    s"FunctionDefinition(($args) => $result)"
+    s"FunctionDefinition(($args) => $resultType)"
   }
 
   private def boolToObs(observable: Boolean) = {

@@ -11,7 +11,7 @@ object FunctionDefinitionHelper {
     } else {
       const
     }
-    FunctionDefinition((1 to argumentsCount).map(_ => argumentDefinition), resultIsObservable = resultIsObservable)
+    FunctionDefinition((1 to argumentsCount).map(_ => argumentDefinition), resultType = ScopeElement(resultIsObservable))
   }
 
   def adaptArguments(argumentsCount: Int, argumentsAreObservable: Boolean) = {

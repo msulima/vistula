@@ -35,6 +35,9 @@ object Transformer {
       case Introduce(variable, body) =>
         val ns = scope.addToScope(variable)
         run(ns)(body)
+      case Import(variable) =>
+        val ns = scope.addToScope(variable)
+        ScopedResult(ns, Seq())
       case IntroduceClass(id, definition, constructor) =>
         val ns = scope.addToScope(id, definition)
         run(ns)(constructor)

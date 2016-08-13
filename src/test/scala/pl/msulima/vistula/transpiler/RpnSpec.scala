@@ -8,13 +8,13 @@ class RpnSpec extends Specification {
   "test" in {
 
     val program =
-      """def b(X: *vistula.Predef):
-        |  X.wrap(1)""".stripMargin
+      """let a = vistula.Seq.apply(1)
+        |a.filter(X)
+      """.stripMargin
 
     Vistula.toJavaScript(program) must_==
-      """function b(X) {
-        |    return X.rxFlatMap($arg => ($arg.wrap)).rxFlatMap($arg => ($arg(1)));
-        |};""".stripMargin
+      """const a = vistula.Seq.apply(vistula.constantObservable(1));
+        |a.rxFlatMap($arg => ($arg.filter)).rxFlatMap($arg => ($arg(X)));""".stripMargin
   }
 
   "transpiles generator" in {

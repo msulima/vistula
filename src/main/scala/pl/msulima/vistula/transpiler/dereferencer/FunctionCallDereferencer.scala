@@ -13,14 +13,14 @@ trait FunctionCallDereferencer {
       val funcDefinition = getDefinition(function, arguments)
       val (observables, inputs) = findSubstitutes(function, funcDefinition, arguments)
 
-      val body = ExpressionOperation(FunctionCall(funcDefinition.constructor), inputs, ScopeElement(funcDefinition.resultIsObservable))
+      val body = ExpressionOperation(FunctionCall(funcDefinition.constructor), inputs, funcDefinition.resultType)
 
       if (observables.isEmpty) {
         body
-      } else if (function.`type`.observable) {
-        ExpressionOperation(RxFlatMap(body), Seq(function), function.`type`)
+      } else if (body.`type`.observable) {
+        ExpressionOperation(RxFlatMap(body), Seq(function), body.`type`)
       } else {
-        ExpressionOperation(RxMap(body), observables, ScopeElement(observable = true))
+        ExpressionOperation(RxMap(body), observables, body.`type`)
       }
   }
 

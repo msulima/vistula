@@ -10,9 +10,10 @@ case object FunctionDef extends Operator {
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.FunctionDef(name, args, body, _) =>
       val arguments = mapArguments(args)
+      val definition = FunctionDefinition(arguments.map(_.`type`), resultType = ScopeElement(observable = true))
 
       Introduce(
-        Variable(name, ScopeElement(observable = false, FunctionDefinition(arguments.map(_.`type`), resultIsObservable = true))),
+        Variable(name, ScopeElement(observable = false, definition)),
         FunctionDef(name, arguments, body.map(Tokenizer.applyStmt))
       )
   }
@@ -32,6 +33,10 @@ case object FunctionDef extends Operator {
     anonymous(Seq(singleArg), body, mutableArgs = mutableArgs)
   }
 
+  def anonymous(singleArg: Variable, body: Seq[Token]): Token = {
+    apply(Ast.identifier(""), Seq(singleArg), body)
+  }
+
   def anonymous(argumentIds: Seq[Ast.identifier], body: Seq[Token], mutableArgs: Boolean): Token = {
     val arguments = argumentIds.map(arg => Variable(arg, ScopeElement(observable = mutableArgs)))
 
@@ -40,7 +45,7 @@ case object FunctionDef extends Operator {
 
   def apply(name: Ast.identifier, arguments: Seq[Variable], body: Seq[Token]): Token = {
     val declarations = arguments.map(arg => {
-      Introduce(arg, Constant(""))
+      Import(arg)
     })
 
     Operation(

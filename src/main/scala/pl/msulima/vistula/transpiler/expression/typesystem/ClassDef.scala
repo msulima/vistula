@@ -12,13 +12,15 @@ object ClassDef extends Operator {
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.ClassDef(identifier, Nil, body, Nil) =>
       val (fields, constructor) = findFields(identifier, body)
-      val definition = FunctionDefinition(fields.map(_.`type`), resultIsObservable = false, constructor = true)
+      val classReference = ClassReference(Seq(identifier))
+      val definition = FunctionDefinition(fields.map(_.`type`),
+        resultType = ScopeElement(observable = false, `type` = classReference), constructor = true)
 
       val classDefinition = ClassDefinition(fields.map(field => {
         field.id -> field.`type`
       }).toMap)
 
-      IntroduceClass(ClassReference(Seq(identifier)), classDefinition, Introduce(
+      IntroduceClass(classReference, classDefinition, Introduce(
         Variable(identifier, ScopeElement(observable = false, definition)),
         constructor
       ))
@@ -36,7 +38,7 @@ object ClassDef extends Operator {
   private def createConstructor(classIdentifier: identifier, constructorBody: Seq[stmt], arguments: Seq[Variable]) = {
     val thisId = Ast.identifier("this")
 
-    val introduceThis = Introduce(Variable(thisId, ScopeElement(observable = false)), Constant(""))
+    val introduceThis = Import(Variable(thisId, ScopeElement(observable = false)))
     val fieldInitialization = arguments.map(arg => {
       val source = Reference(Reference(thisId), Constant(arg.id.name))
       Operation(Declare(declare = false), Seq(source, Reference(arg.id)))
