@@ -18,4 +18,4 @@ case object Return extends Operator {
   override def apply(operands: List[Constant]): String = {
     s"return ${operands.head.value}"
   }
-}
+  }

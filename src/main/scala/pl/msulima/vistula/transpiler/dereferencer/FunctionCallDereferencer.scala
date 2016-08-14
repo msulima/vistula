@@ -8,23 +8,12 @@ trait FunctionCallDereferencer {
   this: Dereferencer =>
 
   def functionCallDereferencer: PartialFunction[Token, Expression] = {
-    case Operation(_: FunctionCall, func +: arguments) =>
-      val function = dereferenceFunction(func, arguments)
-      val funcDefinition = getDefinition(function, arguments)
-      val (observables, inputs) = findSubstitutes(function, funcDefinition, arguments)
+    case Operation(_: FunctionCall, func +: args) =>
+      val function = dereferenceFunction(func, args)
+      val funcDefinition = getDefinition(function, args)
+      val arguments = dereferenceArguments(funcDefinition, args)
 
-      val body = ExpressionOperation(FunctionCall(funcDefinition.constructor), inputs, funcDefinition.resultType)
-
-      if (observables.isEmpty) {
-        body
-      } else {
-        val mapper = if (body.`type`.observable) {
-          RxFlatMap(body)
-        } else {
-          RxMap(body)
-        }
-        ExpressionOperation(mapper, observables, body.`type`)
-      }
+      functionCall(function, funcDefinition, arguments)
   }
 
   private def dereferenceFunction(function: Token, arguments: Seq[Token]) = {
@@ -48,14 +37,42 @@ trait FunctionCallDereferencer {
     }
   }
 
-  private def findSubstitutes(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Token]): (Seq[Expression], Seq[Expression]) = {
+  private def dereferenceArguments(funcDefinition: FunctionDefinition, arguments: Seq[Token]) = {
+    arguments.zip(funcDefinition.adapt(arguments)).map({
+      case (arg, argDefinition) =>
+        if (argDefinition.observable) {
+          Box(arg)
+        } else {
+          arg
+        }
+    }).map(dereference)
+  }
+
+  def functionCall(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): ExpressionOperation = {
+    val (observables, inputs) = findSubstitutes(function, funcDefinition, arguments)
+
+    val body = ExpressionOperation(FunctionCall(funcDefinition.constructor), inputs, funcDefinition.resultType)
+
+    if (observables.isEmpty) {
+      body
+    } else {
+      val mapper = if (body.`type`.observable) {
+        RxFlatMap(body)
+      } else {
+        RxMap(body)
+      }
+      ExpressionOperation(mapper, observables, body.`type`)
+    }
+  }
+
+  private def findSubstitutes(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): (Seq[Expression], Seq[Expression]) = {
     val functionSubstitutes = OperationDereferencer.extractObservables(function)
     val argumentsSubstitutes = arguments.zip(funcDefinition.adapt(arguments)).map({
       case (arg, argDefinition) =>
         if (argDefinition.observable) {
-          Seq() -> dereference(Box(arg))
+          Seq() -> arg
         } else {
-          OperationDereferencer.extractObservables(dereference(arg))
+          OperationDereferencer.extractObservables(arg)
         }
     })
 

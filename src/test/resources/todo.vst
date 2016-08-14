@@ -2,6 +2,10 @@
 const submitTasks = new vistula.ObservableImpl();
 '''
 
+class Todo:
+  def __init__(title: *vistula.lang.String, completed: *vistula.lang.Boolean, editing: *vistula.lang.Boolean):
+    pass
+
 def addTask(ev: vistula.dom.Event):
   ev.preventDefault()
 
@@ -22,11 +26,7 @@ let filter = currentFilter(stdlib.location.hash)
 
 def updateTodos(allTodos, action):
   if action.isAdd:
-    allTodos.append({
-      "title": action.form.title,
-      "completed": False,
-      "editing": False
-    })
+    allTodos.append(Todo(action.form.title, False, False))
   else:
     allTodos.diff(action.todos)
 

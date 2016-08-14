@@ -44,7 +44,7 @@ case object FunctionDef extends Operator {
 
     Operation(
       FunctionDef,
-      Constant(name.name) +: FunctionScope(declarations ++ body) +: arguments.map(arg => Constant(arg.id.name))
+      Constant(name.name) +: Operation(FunctionScope, declarations ++ body) +: arguments.map(arg => Constant(arg.id.name))
     )
   }
 
@@ -60,10 +60,6 @@ case object FunctionDef extends Operator {
 }
 
 case object FunctionScope extends Operator {
-
-  private[control] def apply(program: Seq[Token]): Token = {
-    Operation(FunctionScope, program.init :+ Box(program.last))
-  }
 
   override def apply(operands: List[Constant]): String = {
     Transpiler.toJavaScriptFromTokens(operands)

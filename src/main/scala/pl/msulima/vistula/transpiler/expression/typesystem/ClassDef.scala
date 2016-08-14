@@ -3,11 +3,11 @@ package pl.msulima.vistula.transpiler.expression.typesystem
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.{identifier, stmt}
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.expression.control.FunctionDef
+import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, Return}
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, Reference}
 import pl.msulima.vistula.transpiler.scope._
 
-object ClassDef extends Operator {
+object ClassDef {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.ClassDef(identifier, Nil, body, Nil) =>
@@ -44,8 +44,7 @@ object ClassDef extends Operator {
       Operation(Declare(declare = false, mutable = arg.`type`.observable), Seq(source, Reference(arg.id)))
     })
 
-    FunctionDef(classIdentifier, arguments, (introduceThis +: fieldInitialization) ++ constructorBody.map(Tokenizer.applyStmt))
+    val body = (introduceThis +: fieldInitialization) ++ constructorBody.map(Tokenizer.applyStmt) :+ Operation(Return, Seq())
+    FunctionDef(classIdentifier, arguments, body)
   }
-
-  override def apply(inputs: List[Constant]): String = "wat"
 }

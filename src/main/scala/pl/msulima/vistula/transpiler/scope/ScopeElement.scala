@@ -1,7 +1,6 @@
 package pl.msulima.vistula.transpiler.scope
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.Token
 
 
 case class ScopeElement(observable: Boolean, `type`: ClassType) {
@@ -26,7 +25,7 @@ sealed trait ClassType
 case class FunctionDefinition(arguments: Seq[ScopeElement], resultType: ScopeElement,
                               varargs: Boolean = false, constructor: Boolean = false) extends ClassType {
 
-  def adapt(arguments: Seq[Token]): Seq[ScopeElement] = {
+  def adapt(arguments: Seq[_]): Seq[ScopeElement] = {
     if (varargs) {
       FunctionDefinitionHelper.adaptArguments(arguments.size, this.arguments.head.observable)
     } else {

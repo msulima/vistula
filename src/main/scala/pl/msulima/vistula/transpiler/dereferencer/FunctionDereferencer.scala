@@ -5,7 +5,7 @@ import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, FunctionSc
 import pl.msulima.vistula.transpiler.scope.{FunctionDefinitionHelper, ScopeElement}
 
 trait FunctionDereferencer {
-  this: Dereferencer =>
+  this: Dereferencer with BoxDereferencer =>
 
   def functionDereferencer: PartialFunction[Token, Expression] = {
     case operation@Operation(FunctionDef, program) =>
@@ -16,7 +16,21 @@ trait FunctionDereferencer {
       ExpressionOperation(FunctionDef, program.map(dereference), ScopeElement(observable = false, funcDefinition))
     case operation@Operation(FunctionScope, program) =>
       val result = Transformer.scoped(program, scope)
+      val maybeLast = findReturn(result)
 
-      ExpressionOperation(FunctionScope, result.init :+ Return(result.last), result.last.`type`)
+      ExpressionOperation(FunctionScope, result.init ++ maybeLast.toSeq, result.last.`type`)
+  }
+
+  private def findReturn(result: Seq[Expression]): Option[ExpressionOperation] = {
+    result.last match {
+      case ExpressionOperation(Return, Nil, _) =>
+        None
+      case ExpressionOperation(Return, x :: Nil, _) =>
+        val y = toObservable(x)
+        Some(ExpressionOperation(Return, Seq(y), y.`type`))
+      case x =>
+        val y = toObservable(x)
+        Some(ExpressionOperation(Return, Seq(y), y.`type`))
+    }
   }
 }

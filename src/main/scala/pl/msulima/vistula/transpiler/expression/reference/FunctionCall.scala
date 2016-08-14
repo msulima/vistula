@@ -20,6 +20,7 @@ object FunctionCall {
 }
 
 case class FunctionCall(constructor: Boolean) extends Operator {
+
   override def apply(operands: List[Constant]) = {
     val prefix = if (constructor) {
       "new "
