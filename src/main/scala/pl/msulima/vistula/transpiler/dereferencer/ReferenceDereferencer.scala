@@ -31,16 +31,12 @@ trait ReferenceDereferencer {
     val sourceElement = source.`type`
     val body = referenceConstantField(source, target, sourceElement)
 
-    if (sourceElement.observable) {
-      val mapper = if (body.`type`.observable) {
-        RxFlatMap(body)
-      } else {
-        RxMap(body)
-      }
-      ExpressionOperation(mapper, Seq(source), body.`type`.copy(observable = true))
+    val observables = if (sourceElement.observable) {
+      Seq(source)
     } else {
-      body
+      Seq()
     }
+    RxMapOp(observables, body)
   }
 
   private def referenceConstantField(source: Expression, target: Token, sourceElement: ScopeElement): ExpressionOperation = {

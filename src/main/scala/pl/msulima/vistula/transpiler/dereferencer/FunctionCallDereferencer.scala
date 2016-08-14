@@ -50,20 +50,11 @@ trait FunctionCallDereferencer {
 
   def functionCall(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): ExpressionOperation = {
     val (observables, inputs) = findSubstitutes(function, funcDefinition, arguments)
-
     val body = ExpressionOperation(FunctionCall(funcDefinition.constructor), inputs, funcDefinition.resultType)
 
-    if (observables.isEmpty) {
-      body
-    } else {
-      val mapper = if (body.`type`.observable) {
-        RxFlatMap(body)
-      } else {
-        RxMap(body)
-      }
-      ExpressionOperation(mapper, observables, body.`type`)
-    }
+    RxMapOp(observables, body)
   }
+
 
   private def findSubstitutes(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): (Seq[Expression], Seq[Expression]) = {
     val functionSubstitutes = OperationDereferencer.extractObservables(function)

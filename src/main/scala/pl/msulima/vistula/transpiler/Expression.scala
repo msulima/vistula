@@ -43,7 +43,20 @@ case class RxFlatMap(output: ExpressionOperation) extends Operator {
 
 object RxMapOp {
 
-  def apply(useFlatMap: Boolean, body: Constant, operands: List[Constant]) = {
+  def apply(observables: Seq[Expression], body: ExpressionOperation): ExpressionOperation = {
+    if (observables.isEmpty) {
+      body
+    } else {
+      val mapper = if (body.`type`.observable) {
+        RxFlatMap(body)
+      } else {
+        RxMap(body)
+      }
+      ExpressionOperation(mapper, observables, body.`type`.copy(observable = true))
+    }
+  }
+
+  def apply(useFlatMap: Boolean, body: Constant, operands: List[Constant]): String = {
     val mapper = if (useFlatMap) {
       "rxFlatMap"
     } else {
