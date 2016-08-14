@@ -14,10 +14,10 @@ object SubstituteObservables {
     operation.copy(inputs = operation.inputs.map({
       case input@ExpressionOperation(FunctionScope, _, _) =>
         input
-      case input@ExpressionOperation(_, _, id) if id.observable =>
-        mapping.get(input).map(mapped => ExpressionConstant(mapped, id)).getOrElse(input)
-      case input@ExpressionConstant(value, id) if id.observable =>
-        mapping.get(input).map(mapped => ExpressionConstant(mapped, id)).getOrElse(input)
+      case input@ExpressionOperation(_, _, typedef) if typedef.observable =>
+        mapping.get(input).map(mapped => ExpressionConstant(mapped, typedef)).getOrElse(input)
+      case input@ExpressionConstant(_, typedef) if typedef.observable =>
+        mapping.get(input).map(mapped => ExpressionConstant(mapped, typedef)).getOrElse(input)
       case operation: ExpressionOperation =>
         apply(mapping, operation)
       case input =>

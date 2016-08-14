@@ -34,11 +34,7 @@ object Transformer {
     token match {
       case Introduce(variable, body) =>
         val result = DereferencerImpl(scope, token)
-        val ns = if (variable.`type`.`type` == ClassReference.Object) {
-          scope.addToScope(variable.copy(`type` = variable.`type`.copy(`type` = result.`type`.`type`)))
-        } else {
-          scope.addToScope(variable)
-        }
+        val ns = scope.addToScope(inferType(variable, result))
         ScopedResult(ns, Seq(result))
       case Import(variable) =>
         val ns = scope.addToScope(variable)
@@ -48,6 +44,14 @@ object Transformer {
         run(ns)(constructor)
       case _ =>
         ScopedResult(scope, Seq(DereferencerImpl(scope, token)))
+    }
+  }
+
+  private def inferType(variable: Variable, result: Expression): Variable = {
+    if (variable.`type`.`type` == ClassReference.Object) {
+      variable.copy(`type` = variable.`type`.copy(`type` = result.`type`.`type`))
+    } else {
+      variable
     }
   }
 }
