@@ -37,4 +37,10 @@ let main = '''# html
 </div>
 '''
 
-stdlib.dom.appendChild("main", main)
+let foo = stdlib.dom.appendChild("main", main)
+
+'''# javascript
+
+foo.rxForEach(() => {});
+
+'''

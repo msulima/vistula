@@ -6,22 +6,22 @@ object FunctionDefinitionHelper {
   val obs = ScopeElement.Default
 
   def adapt(argumentsCount: Int, argumentsAreObservable: Boolean, resultIsObservable: Boolean) = {
-    val argumentDefinition = if (argumentsAreObservable) {
-      obs
-    } else {
-      const
-    }
+    val argumentDefinition = boolToObs(argumentsAreObservable)
     val resultType = ScopeElement(resultIsObservable, ClassReference.Object)
 
     FunctionDefinition((1 to argumentsCount).map(_ => argumentDefinition), resultType = resultType)
   }
 
   def adaptArguments(argumentsCount: Int, argumentsAreObservable: Boolean) = {
-    val argumentDefinition = if (argumentsAreObservable) {
+    val argumentDefinition = boolToObs(argumentsAreObservable)
+    (1 to argumentsCount).map(_ => argumentDefinition)
+  }
+
+  private def boolToObs(argumentsAreObservable: Boolean): ScopeElement = {
+    if (argumentsAreObservable) {
       obs
     } else {
       const
     }
-    (1 to argumentsCount).map(_ => argumentDefinition)
   }
 }
