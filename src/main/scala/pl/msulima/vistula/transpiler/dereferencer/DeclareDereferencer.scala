@@ -17,7 +17,8 @@ trait DeclareDereferencer {
         Operation(Dereference, Seq(body))
       }
       val dereferencedBody = dereference(value)
+      val underlyingType = dereference(body).`type`
 
-      ExpressionOperation(dec, Seq(dereference(name), dereferencedBody), dereference(body).`type`)
+      ExpressionOperation(dec, Seq(dereference(name), dereferencedBody), underlyingType)
   }
 }

@@ -26,11 +26,14 @@ trait FunctionDereferencer {
       case ExpressionOperation(Return, Nil, _) =>
         None
       case ExpressionOperation(Return, x :: Nil, _) =>
-        val y = toObservable(x)
-        Some(ExpressionOperation(Return, Seq(y), y.`type`))
+        doReturn(x)
       case x =>
-        val y = toObservable(x)
-        Some(ExpressionOperation(Return, Seq(y), y.`type`))
+        doReturn(x)
     }
+  }
+
+  private def doReturn(x: Expression) = {
+    val y = toObservable(x)
+    Some(ExpressionOperation(Return, Seq(y), y.`type`))
   }
 }

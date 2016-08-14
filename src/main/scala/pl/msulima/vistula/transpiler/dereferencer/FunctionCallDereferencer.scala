@@ -55,7 +55,6 @@ trait FunctionCallDereferencer {
     RxMapOp(observables, body)
   }
 
-
   private def findSubstitutes(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): (Seq[Expression], Seq[Expression]) = {
     val functionSubstitutes = OperationDereferencer.extractObservables(function)
     val argumentsSubstitutes = arguments.zip(funcDefinition.adapt(arguments)).map({
