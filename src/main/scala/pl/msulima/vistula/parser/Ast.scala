@@ -112,8 +112,6 @@ object Ast {
 
     case class Set(elts: Seq[expr]) extends expr
 
-    case class ListComp(elt: expr, generators: Seq[comprehension]) extends expr
-
     case class SetComp(elt: expr, generators: Seq[comprehension]) extends expr
 
     case class DictComp(key: expr, value: expr, generators: Seq[comprehension]) extends expr
@@ -145,8 +143,6 @@ object Ast {
     case class Subscript(value: expr, slice: slice, ctx: expr_context) extends expr
 
     case class Name(id: identifier, ctx: expr_context) extends expr
-
-    case class List(elts: Seq[expr], ctx: expr_context) extends expr
 
     case class Tuple(elts: Seq[expr], ctx: expr_context) extends expr
 

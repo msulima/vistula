@@ -103,15 +103,12 @@ object Expressions {
   val atom: P[Ast.expr] = {
     val deref: P[Ast.expr] = P("*" ~ atom).map(Ast.expr.Dereference)
     val empty_tuple = ("(" ~ ")").map(_ => Ast.expr.Tuple(Nil, Ast.expr_context.Load))
-    val empty_list = ("[" ~ "]").map(_ => Ast.expr.List(Nil, Ast.expr_context.Load))
     val empty_dict = ("{" ~ "}").map(_ => Ast.expr.Dict(Nil, Nil))
     P(
       deref |
         empty_tuple |
-        empty_list |
         empty_dict |
         "(" ~ (yield_expr | generator | tuple) ~ ")" |
-        "[" ~ (list_comp | list) ~ "]" |
         "{" ~ dictorsetmaker ~ "}" |
         "`" ~ testlist1.map(x => Ast.expr.Repr(Ast.expr.Tuple(x, Ast.expr_context.Load))) ~ "`" |
         STRING.rep(1).map(_.mkString).map(Ast.expr.Str) |
@@ -119,11 +116,9 @@ object Expressions {
         NUMBER
     )
   }
-  val list_contents = P(test.rep(1, ",") ~ ",".?)
-  val list = P(list_contents).map(Ast.expr.List(_, Ast.expr_context.Load))
-  val tuple = P(list_contents).map(Ast.expr.Tuple(_, Ast.expr_context.Load))
+  val tuple_contents = P(test.rep(1, ",") ~ ",".?)
+  val tuple = P(tuple_contents).map(Ast.expr.Tuple(_, Ast.expr_context.Load))
   val list_comp_contents = P(test ~ comp_for.rep(1))
-  val list_comp = P(list_comp_contents).map(Ast.expr.ListComp.tupled)
   val generator = P(list_comp_contents).map(Ast.expr.GeneratorExp.tupled)
 
   val trailer: P[Ast.expr => Ast.expr] = {

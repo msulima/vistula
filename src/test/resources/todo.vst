@@ -32,7 +32,7 @@ def updateTodos(allTodos, action):
 
 let storageName = "todos-vistula"
 
-let allTodos: vistula.collection.Seq = (stdlib.storage.getOrDefault(storageName, []) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
+let allTodos: vistula.collection.Seq = (stdlib.storage.getOrDefault(storageName, vistula.Seq.apply()) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
 
 let bar = stdlib.storage.set(storageName, allTodos)
 
@@ -63,7 +63,7 @@ def clearCompleted():
 def removeTodo(todo):
   submitTasks <- {
     "isAdd": False,
-    "todos": [todo]
+    "todos": vistula.Seq.apply(todo)
   }
 
 def editTodo(todo, formField):

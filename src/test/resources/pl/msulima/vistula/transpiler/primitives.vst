@@ -1,6 +1,6 @@
-let A = [1, "A\"B", {
+let A = vistula.Seq.apply(1, "A\"B", {
    "C": "D",
    "E": False,
    "F": 2 + 2,
    "G": (3)
-}, None]
+}, None)

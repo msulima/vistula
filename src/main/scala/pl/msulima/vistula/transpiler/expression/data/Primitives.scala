@@ -1,7 +1,6 @@
 package pl.msulima.vistula.transpiler.expression.data
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.expression.reference.FunctionCall
 import pl.msulima.vistula.transpiler.{Tokenizer, _}
 import pl.msulima.vistula.util.ToArray
 
@@ -12,8 +11,6 @@ object Primitives {
       Constant(static(expr))
     case Ast.expr.Str(x) =>
       StaticString(x)
-    case Ast.expr.List(elts, Ast.expr_context.Load) =>
-      FunctionCall("vistula.Seq.apply", elts.map(expr => Tokenizer.apply(expr)))
     case Ast.expr.Dict(keys, values) =>
       val dict = keys.zip(values).flatMap({
         case (Ast.expr.Str(key), expr) =>

@@ -26,7 +26,7 @@ class RpnSpec extends Specification {
       """
         |A + 2;
         |A + 2 + B + False;
-        |let A = [1, 2 + 3, B, C - 4]
+        |let A = vistula.Seq.apply(1, 2 + 3, B, C - 4)
         |A.B;
         |F(A, 3);
         |F(A, 3).B;
