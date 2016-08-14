@@ -6,13 +6,14 @@ class Todo:
   def __init__(title: *vistula.lang.String, completed: *vistula.lang.Boolean, editing: *vistula.lang.Boolean):
     pass
 
+class SubmittedTask:
+  def __init__(isAdd: vistula.lang.Boolean, form: *vistula.lang.Object, todos: *vistula.lang.Seq):
+    pass
+
 def addTask(ev: vistula.dom.Event):
   ev.preventDefault()
 
-  submitTasks <- {
-    "isAdd": True,
-    "form": stdlib.formValueFromEvent(ev)
-  }
+  submitTasks <- SubmittedTask(True, stdlib.formValueFromEvent(ev), None)
 
 def currentFilter(hash):
   if hash == "/active":
@@ -24,7 +25,7 @@ def currentFilter(hash):
 
 let filter = currentFilter(stdlib.location.hash)
 
-def updateTodos(allTodos, action):
+def updateTodos(allTodos, action: *SubmittedTask):
   if action.isAdd:
     allTodos.append(Todo(action.form.title, False, False))
   else:
@@ -55,16 +56,10 @@ def classForFilter(label):
 let completed = allTodos.filter(lambda todo -> todo.completed)
 
 def clearCompleted():
-  submitTasks <- {
-    "isAdd": False,
-    "todos": completed
-  }
+  submitTasks <- SubmittedTask(False, None, completed)
 
 def removeTodo(todo):
-  submitTasks <- {
-    "isAdd": False,
-    "todos": vistula.Seq.apply(todo)
-  }
+  submitTasks <- SubmittedTask(False, None, vistula.Seq.apply(todo))
 
 def editTodo(todo, formField):
   todo.editing <- True

@@ -29,7 +29,7 @@ function ArrayBuffer(elements) {
         return constantObservable.constantObservable(this.elements.length);
     });
 
-    this.filter = constantObservable.constantObservable(predicate => {
+    this.filter = predicate => {
         return zip.zipAndFlatten(this.elements.map(Dest => {
             return predicate(Dest).rxMap($result => {
                 if ($result) {
@@ -39,7 +39,7 @@ function ArrayBuffer(elements) {
                 }
             });
         })).rxMap(x => new ArrayBuffer(x));
-    });
+    };
 
     this.map = constantObservable.constantObservable(transformer => {
         const elements2 = this.elements.map(transformer);
