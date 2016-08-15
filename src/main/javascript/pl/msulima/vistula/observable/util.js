@@ -13,21 +13,34 @@ function delayedObservable(value, delay) {
     return observable;
 }
 
-function aggregate(Initial, Source, createSource) {
+function aggregate(Source, initial, createSource) {
     const $Obs = new ObservableImpl();
-    Initial.rxForEachOnce(initial => {
-        let $acc = initial;
-        $Obs.rxPush($acc);
+    let $acc = initial;
+    $Obs.rxPush($acc);
 
-        const $Following = Source.rxFlatMap(source => {
-            return createSource($acc, source);
-        });
-
-        $Following.rxForEach(following => {
-            $acc = following;
-            $Obs.rxPush(following);
-        });
+    const $Following = Source.rxFlatMap(source => {
+        return createSource($acc, source);
     });
+
+    $Following.rxForEach(following => {
+        $acc = following;
+        $Obs.rxPush(following);
+    });
+
+    return $Obs;
+}
+
+function withDefault(Source, initial) {
+    var unsubscribe;
+
+    const $Obs = new ObservableImpl(() => {
+        unsubscribe = Source.rxForEach(source => {
+            $Obs.rxPush(source);
+        });
+    }, () => {
+        unsubscribe();
+    });
+    $Obs.rxPush(initial);
 
     return $Obs;
 }
@@ -102,5 +115,6 @@ module.exports = {
     ifStatement: ifStatement,
     toObservable: toObservable,
     fromObservable: fromObservable,
+    withDefault: withDefault,
     wrap: wrap
 };

@@ -1,3 +1,4 @@
-const W = vistula.aggregate(X, Z, function (Y, Z) {
-    return vistula.constantObservable(Y + Z);
+const initial = 42;
+const W = vistula.aggregate(Source, initial, function (Acc, Source) {
+    return vistula.constantObservable(Acc + Source);
 });

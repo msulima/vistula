@@ -1,1 +1,6 @@
-let W = (X or Y + Z for Y in Z)
+const initial = 42
+let W = (initial or Acc + Source for Acc in Source)
+
+# (Source or initial) -> (lambda previous, source => previous + source)
+
+# vistula.withDefault(Source, 42)

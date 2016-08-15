@@ -4,11 +4,12 @@ const observableImpl = require("./observableImpl");
 const mapObservable = require("./mapObservable");
 const pointer = require("./pointer");
 
-const ObservableImpl = function (upstreamUnsubscribe) {
+const ObservableImpl = function (onSubscribe, onUnsubscribe) {
     this.hasValue = false;
     this.lastValue = null;
     this.observers = [];
-    this.upstreamUnsubscribe = upstreamUnsubscribe;
+    this.onSubscribe = onSubscribe;
+    this.onUnsubscribe = onUnsubscribe;
 };
 
 ObservableImpl.prototype.rxForEach = observableImpl.rxForEach;

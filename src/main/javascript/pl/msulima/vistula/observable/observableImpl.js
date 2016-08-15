@@ -1,6 +1,9 @@
 "use strict";
 
 function rxForEach(callback) {
+    if (this.onSubscribe) {
+        this.onSubscribe();
+    }
     this.observers.push(callback);
 
     if (this.hasValue) {
@@ -32,8 +35,8 @@ function rxLastValue() {
 }
 
 function unsubscribe(callback) {
-    if (this.upstreamUnsubscribe) {
-        this.upstreamUnsubscribe();
+    if (this.onUnsubscribe) {
+        this.onUnsubscribe();
     }
     this.observers = this.observers.filter(observer => {
         return observer != callback;

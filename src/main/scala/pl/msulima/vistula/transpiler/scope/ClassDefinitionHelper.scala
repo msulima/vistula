@@ -14,7 +14,7 @@ object ClassDefinitionHelper {
   val defaults: Map[ClassReference, ClassDefinition] = Map(
     ClassReference.Object -> ClassDefinition(Map()),
     Vistula -> ClassDefinition(Map(
-      obsDef("aggregate", obs, obs, const),
+      obsDef("aggregate", obs, const, const),
       obsDef("constantObservable", const),
       obsDef("ifChangedArrays", obs, const, const),
       obsDef("ifStatement", obs, obs, obs),

@@ -98,29 +98,6 @@ describe("Observable", function () {
         probe.expect([3]);
     });
 
-    it("aggregate", function () {
-        // given
-        const Initial = constantObservable.constantObservable(1);
-        const Source = new vistula.ObservableImpl();
-
-        const Obs = util.aggregate(Initial, Source, ($acc, $source) => {
-            //noinspection UnnecessaryLocalVariableJS
-            const Obs = constantObservable.constantObservable($acc);
-            const Source = constantObservable.constantObservable($source);
-            return zip.zip([Obs, Source]).rxMap((value) => {
-                return value[0] + value[1];
-            });
-        });
-        const probe = new Probe(Obs);
-
-        // when
-        Source.rxPush(10);
-        Source.rxPush(100);
-
-        // then
-        probe.expect([1, 11, 111]);
-    });
-
     it("flatMap then map", function () {
         // given
         const Source = new vistula.ObservableImpl();

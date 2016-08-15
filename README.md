@@ -1,7 +1,11 @@
-* #label
-* [class.editing]
-* (keyup.enter)
-* Modifications
-* Error handling
-* Classes
-* Observable keys?
+* Dict as class
+* Recursion
+* Generators
+* Subscribe to side-effects
+* Declare functions after usage
+* Functions overloading
+* Imports, packages
+* Pattern matching
+* Generics
+* Native stdlib
+* JS bindings

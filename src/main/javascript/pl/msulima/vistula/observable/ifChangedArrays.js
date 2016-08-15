@@ -15,6 +15,8 @@ function ifChangedArrays(Condition, FragmentsTrue, FragmentsFalse) {
 
 function distinctUntilChanged(Obs) {
     const proxy = new ObservableImpl(() => {
+        // FIXME what if unsubscribe, then subscribe?
+    }, () => {
         unsubscribe();
     });
     let hasValue = false;

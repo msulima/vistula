@@ -34,8 +34,8 @@ case object Generator {
       val innerBody = FunctionDef.anonymous(arguments, Seq(Tokenizer.applyStmt(body)))
 
       FunctionCall("vistula.aggregate", Seq(
-        Tokenizer.applyStmt(initial),
         Reference(source),
+        Tokenizer.applyStmt(initial),
         innerBody
       ))
   }

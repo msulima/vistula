@@ -11,7 +11,7 @@ function staticTransform(upstream, transform) {
     return new StaticObservable(upstream, null, transform);
 }
 
-const StaticObservable = function (upstream, value, transform, marker) {
+const StaticObservable = function (upstream, value, transform) {
     this.hasValue = true;
     this.lastValue = value;
     this.observers = [];
