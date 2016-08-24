@@ -5,12 +5,12 @@ var clock = timer.rxMap(function () {
     return new Date().getTime();
 });
 
-var cursorX = new vistula.ObservableImpl();
-var cursorY = new vistula.ObservableImpl();
+var cursorX = vistula.constantObservable(0);
+var cursorY = vistula.constantObservable(0);
 
 document.addEventListener("mousemove", function (event) {
-    cursorX.rxPush(event.screenX);
-    cursorY.rxPush(event.screenY);
+    cursorX.rxPush(event.clientX);
+    cursorY.rxPush(event.clientY);
 });
 
 var cursor = vistula.constantObservable({
