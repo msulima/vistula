@@ -20,7 +20,7 @@ object Expressions {
   }
 
   val NAME: P[Ast.identifier] = Lexical.identifier
-  val NUMBER: P[Ast.expr.Num] = P(Lexical.floatnumber | Lexical.longinteger | Lexical.integer | Lexical.imagnumber).map(Ast.expr.Num)
+  val NUMBER: P[Ast.expr.Num] = P(Lexical.floatnumber | Lexical.longinteger | Lexical.integer).map(Ast.expr.Num)
   val STRING: P[Ast.string] = Lexical.stringliteral
 
   val typedef: P[Seq[Ast.identifier]] = P(NAME.rep(min = 0, sep = "."))

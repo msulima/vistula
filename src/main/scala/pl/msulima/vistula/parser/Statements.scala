@@ -55,8 +55,8 @@ class Statements(indent: Int) {
 
   val simple_stmt: P[Seq[Ast.stmt]] = P(small_stmt.rep(1, sep = ";") ~ ";".?)
   val small_stmt: P[Ast.stmt] = P(
-    print_stmt | del_stmt | pass_stmt | flow_stmt |
-      import_stmt | global_stmt | exec_stmt | assert_stmt | expr_stmt
+    print_stmt | pass_stmt | flow_stmt |
+      import_stmt | assert_stmt | expr_stmt
   )
   val expr_stmt: P[Ast.stmt] = {
     val aug = P(testlist ~ augassign ~ (yield_expr | testlist.map(tuplize)))
@@ -91,7 +91,6 @@ class Statements(indent: Int) {
     val dest = P(">>" ~ test ~ ("," ~ test).rep ~ ",".?).map { case (dest, exprs) => Ast.stmt.Print(Some(dest), exprs, true) }
     P("print" ~~ " ".rep ~~ (noDest | dest))
   }
-  val del_stmt = P(kw("del") ~~ " ".rep ~~ exprlist).map(Ast.stmt.Delete)
   val pass_stmt = P(kw("pass")).map(_ => Ast.stmt.Pass)
   val flow_stmt: P[Ast.stmt] = P(break_stmt | continue_stmt | return_stmt | raise_stmt | yield_stmt)
   val break_stmt = P(kw("break")).map(_ => Ast.stmt.Break)
@@ -115,15 +114,9 @@ class Statements(indent: Int) {
   val import_as_names = P(import_as_name.rep(1, ",") ~ (",").?)
   val dotted_as_names = P(dotted_as_name.rep(1, ","))
   val dotted_name = P(NAME.rep(1, "."))
-  val global_stmt: P[Ast.stmt.Global] = P(kw("global") ~ NAME.rep(sep = ",")).map(Ast.stmt.Global)
-  val exec_stmt: P[Ast.stmt.Exec] = P(kw("exec") ~ expr ~ (kw("in") ~ test ~ ("," ~ test).?).?).map {
-    case (expr, None) => Ast.stmt.Exec(expr, None, None)
-    case (expr, Some((globals, None))) => Ast.stmt.Exec(expr, Some(globals), None)
-    case (expr, Some((globals, Some(locals)))) => Ast.stmt.Exec(expr, Some(globals), Some(locals))
-  }
   val assert_stmt: P[Ast.stmt.Assert] = P(kw("assert") ~ test ~ ("," ~ test).?).map(Ast.stmt.Assert.tupled)
 
-  val compound_stmt: P[Ast.stmt] = P(IfParser.if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | decorated)
+  val compound_stmt: P[Ast.stmt] = P(IfParser.if_stmt | while_stmt | for_stmt | try_stmt | decorated)
   val space_indents = P(spaces.repX ~~ " ".repX(indent))
   val while_stmt = P(kw("while") ~/ test ~ ":" ~~ suite ~~ (space_indents ~~ kw("else") ~/ ":" ~~ suite).?.map(_.toSeq.flatten)).map(Ast.stmt.While.tupled)
   val for_stmt: P[Ast.stmt.For] = P(kw("for") ~/ exprlist ~ kw("in") ~ testlist ~ ":" ~~ suite ~~ (space_indents ~ kw("else") ~/ ":" ~~ suite).?).map {
@@ -151,15 +144,6 @@ class Statements(indent: Int) {
         )
     }
   }
-  val with_stmt: P[Ast.stmt.With] = P(kw("with") ~/ with_item.rep(1, ",") ~ ":" ~~ suite).map {
-    case (items, body) =>
-      val (last_expr, last_vars) = items.last
-      val inner = Ast.stmt.With(last_expr, last_vars, body)
-      items.init.foldRight(inner) {
-        case ((expr, vars), body) => Ast.stmt.With(expr, vars, Seq(body))
-      }
-  }
-  val with_item: P[(Ast.expr, Option[Ast.expr])] = P(test ~ (kw("as") ~ expr).?)
   // NB compile.c makes sure that the default except clause is last
   val except_clause = P(space_indents ~ kw("except") ~/ (test ~ ((kw("as") | ",") ~ test).?).?)
 

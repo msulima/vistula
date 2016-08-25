@@ -36,8 +36,6 @@ object Ast {
 
     case class Return(value: Option[expr]) extends stmt
 
-    case class Delete(targets: Seq[expr]) extends stmt
-
     case class Assign(targets: Seq[expr], value: expr) extends stmt
 
     // Extension
@@ -57,8 +55,6 @@ object Ast {
 
     case class If(test: expr, body: Seq[stmt], orelse: Seq[stmt]) extends stmt
 
-    case class With(context_expr: expr, optional_vars: Option[expr], body: Seq[stmt]) extends stmt
-
     // 'type' is a bad name
     case class Raise(`type`: Option[expr], inst: Option[expr], tback: Option[expr]) extends stmt
 
@@ -71,13 +67,6 @@ object Ast {
     case class Import(names: Seq[alias]) extends stmt
 
     case class ImportFrom(module: Option[identifier], names: Seq[alias], level: Option[int]) extends stmt
-
-    // Doesn't capture requirement that locals must be
-    // defined if globals is
-    // still supports use as a function!
-    case class Exec(body: expr, globals: Option[expr], locals: Option[expr]) extends stmt
-
-    case class Global(names: Seq[identifier]) extends stmt
 
     case class Expr(value: expr) extends stmt
 
