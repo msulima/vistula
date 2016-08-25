@@ -1,5 +1,6 @@
 let A = 1
 
-def F():
+def F() {
   const A = 2
   A + 3
+}

@@ -41,7 +41,7 @@ object FunctionParser {
   private val parameters: P[Ast.arguments] = P("(" ~ varargslist ~ ")")
 
   val lambdef: P[Ast.expr.Lambda] = P(kw("lambda") ~ varargslist ~ "->" ~ test).map(Ast.expr.Lambda.tupled)
-  val funcdef: P[Seq[Ast.expr] => Ast.stmt.FunctionDef] = P(kw("def") ~/ NAME ~ parameters ~ ":" ~~ Statements.suite).map {
+  val funcdef: P[Seq[Ast.expr] => Ast.stmt.FunctionDef] = P(kw("def") ~/ NAME ~ parameters ~ Statements.curlyBracketsBlock).map {
     case (name, args, suite) => Ast.stmt.FunctionDef(name, args, suite, _)
   }
 }

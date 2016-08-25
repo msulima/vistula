@@ -9,8 +9,9 @@ class RpnSpec extends Specification {
 
     val program =
       """class M:
-        |  def __init__(x: vistula.lang.Object, y: *vistula.lang.Object):
+        |  def __init__(x: vistula.lang.Object, y: *vistula.lang.Object) {
         |    pass
+        |  }
         |
         |const a = M(1, 2)
         |a.x + 1

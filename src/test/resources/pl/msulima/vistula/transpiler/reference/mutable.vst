@@ -6,6 +6,7 @@ let Z = f(A + 2, b)
 const W = *(F(A, b))
 const e = 2 + 2
 
-def F(A, B):
+def F(A, B) {
   const a = A
   a.x() + e
+}

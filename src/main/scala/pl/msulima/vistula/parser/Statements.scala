@@ -161,4 +161,6 @@ class Statements(indent: Int) {
     })
     P(indented | " ".rep ~ simple_stmt)
   }
+
+  val curlyBracketsBlock = P("{" ~~ suite ~ "}")
 }

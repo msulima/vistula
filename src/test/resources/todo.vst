@@ -3,33 +3,38 @@ const submitTasks = new vistula.ObservableImpl();
 '''
 
 class Todo:
-  def __init__(title: *vistula.lang.String, completed: *vistula.lang.Boolean, editing: *vistula.lang.Boolean):
+  def __init__(title: *vistula.lang.String, completed: *vistula.lang.Boolean, editing: *vistula.lang.Boolean) {
     pass
+  }
 
 class SubmittedTask:
-  def __init__(isAdd: vistula.lang.Boolean, form: *vistula.lang.Object, todos: *vistula.lang.Seq):
+  def __init__(isAdd: vistula.lang.Boolean, form: *vistula.lang.Object, todos: *vistula.lang.Seq) {
     pass
+  }
 
-def addTask(ev: vistula.dom.Event):
+def addTask(ev: vistula.dom.Event) {
   ev.preventDefault()
 
   submitTasks <- SubmittedTask(True, stdlib.formValueFromEvent(ev), None)
+}
 
-def currentFilter(hash):
+def currentFilter(hash) {
   if hash == "/active":
     "active"
   elif hash == "/completed":
     "completed"
   else:
     "all"
+}
 
 let filter = currentFilter(stdlib.location.hash)
 
-def updateTodos(allTodos, action: *SubmittedTask):
+def updateTodos(allTodos, action: *SubmittedTask) {
   if action.isAdd:
     allTodos.append(Todo(action.form.title, False, False))
   else:
     allTodos.diff(action.todos)
+}
 
 let storageName = "todos-vistula"
 
@@ -37,37 +42,43 @@ let allTodos: vistula.collection.Seq = (stdlib.storage.getOrDefault(storageName,
 
 let bar = stdlib.storage.set(storageName, allTodos)
 
-def isVisible(todo):
+def isVisible(todo) {
   if filter == "all":
     True
   elif filter == "completed":
     todo.completed
   else:
     not todo.completed
+}
 
 let todos = allTodos.filter(isVisible)
 
-def classForFilter(label):
+def classForFilter(label) {
   if filter == label:
     "selected"
   else:
     ""
+}
 
 let completed = allTodos.filter(lambda todo -> todo.completed)
 
-def clearCompleted():
+def clearCompleted() {
   submitTasks <- SubmittedTask(False, None, completed)
+}
 
-def removeTodo(todo):
+def removeTodo(todo) {
   submitTasks <- SubmittedTask(False, None, vistula.Seq.apply(todo))
+}
 
-def editTodo(todo, formField):
+def editTodo(todo, formField) {
   todo.editing <- True
   pass
   (*formField).focus()
+}
 
-def finishEditingTodo(todo):
+def finishEditingTodo(todo) {
   todo.editing <- False
+}
 
 let leftTodosCount = allTodos.size() - completed.size()
 
@@ -75,7 +86,7 @@ let app = '''# html:/todo.vst.html'''
 
 let foo = stdlib.dom.appendChild("todoapp", app)
 
-def toggleAll():
+def toggleAll() {
   const x = leftTodosCount
 
   let y = for todo in todos:
@@ -83,6 +94,7 @@ def toggleAll():
 
   pass
   *y
+}
 
 '''# javascript
 

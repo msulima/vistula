@@ -4,14 +4,16 @@ let start = vistula.constantObservable(new Date().getTime());
 
 let ticks = (0 or ticks + 1 for ticks in clock)
 
-def oddTime(clock):
+def oddTime(clock) {
   if clock % 2 == 0:
     clock
   else:
     "no"
+}
 
-def realTimeElapsed(elapsed):
+def realTimeElapsed(elapsed) {
   clock - elapsed
+}
 
 let timeElapsed = clock - start
 

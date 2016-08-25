@@ -1,14 +1,18 @@
-def a(X: vistula.Predef):
+def a(X: vistula.Predef) {
   X.wrap(1)
+}
 
-def b(X: *vistula.Predef):
+def b(X: *vistula.Predef) {
   X.wrap(1)
+}
 
-def c(X: vistula.lang.Object):
+def c(X: vistula.lang.Object) {
   2
+}
 
-def d(X: *vistula.lang.Object):
+def d(X: *vistula.lang.Object) {
   2
+}
 
 c(1);
 d(1);
