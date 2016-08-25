@@ -49,7 +49,7 @@ object Ast {
     case class Print(dest: Option[expr], values: Seq[expr], nl: bool) extends stmt
 
     // use 'orelse' because else is a keyword in target languages
-    case class For(target: expr, iter: expr, body: Seq[stmt], orelse: Seq[stmt]) extends stmt
+    case class For(target: expr, iter: expr, body: Seq[stmt]) extends stmt
 
     case class While(test: expr, body: Seq[stmt], orelse: Seq[stmt]) extends stmt
 

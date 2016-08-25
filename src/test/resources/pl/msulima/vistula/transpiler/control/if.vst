@@ -1,12 +1,14 @@
-if X < 3:
+if (X < 3) {
   let Y = X + 3
   Y
-elif not X < 0:
+} elif (not X < 0) {
   X
-else:
+} else {
   3
+}
 
-if True:
+if (True) {
   X
-else:
+} else {
   1
+}

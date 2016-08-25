@@ -1,7 +1,9 @@
-let A = for X in XS:
+let A = for (X in XS) {
     X + 2
+}
 
-let B = for X in vistula.Seq.apply(1, 2):
+let B = for (X in vistula.Seq.apply(1, 2)) {
     let Y = X + 2
     pass
     Y
+}

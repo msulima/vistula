@@ -5,10 +5,11 @@ let start = vistula.constantObservable(new Date().getTime());
 let ticks = (0 or ticks + 1 for ticks in clock)
 
 def oddTime(clock) {
-  if clock % 2 == 0:
+  if (clock % 2 == 0) {
     clock
-  else:
+  } else {
     "no"
+  }
 }
 
 def realTimeElapsed(elapsed) {

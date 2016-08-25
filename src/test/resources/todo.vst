@@ -2,15 +2,17 @@
 const submitTasks = new vistula.ObservableImpl();
 '''
 
-class Todo:
+class Todo {
   def __init__(title: *vistula.lang.String, completed: *vistula.lang.Boolean, editing: *vistula.lang.Boolean) {
     pass
   }
+}
 
-class SubmittedTask:
+class SubmittedTask {
   def __init__(isAdd: vistula.lang.Boolean, form: *vistula.lang.Object, todos: *vistula.lang.Seq) {
     pass
   }
+}
 
 def addTask(ev: vistula.dom.Event) {
   ev.preventDefault()
@@ -19,21 +21,23 @@ def addTask(ev: vistula.dom.Event) {
 }
 
 def currentFilter(hash) {
-  if hash == "/active":
+  if (hash == "/active") {
     "active"
-  elif hash == "/completed":
+  } elif (hash == "/completed") {
     "completed"
-  else:
+  } else {
     "all"
+  }
 }
 
 let filter = currentFilter(stdlib.location.hash)
 
 def updateTodos(allTodos, action: *SubmittedTask) {
-  if action.isAdd:
+  if (action.isAdd) {
     allTodos.append(Todo(action.form.title, False, False))
-  else:
+  } else {
     allTodos.diff(action.todos)
+  }
 }
 
 let storageName = "todos-vistula"
@@ -43,21 +47,23 @@ let allTodos: vistula.collection.Seq = (stdlib.storage.getOrDefault(storageName,
 let bar = stdlib.storage.set(storageName, allTodos)
 
 def isVisible(todo) {
-  if filter == "all":
+  if (filter == "all") {
     True
-  elif filter == "completed":
+  } elif (filter == "completed") {
     todo.completed
-  else:
+  } else {
     not todo.completed
+  }
 }
 
 let todos = allTodos.filter(isVisible)
 
 def classForFilter(label) {
-  if filter == label:
+  if (filter == label) {
     "selected"
-  else:
+  } else {
     ""
+  }
 }
 
 let completed = allTodos.filter(lambda todo -> todo.completed)
@@ -89,8 +95,9 @@ let foo = stdlib.dom.appendChild("todoapp", app)
 def toggleAll() {
   const x = leftTodosCount
 
-  let y = for todo in todos:
-      todo.completed <- x != 0
+  let y = for (todo in todos) {
+    todo.completed <- x != 0
+  }
 
   pass
   *y

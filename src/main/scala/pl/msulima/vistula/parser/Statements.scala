@@ -47,7 +47,7 @@ class Statements(indent: Int) {
   val decorators = P(decorator.rep)
   val decorated: P[Ast.stmt] = P(decorators ~ (classdef | FunctionParser.funcdef)).map { case (a, b) => b(a) }
   val classdef: P[Seq[Ast.expr] => Ast.stmt.ClassDef] =
-    P(kw("class") ~/ NAME ~ ("(" ~ testlist.? ~ ")").?.map(_.toSeq.flatten.flatten) ~ ":" ~~ suite).map {
+    P(kw("class") ~/ NAME ~ ("(" ~ testlist.? ~ ")").?.map(_.toSeq.flatten.flatten) ~ suite).map {
       case (a, b, c) => Ast.stmt.ClassDef(a, b, c, _)
     }
 
@@ -116,13 +116,9 @@ class Statements(indent: Int) {
   val dotted_name = P(NAME.rep(1, "."))
   val assert_stmt: P[Ast.stmt.Assert] = P(kw("assert") ~ test ~ ("," ~ test).?).map(Ast.stmt.Assert.tupled)
 
-  val compound_stmt: P[Ast.stmt] = P(IfParser.if_stmt | while_stmt | for_stmt | try_stmt | decorated)
+  val compound_stmt: P[Ast.stmt] = P(IfParser.if_stmt | while_stmt | LoopParser.for_stmt | try_stmt | decorated)
   val space_indents = P(spaces.repX ~~ " ".repX(indent))
   val while_stmt = P(kw("while") ~/ test ~ ":" ~~ suite ~~ (space_indents ~~ kw("else") ~/ ":" ~~ suite).?.map(_.toSeq.flatten)).map(Ast.stmt.While.tupled)
-  val for_stmt: P[Ast.stmt.For] = P(kw("for") ~/ exprlist ~ kw("in") ~ testlist ~ ":" ~~ suite ~~ (space_indents ~ kw("else") ~/ ":" ~~ suite).?).map {
-    case (itervars, generator, body, orelse) =>
-      Ast.stmt.For(tuplize(itervars), tuplize(generator), body, orelse.toSeq.flatten)
-  }
   val try_stmt: P[Ast.stmt] = {
     val `try` = P(kw("try") ~/ ":" ~~ suite)
     val excepts: P[Seq[Ast.excepthandler]] = P((except_clause ~ ":" ~~ suite).map {
@@ -159,8 +155,6 @@ class Statements(indent: Int) {
     val indented = P(deeper.flatMap { nextIndent =>
       new Statements(nextIndent).stmt.repX(1, spaces.repX(1) ~~ (" " * nextIndent | "\t" * nextIndent)).map(_.flatten)
     })
-    P(indented | " ".rep ~ simple_stmt)
+    P("{" ~~ (indented | " ".rep ~ simple_stmt) ~ "}")
   }
-
-  val curlyBracketsBlock = P("{" ~~ suite ~ "}")
 }
