@@ -2,6 +2,7 @@ package pl.msulima.vistula.transpiler.scope
 
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
+import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 
 import scala.annotation.tailrec
 
@@ -20,6 +21,10 @@ case object ScopeRunner {
       case IntroduceClass(id, definition, constructor) =>
         val ns = scope.addToScope(id, definition)
         run(ns)(constructor)
+      case op@Operation(func@FunctionDef(id, _, _), _) =>
+        val body = DereferencerImpl(scope, op)
+        val ns = scope.addToScope(Variable(id, body.`type`))
+        ScopedResult(ns, Seq(body))
       case _ =>
         ScopedResult(scope, Seq(DereferencerImpl(scope, token)))
     }

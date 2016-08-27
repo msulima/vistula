@@ -7,5 +7,5 @@ const W = F(A, vistula.constantObservable(b)).rxLastValue();
 const e = 2 + 2;
 function F(A, B) {
     const a = A.rxLastValue();
-    return vistula.constantObservable(a.x() + e);
+    return a.x() + e;
 };

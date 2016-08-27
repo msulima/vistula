@@ -1,3 +1,7 @@
 const X: vistula.dom.Dom = 42
-
 X.textObservable("a")
+
+let a = vistula.Seq.apply(1)
+let b: vistula.collection.Seq = vistula.Seq.apply(1)
+a.filter(Y)
+b.filter(Y)

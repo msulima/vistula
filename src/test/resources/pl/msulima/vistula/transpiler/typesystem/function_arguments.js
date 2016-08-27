@@ -5,10 +5,10 @@ function b(X) {
     return X.rxFlatMap($arg => ($arg.wrap(1)));
 };
 function c(X) {
-    return vistula.constantObservable(2);
+    return 2;
 };
 function d(X) {
-    return vistula.constantObservable(2);
+    return 2;
 };
 c(1);
 d(vistula.constantObservable(1));

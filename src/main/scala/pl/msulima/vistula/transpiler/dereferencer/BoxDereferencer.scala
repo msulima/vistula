@@ -20,7 +20,7 @@ trait BoxDereferencer {
       dereference(token) match {
         case c@ExpressionOperation(_, _, id) if id.observable =>
           c.copy(`type` = c.`type`.copy(observable = false))
-        case c@ExpressionOperation(FunctionDef, _, ScopeElement(false, _: FunctionDefinition)) =>
+        case c@ExpressionOperation(_: FunctionDef, _, ScopeElement(false, _: FunctionDefinition)) =>
           c
         case c =>
           toObservable(c)

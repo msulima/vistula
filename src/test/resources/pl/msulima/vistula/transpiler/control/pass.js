@@ -1,3 +1,3 @@
 function F(X) {
-    return vistula.constantObservable(2);
+    return 2;
 };

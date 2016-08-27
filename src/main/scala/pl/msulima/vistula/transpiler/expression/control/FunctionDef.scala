@@ -5,17 +5,13 @@ import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.scope._
 import pl.msulima.vistula.util.Indent
 
-case object FunctionDef extends Operator {
+object FunctionDef {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.FunctionDef(name, args, body, _) =>
       val arguments = mapArguments(args)
-      val definition = FunctionDefinition(arguments.map(_.`type`), resultType = ScopeElement.Default)
 
-      Introduce(
-        Variable(name, ScopeElement(observable = false, definition)),
-        FunctionDef(name, arguments, body.map(Tokenizer.applyStmt))
-      )
+      FunctionDef(name, arguments, body.map(Tokenizer.applyStmt))
   }
 
   def mapArguments(arguments: Ast.arguments) = {
@@ -42,18 +38,16 @@ case object FunctionDef extends Operator {
       Import(arg)
     })
 
-    Operation(
-      FunctionDef,
-      Constant(name.name) +: Operation(FunctionScope, declarations ++ body) +: arguments.map(arg => Constant(arg.id.name))
-    )
+    Operation(FunctionDef(name, declarations ++ body, arguments), Seq())
   }
+}
+
+case class FunctionDef(name: Ast.identifier, program: Seq[Token], arguments: Seq[Variable]) extends Operator {
 
   override def apply(operands: List[Constant]): String = {
-    val name = operands(0)
-    val body = operands(1)
-    val arguments = operands.drop(2)
+    val body = operands.head
 
-    s"""function ${name.value}(${arguments.map(_.value).mkString(", ")}) {
+    s"""function ${name.name}(${arguments.map(_.id.name).mkString(", ")}) {
         |${Indent.leftPad(body.value)}
         |}""".stripMargin
   }

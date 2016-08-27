@@ -1,3 +1,8 @@
+## M1
+
+* Classes
+* Functions return declarations
+
 * Dict as class
 * Recursion
 * Generators

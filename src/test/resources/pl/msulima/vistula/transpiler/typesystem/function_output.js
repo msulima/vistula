@@ -1,10 +1,8 @@
-const a = vistula.Seq.apply(vistula.constantObservable(1));
-const b = vistula.Seq.apply(vistula.constantObservable(1));
-vistula.zip([
-    a,
-    X
-]).rxFlatMap($args => ($args[0].filter($args[1])));
-vistula.zip([
-    b,
-    X
-]).rxFlatMap($args => ($args[0].filter($args[1])));
+function c(X) {
+    return X;
+};
+function d(X) {
+    return X;
+};
+const a = vistula.constantObservable(c(1) + 2);
+const b = d(vistula.constantObservable(1)).rxMap($arg => ($arg + 2));

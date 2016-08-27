@@ -1,4 +1,10 @@
-let a = vistula.Seq.apply(1)
-let b: vistula.collection.Seq = vistula.Seq.apply(1)
-a.filter(X)
-b.filter(X)
+def c(X: vistula.lang.Object) {
+  X
+}
+
+def d(X: *vistula.lang.Object) {
+  X
+}
+
+let a = c(1) + 2
+let b = d(1) + 2

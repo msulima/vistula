@@ -8,7 +8,7 @@ import pl.msulima.vistula.transpiler.scope.{ScopeElement, Variable}
 object Loop {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
-    case Ast.stmt.For(Ast.expr.Name(name, Ast.expr_context.Load), iterExpr, body, _) =>
+    case Ast.stmt.For(Ast.expr.Name(name, Ast.expr_context.Load), iterExpr, body) =>
       Loop(iterExpr, name, body.map(Tokenizer.applyStmt))
   }
 

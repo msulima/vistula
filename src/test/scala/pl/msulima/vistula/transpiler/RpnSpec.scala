@@ -8,33 +8,27 @@ class RpnSpec extends Specification {
   "test" in {
 
     val program =
-      """class M {
-        |  def __init__(x: vistula.lang.Object, y: *vistula.lang.Object) {
-        |    pass
-        |  }
+      """def c(X: vistula.lang.Number) {
+        |  X
         |}
         |
-        |const a = M(1, 2)
-        |a.x + 1
-        |a.y + 2
+        |def d(X: *vistula.lang.Object) {
+        |  X
+        |}
         |
-        |let b = M(1, 2)
-        |b.x + 1
-        |b.y + 2
-        |
-      """.stripMargin
+        |let a = c(1) + 2
+        |let b = d(1) + 2
+        | """.stripMargin
 
     Vistula.toJavaScript(program) must_==
-      """function M(x, y) {
-        |    this.x = x;
-        |    this.y = y;
+      """function c(X) {
+        |    return X;
         |};
-        |const a = new M(1, vistula.constantObservable(2));
-        |a.x + 1;
-        |a.y.rxMap($arg => ($arg + 2));
-        |const b = vistula.constantObservable(new M(1, vistula.constantObservable(2)));
-        |b.rxMap($arg => ($arg.x + 1));
-        |b.rxFlatMap($arg => ($arg.y)).rxMap($arg => ($arg + 2));""".stripMargin
+        |function d(X) {
+        |    return X;
+        |};
+        |const a = vistula.constantObservable(c(1) + 2);
+        |const b = d(vistula.constantObservable(1)).rxMap($arg => ($arg + 2));""".stripMargin
   }
 
   "transpiles generator" in {
