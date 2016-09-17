@@ -36,7 +36,8 @@ object Scope {
   val Empty = {
     Scope(
       variables = Map(
-        Ast.identifier("vistula") -> ScopeElement(observable = false, `type` = ClassDefinitionHelper.Vistula)
+        Ast.identifier("vistula") -> ScopeElement(observable = false, `type` = ClassDefinitionHelper.Vistula),
+        Ast.identifier("stdlib") -> ScopeElement(observable = true, `type` = ClassDefinitionHelper.Stdlib)
       ),
       functions = Map(),
       classes = ClassDefinitionHelper.defaults

@@ -31,7 +31,7 @@ case object Generator {
         Variable(acc, ScopeElement.DefaultConst),
         Variable(source, ScopeElement.DefaultConst)
       )
-      val innerBody = FunctionDef.anonymous(arguments, Seq(Tokenizer.applyStmt(body)))
+      val innerBody = FunctionDef.anonymous(arguments, Seq(Box(Tokenizer.applyStmt(body))))
 
       FunctionCall("vistula.aggregate", Seq(
         Reference(source),
