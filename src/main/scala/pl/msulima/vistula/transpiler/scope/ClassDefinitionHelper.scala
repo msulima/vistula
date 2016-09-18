@@ -23,7 +23,10 @@ object ClassDefinitionHelper {
       Ast.identifier("clock") -> ScopeElement(observable = true, `type` = Date)
     )),
     Date -> ClassDefinition(Map(
-      constDef("getMinutes"), constDef("getHours")
+      constDef("getTime"),
+      constDef("getSeconds"),
+      constDef("getMinutes"),
+      constDef("getHours")
     ))
   )
 

@@ -11,12 +11,25 @@ It aims at making web applications easier to write and more error-prone. It does
 ```
 let clock = stdlib.time.clock
 let secondsThisHour = clock.getMinutes() * 60 + clock.getSeconds()
-let quarterPassed = secondsThisHour >= 900
 ```
 
 `secondsThisHour`, is and **any variables that depend on it** will be automatically updated on every clock tick.
 
 # Built-in template language
+
+```html
+<div>
+  It's {{ (12 if (clock.getHours() % 12 == 0) else clock.getHours() % 12) }}:{{ clock.getMinutes() }}
+  {% if clock.getHours() < 12 %}
+    a.m.
+  {% else %}
+    p.m.
+  {% endif %}
+  <span>{{ secondsThisHour }} seconds passed this hour.</span>
+</div>
+```
+
+Yes, it even supports if-else!
 
 ## State of development
 

@@ -6,8 +6,8 @@ let clock = stdlib.time.clock
 
 let ticks = (0 or ticks + 1 for ticks in clock)
 
-def oddTime(clock) {
-  if (clock % 2 == 0) {
+def oddTime(clock: *js.Date) {
+  if (clock.getTime() % 2 == 0) {
     clock
   } else {
     "no"
@@ -15,16 +15,27 @@ def oddTime(clock) {
 }
 
 def realTimeElapsed(elapsed) {
-  clock - elapsed
+  clock.getTime() - elapsed
 }
 
-let timeElapsed = clock - start
+let timeElapsed = clock.getTime() - start
 
 let labelText = "It is: " + clock + ", elapsed from entering page: " + timeElapsed + " in " + ticks + " real: " + realTimeElapsed(start) + " is odd: " + oddTime(clock)
 
 let areaField = cursor.x * cursor.y
 
+let secondsThisHour = clock.getMinutes() * 60 + clock.getSeconds()
+
 let main = '''# html
+<div>
+  It's {{ (12 if (clock.getHours() % 12 == 0) else clock.getHours() % 12) }}:{{ clock.getMinutes() }}
+  {% if clock.getHours() < 12 %}
+    a.m.
+  {% else %}
+    p.m.
+  {% endif %}
+  <span>{{ secondsThisHour }} seconds passed this hour.</span>
+</div>
 <div>
   <p>{{ labelText }}</p>
   <p>
