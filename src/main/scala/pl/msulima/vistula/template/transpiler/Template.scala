@@ -14,7 +14,7 @@ case class Scoped(variables: Seq[Ast.identifier], body: Token)
 object Template {
 
   def apply(program: String): Token = {
-    val nodes = apply((parser.Statements.document ~ End).parse(program).get.value)
+    val nodes = apply((parser.Parser.document ~ End).parse(program).get.value)
     if (nodes.size == 1) {
       nodes.head
     } else {

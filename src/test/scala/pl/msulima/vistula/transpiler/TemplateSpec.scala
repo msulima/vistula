@@ -8,10 +8,11 @@ class TemplateSpec extends Specification with TranspilerSpecification {
 
   def test = transpileAndCompareHtml("template") _
 
-  test("sample")
+  test("event")
+  test("form")
   test("if")
   test("loop")
-  test("form")
-  test("event")
+  test("sample")
+  test("spaces")
   test("variable")
 }

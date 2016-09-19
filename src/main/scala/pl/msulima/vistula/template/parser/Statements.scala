@@ -15,9 +15,9 @@ object Statements {
 
     val endIf = Expressions.block(Lexical.kw("endif"))
 
-    val elseStatement = (elseBlock ~ document).?.map(_.getOrElse(Seq.empty))
+    val elseStatement = (elseBlock ~ Parser.document).?.map(_.getOrElse(Seq.empty))
 
-    P(ifStart ~ document ~ elseStatement ~ endIf).map(IfNode.tupled)
+    P(ifStart ~ Parser.document ~ elseStatement ~ endIf).map(IfNode.tupled)
   }
 
   val forStatement: Parser[LoopNode] = {
@@ -28,7 +28,7 @@ object Statements {
 
     val endFor = Expressions.block(Lexical.kw("endfor"))
 
-    P(startFor ~ document ~ endFor).map(LoopNode.tupled)
+    P(startFor ~ Parser.document ~ endFor).map(LoopNode.tupled)
   }
 
   val variable =
@@ -39,13 +39,4 @@ object Statements {
 
   val selfClosingElement: P[Element] =
     P(TagParser.selfClosingTag).map(x => Element(x, Seq()))
-
-  val element: P[Element] =
-    P(TagParser.openTag ~ node.rep(min = 0) ~ TagParser.closeTag).map(Element.tupled)
-
-  val node: P[Node] =
-    P(element | selfClosingElement | forStatement | ifStatement | variable | textNode)
-
-  lazy val document: P[Seq[Node]] =
-    P(multilineSpace ~ node.rep ~ multilineSpace)
 }

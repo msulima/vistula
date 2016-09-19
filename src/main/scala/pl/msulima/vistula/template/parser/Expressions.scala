@@ -12,5 +12,4 @@ object Expressions {
   def block[T](p: => Parser[T]): Parser[T] = {
     P("{%" ~ p ~ "%}")
   }
-
 }

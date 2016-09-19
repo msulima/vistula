@@ -1,9 +1,9 @@
 "use strict";
 
-const timer = new vistula.ObservableImpl();
+const timer = vistula.constantObservable(0);
 setInterval(timer.rxPush.bind(timer), 1000);
 
-const clock = timer.rxMap(function () {
+const clock = timer.rxMap(function (ignored) {
     return new Date();
 });
 
