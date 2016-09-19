@@ -6,7 +6,7 @@
 </header>
 {% if todos.size() > 0 %}
 <section class="main">
-    <input class="toggle-all" type="checkbox" (click)="{{ toggleAll() }} "/>
+    <input class="toggle-all" type="checkbox" (click)="{{ toggleAll() }}"/>
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">
         {% for todo in todos %}

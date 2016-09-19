@@ -1,4 +1,5 @@
 vistula.zipAndFlatten([
+    vistula.dom.textNode("\n"),
     vistula.dom.createElement("span", [], [
         vistula.dom.textNode("a  "),
         vistula.dom.textObservable(b),
@@ -18,5 +19,7 @@ vistula.zipAndFlatten([
         ]
     ], [
         vistula.dom.textNode("\n    h\n    i\n")
-    ])
+    ]),
+    vistula.dom.textNode("\n"),
+    vistula.dom.createElement("input", [], [])
 ])
