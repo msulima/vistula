@@ -7,3 +7,13 @@ It's {{ Y }}
 {% if X < 0 %}
 Negative
 {% endif %}
+
+{% if X > 100 %}
+A
+{% elif X > 10 %}
+B
+{% elif X > 0 %}
+C
+{% else %}
+D
+{% endif %}

@@ -9,16 +9,18 @@ import pl.msulima.vistula.template.parser.WsApi._
 object Statements {
 
   val ifStatement: Parser[IfNode] = {
-    val ifStart = Expressions.block(Lexical.kw("if") ~/ VistulaExpressions.comparison)
-
     val elseBlock = Expressions.block(Lexical.kw("else"))
 
     val endIf = Expressions.block(Lexical.kw("endif"))
 
-    val elseStatement = (elseBlock ~ Parser.document).?.map(_.getOrElse(Seq.empty))
+    val elseStatement: P[Seq[Node]] = (elseBlock ~ Parser.document).?.map(_.getOrElse(Seq.empty))
 
-    P(ifStart ~ Parser.document ~ elseStatement ~ endIf).map(IfNode.tupled)
+    lazy val elif: P[Seq[Node]] = P(condStart("elif") ~ Parser.document ~ (elif | elseStatement)).map(node => Seq(IfNode.tupled(node)))
+
+    P(condStart("if") ~ Parser.document ~/ (elif | elseStatement) ~ endIf).map(IfNode.tupled)
   }
+
+  private def condStart(kw: String) = Expressions.block(Lexical.kw(kw) ~/ VistulaExpressions.comparison)
 
   val forStatement: Parser[LoopNode] = {
     val identifier = P(Lexical.kw("for") ~/ Lexical.identifier)
