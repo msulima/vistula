@@ -16,7 +16,11 @@ object Declare {
   def apply(identifier: Ast.identifier, mutable: Boolean, body: Token, typedef: ClassReference): Token = {
     val variable = Variable(identifier, ScopeElement(mutable, typedef))
 
-    Introduce(variable, Operation(Declare(declare = true, mutable = mutable), Seq(Constant(identifier.name), body)))
+    Introduce(variable, apply(identifier, body, mutable, declare = true))
+  }
+
+  def apply(identifier: Ast.identifier, body: Token, mutable: Boolean, declare: Boolean): Operation = {
+    Operation(Declare(declare = declare, mutable = mutable), Seq(Constant(identifier.name), body))
   }
 }
 

@@ -4,11 +4,8 @@ import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
 import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 
-import scala.annotation.tailrec
-
 case object ScopeRunner {
 
-  @tailrec
   def run(scope: Scope)(token: Token): ScopedResult = {
     token match {
       case Introduce(variable, body) =>
@@ -18,10 +15,13 @@ case object ScopeRunner {
       case Import(variable) =>
         val ns = scope.addToScope(variable)
         ScopedResult(ns, Seq())
-      case introduce@IntroduceClass(id, fields, methods, constructor) =>
-        val ns = scope.addToScope(id, new DereferencerImpl(scope).classDereferencer(introduce))
+      case introduce@IntroduceClass(id, _, _, constructor) =>
+        val dereferencer = new DereferencerImpl(scope)
+        val (classDefinition, methods) = dereferencer.classDereferencer(introduce)
+        val ns = scope.addToScope(id, classDefinition)
 
-        run(ns)(constructor)
+        val scopedResult = run(ns)(constructor)
+        scopedResult.copy(program = scopedResult.program ++ methods)
       case op@Operation(func@FunctionDef(id, _, _), _) =>
         val body = DereferencerImpl(scope, op)
         val ns = scope.addToScope(Variable(id, body.`type`))

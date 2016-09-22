@@ -3,10 +3,10 @@ class M {
     pass
   }
 
-  def bar() {
+  def bar(y: vistula.lang.Object, z: *vistula.lang.Object) {
     1
   }
 }
 
-const a = M(1)
-a.bar() + 2
+let a = M(1)
+a.bar(2, 3) + 4

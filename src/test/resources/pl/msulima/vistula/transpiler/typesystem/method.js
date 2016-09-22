@@ -1,10 +1,8 @@
-function M(x, y) {
+function M(x) {
     this.x = x;
-    this.y = y;
 };
-const a = new M(1, vistula.constantObservable(2));
-a.x + 1;
-a.y.rxMap($arg => ($arg + 2));
-const b = vistula.constantObservable(new M(1, vistula.constantObservable(2)));
-b.rxMap($arg => ($arg.x + 1));
-b.rxFlatMap($arg => ($arg.y)).rxMap($arg => ($arg + 2));
+M.prototype.bar = function (y, z) {
+    return 1;
+};
+const a = vistula.constantObservable(new M(1));
+a.rxMap($arg => ($arg.bar(2, vistula.constantObservable(3)) + 4));

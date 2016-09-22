@@ -26,6 +26,9 @@ class RpnSpec extends Specification {
       """function M(x) {
         |    this.x = x;
         |};
+        |M.prototype.bar = function () {
+        |    return 1;
+        |};
         |const a = vistula.constantObservable(new M(1));
         |a.rxMap($arg => ($arg.bar() + 2));""".stripMargin
   }
