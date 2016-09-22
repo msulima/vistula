@@ -25,8 +25,11 @@ let labelText = "It is: " + clock + ", elapsed from entering page: " + timeElaps
 let areaField = cursor.x * cursor.y
 
 let secondsThisHour = clock.getMinutes() * 60 + clock.getSeconds()
+let name = "You"
 
 let main = '''# html
+<input type="text" value="{{ name }}"/>
+Hello {{ name }}!
 <div>
   It's {{ (12 if (clock.getHours() % 12 == 0) else clock.getHours() % 12) }}:{{ clock.getMinutes() }}
   {% if clock.getHours() < 12 %}

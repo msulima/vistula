@@ -29,7 +29,36 @@ let secondsThisHour = clock.getMinutes() * 60 + clock.getSeconds()
 </div>
 ```
 
-Yes, it even supports if-else!
+*Yes, it even supports if-else!*
+
+Templates are precompiled, which means they're type-safe and can be treated as regular objects.
+They can access all variables/functions from scope in which they're defined.
+
+```
+def getHours() {
+  if (clock.getHours() % 12 == 0) {
+    12
+  } else {
+    clock.getHours() % 12
+  }
+}
+
+let template = '''# html
+<span>It's {{ getHours() }}:{{ clock.getMinutes() }}</span>
+'''
+```
+
+# Automatic form bindings
+
+```
+let name = "You"
+
+let template = '''# html
+<input type="text" value="{{ name }}"/>
+Hello {{ name }}
+'''
+```
+
 
 ## State of development
 
@@ -40,6 +69,7 @@ there's a lot of bugs, performance issues etc.
 
 * (Elm)[http://elm-lang.org/], but treating observables as first-class citizens
 came before (signals)[http://elm-lang.org/blog/farewell-to-frp].
+* (Smarty)[http://www.smarty.net/] and (Twirl)[https://www.playframework.com/documentation/2.4.x/ScalaTemplates] template engines.
 
 ## M1
 
