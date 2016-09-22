@@ -14,7 +14,7 @@ class SubmittedTask {
   }
 }
 
-def addTask(ev: vistula.dom.Event) {
+def addTask(ev: js.Event) {
   ev.preventDefault()
 
   submitTasks <- SubmittedTask(True, stdlib.formValueFromEvent(ev), None)

@@ -8,13 +8,17 @@ trait FunctionDereferencer {
   this: Dereferencer with BoxDereferencer =>
 
   def functionDereferencer: PartialFunction[Token, Expression] = {
-    case operation@Operation(func@FunctionDef(name, program, arguments), Nil) =>
-      val body = dereferenceScope(program, box = false)
-      val funcDefinition = FunctionDefinition(arguments.map(_.`type`), body.`type`)
-
-      ExpressionOperation(func, Seq(body), ScopeElement(observable = false, funcDefinition))
+    case operation@Operation(func: FunctionDef, Nil) =>
+      dereferenceFunction(func)
     case operation@Operation(FunctionScope, program) =>
       dereferenceScope(program, box = true)
+  }
+
+  def dereferenceFunction(func: FunctionDef): ExpressionOperation = {
+    val body = dereferenceScope(func.program, box = false)
+    val funcDefinition = FunctionDefinition(func.arguments.map(_.`type`), body.`type`)
+
+    ExpressionOperation(func, Seq(body), ScopeElement(observable = false, funcDefinition))
   }
 
   private def dereferenceScope(program: Seq[Token], box: Boolean): ExpressionOperation = {

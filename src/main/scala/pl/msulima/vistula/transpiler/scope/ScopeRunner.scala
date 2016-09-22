@@ -18,8 +18,9 @@ case object ScopeRunner {
       case Import(variable) =>
         val ns = scope.addToScope(variable)
         ScopedResult(ns, Seq())
-      case IntroduceClass(id, definition, constructor) =>
-        val ns = scope.addToScope(id, definition)
+      case introduce@IntroduceClass(id, fields, methods, constructor) =>
+        val ns = scope.addToScope(id, new DereferencerImpl(scope).classDereferencer(introduce))
+
         run(ns)(constructor)
       case op@Operation(func@FunctionDef(id, _, _), _) =>
         val body = DereferencerImpl(scope, op)

@@ -9,10 +9,11 @@ object ClassDefinitionHelper {
   private val VistulaSeq = ClassReference("vistula.collection.Seq")
   private val VistulaDom = ClassReference("vistula.dom.Dom")
   val Vistula = ClassReference("vistula.Predef")
-  val Event = ClassReference("vistula.dom.Event")
 
   val Stdlib = ClassReference("stdlib.Predef")
   private val StdlibTime = ClassReference("stdlib.time")
+
+  val Event = ClassReference("js.Event")
   private val Date = ClassReference("js.Date")
 
   private val stdlib = Map(

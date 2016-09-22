@@ -1,0 +1,12 @@
+class M {
+  def __init__(x: vistula.lang.Object) {
+    pass
+  }
+
+  def bar() {
+    1
+  }
+}
+
+const a = M(1)
+a.bar() + 2

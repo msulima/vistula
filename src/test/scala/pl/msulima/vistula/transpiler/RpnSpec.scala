@@ -8,13 +8,26 @@ class RpnSpec extends Specification {
   "test" in {
 
     val program =
-      """let clock = stdlib.time.clock
-        |let minutes = clock.getMinutes()
+      """class M {
+        |  def __init__(x: vistula.lang.Object) {
+        |    pass
+        |  }
+        |
+        |  def bar() {
+        |    1
+        |  }
+        |}
+        |
+        |let a = M(1)
+        |a.bar() + 2
         | """.stripMargin
 
     Vistula.toJavaScript(program) must_==
-      """const clock = stdlib.rxMap($arg => ($arg.time)).rxFlatMap($arg => ($arg.clock));
-        |const minutes = clock.rxMap($arg => ($arg.getMinutes()));""".stripMargin
+      """function M(x) {
+        |    this.x = x;
+        |};
+        |const a = vistula.constantObservable(new M(1));
+        |a.rxMap($arg => ($arg.bar() + 2));""".stripMargin
   }
 
   "transpiles generator" in {

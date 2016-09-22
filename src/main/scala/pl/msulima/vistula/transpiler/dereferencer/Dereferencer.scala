@@ -19,6 +19,7 @@ trait Dereferencer {
 
 case class DereferencerImpl(scope: Scope) extends Dereferencer
   with BoxDereferencer
+  with ClassDereferencer
   with DeclareDereferencer
   with DereferenceDereferencer
   with FunctionDereferencer
