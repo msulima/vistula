@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.expression.Direct
+import pl.msulima.vistula.transpiler.expression.Other
 import pl.msulima.vistula.transpiler.expression.arithmetic.{BinOp, BoolOp, Compare, UnaryOp}
 import pl.msulima.vistula.transpiler.expression.control._
 import pl.msulima.vistula.transpiler.expression.data.{InlineHtml, InlineJavaScript, Primitives, Tuple}
@@ -22,7 +22,7 @@ object Tokenizer {
       .orElse(Declare.apply)
       .orElse(FunctionDef.apply)
       .orElse(If.apply)
-      .orElse(Direct.apply)
+      .orElse(Other.apply)
       .orElse(Return.apply)
       .orElse(Loop.apply)
       .orElse(pl.msulima.vistula.transpiler.expression.control.Pass.apply)

@@ -23,4 +23,10 @@ class VistulaSpec extends Specification {
     Files.write(new File("target/todo.js").toPath, script.split("\n").toSeq.asJava)
     script must not(beEmpty)
   }
+
+  "saves files with imports" in {
+    Vistula.compileAll()
+
+    new File("target/vistula/classes/vistula/lang/Integer.js").exists() must beTrue
+  }
 }
