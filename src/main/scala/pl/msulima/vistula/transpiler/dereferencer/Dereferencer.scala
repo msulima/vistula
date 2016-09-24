@@ -24,6 +24,7 @@ case class DereferencerImpl(scope: Scope) extends Dereferencer
   with DereferenceDereferencer
   with FunctionDereferencer
   with FunctionCallDereferencer
+  with ImportDereferencer
   with OperationDereferencer
   with ReferenceDereferencer
   with TupleDereferencer {
