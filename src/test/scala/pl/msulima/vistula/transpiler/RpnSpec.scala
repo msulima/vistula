@@ -8,29 +8,16 @@ class RpnSpec extends Specification {
   "test" in {
 
     val program =
-      """class M {
-        |  def __init__(x: vistula.lang.Object) {
+      """class Object() {
+        |  def __init__() {
         |    pass
         |  }
-        |
-        |  def bar() {
-        |    1
-        |  }
-        |}
-        |
-        |let a = M(1)
-        |a.bar() + 2
-        | """.stripMargin
+        |}""".stripMargin
 
     Vistula.toJavaScript(program) must_==
-      """function M(x) {
-        |    this.x = x;
-        |};
-        |M.prototype.bar = function () {
-        |    return 1;
-        |};
-        |const a = vistula.constantObservable(new M(1));
-        |a.rxMap($arg => ($arg.bar() + 2));""".stripMargin
+      """function Object() {
+        |    ;
+        |};""".stripMargin
   }
 
   "transpiles generator" in {

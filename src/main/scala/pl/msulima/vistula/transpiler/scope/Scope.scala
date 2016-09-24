@@ -8,8 +8,15 @@ case class Variable(id: Ast.identifier, `type`: ScopeElement)
 
 case class ScopedResult(scope: Scope, program: Seq[Expression])
 
-case class Scope(variables: Map[Ast.identifier, ScopeElement], functions: Map[Token, FunctionDefinition],
-                 classes: Map[ClassReference, ClassDefinition]) {
+case class ScopePart(variables: Map[Ast.identifier, ScopeElement],
+                     functions: Map[Token, FunctionDefinition],
+                     classes: Map[ClassReference, ClassDefinition])
+
+case class Scope(private val imports: ScopePart, declarations: ScopePart) {
+
+  private val variables = imports.variables ++ declarations.variables
+  private val functions = imports.functions ++ declarations.functions
+  private val classes = imports.classes ++ declarations.classes
 
   def findById(id: Ast.identifier): Option[ScopeElement] = {
     variables.get(id).orElse(functions.get(Constant(id.name)).map(fn => {
@@ -17,17 +24,21 @@ case class Scope(variables: Map[Ast.identifier, ScopeElement], functions: Map[To
     }))
   }
 
+  def findClass(id: ClassReference): ClassDefinition = {
+    classes(id)
+  }
+
   def addToScope(variable: Variable): Scope = {
     variable.`type` match {
       case ScopeElement(false, definition: FunctionDefinition) =>
-        copy(functions = functions + (Constant(variable.id.name) -> definition))
+        copy(declarations = declarations.copy(functions = declarations.functions + (Constant(variable.id.name) -> definition)))
       case t: ScopeElement =>
-        copy(variables = variables + (variable.id -> t))
+        copy(declarations = declarations.copy(variables = declarations.variables + (variable.id -> t)))
     }
   }
 
   def addToScope(id: ClassReference, classDefinition: ClassDefinition): Scope = {
-    copy(classes = classes + (id -> classDefinition))
+    copy(declarations = declarations.copy(classes = declarations.classes + (id -> classDefinition)))
   }
 }
 
@@ -35,12 +46,15 @@ object Scope {
 
   val Empty = {
     Scope(
-      variables = Map(
-        Ast.identifier("vistula") -> ScopeElement(observable = false, `type` = ClassDefinitionHelper.Vistula),
-        Ast.identifier("stdlib") -> ScopeElement(observable = true, `type` = ClassDefinitionHelper.Stdlib)
+      imports = ScopePart(
+        variables = Map(
+          Ast.identifier("vistula") -> ScopeElement(observable = false, `type` = ClassDefinitionHelper.Vistula),
+          Ast.identifier("stdlib") -> ScopeElement(observable = true, `type` = ClassDefinitionHelper.Stdlib)
+        ),
+        functions = Map(),
+        classes = ClassDefinitionHelper.defaults
       ),
-      functions = Map(),
-      classes = ClassDefinitionHelper.defaults
+      declarations = ScopePart(Map(), Map(), Map())
     )
   }
 }

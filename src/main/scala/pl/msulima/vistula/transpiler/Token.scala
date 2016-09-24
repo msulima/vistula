@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.scope.Variable
+import pl.msulima.vistula.transpiler.scope.{ScopePart, Variable}
 
 
 sealed trait Token
@@ -14,7 +14,9 @@ case class Constant(value: String) extends Token
 
 case class Introduce(variable: Variable, body: Token) extends Token
 
-case class Import(variable: Variable) extends Token
+case class ImportVariable(variable: Variable) extends Token
+
+case class Import(scopePart: ScopePart) extends Token
 
 case class IntroduceClass(classDef: Ast.stmt.ClassDef) extends Token
 

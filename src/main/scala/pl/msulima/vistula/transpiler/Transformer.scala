@@ -7,15 +7,23 @@ import pl.msulima.vistula.transpiler.scope._
 object Transformer {
 
   def transform(program: Seq[Ast.stmt]): Seq[Expression] = {
-    scoped(program.map(Tokenizer.applyStmt), Scope.Empty)
+    transform(program.map(Tokenizer.applyStmt), Scope.Empty)
   }
 
-  def scoped(program: Seq[Token], scope: Scope): Seq[Expression] = {
+  def transform(program: Seq[Token], scope: Scope): Seq[Expression] = {
+    run(program, scope).program
+  }
+
+  def extractScope(program: Seq[Ast.stmt]): Scope = {
+    run(program.map(Tokenizer.applyStmt), Scope.Empty).scope
+  }
+
+  private def run(program: Seq[Token], scope: Scope): ScopedResult = {
     program.foldLeft(ScopedResult(scope, Seq()))((acc, stmt) => {
       val result = ScopeRunner.run(acc.scope)(stmt)
 
       result.copy(program = acc.program ++ result.program)
-    }).program
+    })
   }
 
   private def apply(scope: Scope): PartialFunction[Ast.stmt, ScopedResult] = {

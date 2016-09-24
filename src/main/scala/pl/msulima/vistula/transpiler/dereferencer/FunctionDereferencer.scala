@@ -22,7 +22,7 @@ trait FunctionDereferencer {
   }
 
   private def dereferenceScope(program: Seq[Token], box: Boolean): ExpressionOperation = {
-    val result = Transformer.scoped(program, scope)
+    val result = Transformer.transform(program, scope)
     val maybeLast = findReturn(result, box)
     val body = result.init ++ maybeLast.toSeq
 

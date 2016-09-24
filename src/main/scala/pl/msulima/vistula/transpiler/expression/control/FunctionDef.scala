@@ -34,9 +34,7 @@ object FunctionDef {
   }
 
   def apply(name: Ast.identifier, arguments: Seq[Variable], body: Seq[Token]): Token = {
-    val declarations = arguments.map(arg => {
-      Import(arg)
-    })
+    val declarations = arguments.map(ImportVariable)
 
     Operation(FunctionDef(name, declarations ++ body, arguments), Seq())
   }

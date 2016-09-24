@@ -12,8 +12,13 @@ case object ScopeRunner {
         val result = DereferencerImpl(scope, token)
         val ns = scope.addToScope(inferType(variable, result))
         ScopedResult(ns, Seq(result))
-      case Import(variable) =>
+      case ImportVariable(variable) =>
         val ns = scope.addToScope(variable)
+        ScopedResult(ns, Seq())
+      case Import(scopePart) =>
+        val ns = scopePart.classes.toSeq.foldLeft(scope)({
+          case (acc, (id, definition)) => acc.addToScope(id, definition)
+        })
         ScopedResult(ns, Seq())
       case IntroduceClass(classDef) =>
         val dereferencer = new DereferencerImpl(scope)
