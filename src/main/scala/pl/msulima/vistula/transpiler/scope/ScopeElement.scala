@@ -17,7 +17,9 @@ case class ScopeElement(observable: Boolean, `type`: ClassType) {
 object ScopeElement {
 
   val Default = ScopeElement(observable = true, ClassReference.Object)
-  val DefaultConst = ScopeElement(observable = false, ClassReference.Object)
+  val DefaultConst = const(ClassReference.Object)
+
+  def const(`type`: ClassType) = ScopeElement(observable = false, `type`)
 }
 
 sealed trait ClassType

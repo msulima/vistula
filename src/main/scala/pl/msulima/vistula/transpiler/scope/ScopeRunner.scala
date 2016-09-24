@@ -15,10 +15,11 @@ case object ScopeRunner {
       case Import(variable) =>
         val ns = scope.addToScope(variable)
         ScopedResult(ns, Seq())
-      case introduce@IntroduceClass(id, _, _, constructor) =>
+      case IntroduceClass(classDef) =>
         val dereferencer = new DereferencerImpl(scope)
-        val (classDefinition, methods) = dereferencer.classDereferencer(introduce)
-        val ns = scope.addToScope(id, classDefinition)
+        val (classDefinition, constructor, methods) = dereferencer.classDereferencer(classDef)
+        val classReference = ClassReference(Seq(classDef.name))
+        val ns = scope.addToScope(classReference, classDefinition)
 
         val scopedResult = run(ns)(constructor)
         scopedResult.copy(program = scopedResult.program ++ methods)

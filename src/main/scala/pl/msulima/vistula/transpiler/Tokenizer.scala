@@ -1,11 +1,11 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.transpiler.expression.ClassDef
 import pl.msulima.vistula.transpiler.expression.arithmetic.{BinOp, BoolOp, Compare, UnaryOp}
 import pl.msulima.vistula.transpiler.expression.control._
 import pl.msulima.vistula.transpiler.expression.data.{InlineHtml, InlineJavaScript, Primitives, Tuple}
 import pl.msulima.vistula.transpiler.expression.reference._
-import pl.msulima.vistula.transpiler.expression.typesystem.ClassDef
 
 object Tokenizer {
 

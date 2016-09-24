@@ -1,8 +1,7 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.expression.control.FunctionDef
-import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement, Variable}
+import pl.msulima.vistula.transpiler.scope.Variable
 
 
 sealed trait Token
@@ -17,8 +16,7 @@ case class Introduce(variable: Variable, body: Token) extends Token
 
 case class Import(variable: Variable) extends Token
 
-case class IntroduceClass(id: ClassReference, fields: Map[Ast.identifier, ScopeElement],
-                          methods: Seq[FunctionDef], constructor: Token) extends Token
+case class IntroduceClass(classDef: Ast.stmt.ClassDef) extends Token
 
 trait Operator {
 
