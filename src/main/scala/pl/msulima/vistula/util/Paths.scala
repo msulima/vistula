@@ -1,23 +1,52 @@
 package pl.msulima.vistula.util
 
 import java.io.File
-import java.nio.file.{DirectoryStream, Files, Path}
+import java.nio.file.{DirectoryStream, Files, Path, Paths => JavaPaths}
 
+import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 
 import scala.collection.JavaConversions._
 
 object Paths {
 
-  private val SourceDir = java.nio.file.Paths.get("src", "main", "vistula")
-  private val TargetDir = java.nio.file.Paths.get("target", "vistula", "classes")
+  private val SourceDir = JavaPaths.get("src", "main", "vistula")
+  private val TargetDir = JavaPaths.get("target", "vistula", "classes")
 
   def cleanTarget() = {
     deleteRecursively(TargetDir.toFile)
   }
 
   def findAllSourceFiles() = {
-    getAllFiles(SourceDir)
+    findPackageSourceFiles(Package.Root)
+  }
+
+  def findPackageSourceFiles(input: Package) = {
+    val path = if (input.path.isEmpty) {
+      SourceDir
+    } else {
+      val names = input.path.map(_.name)
+      SourceDir.resolve(JavaPaths.get(names.head, names.tail: _*))
+    }
+
+    getAllFiles(path, input)
+  }
+
+  private def getAllFiles(top: Path, `package`: Package): Iterable[(Path, Package)] = {
+    var directoryStream: DirectoryStream[Path] = null
+
+    try {
+      directoryStream = Files.newDirectoryStream(top)
+      directoryStream.flatMap(dir => {
+        if (dir.toFile.isDirectory) {
+          getAllFiles(dir, `package`.resolve(dir.toFile.getName))
+        } else {
+          Seq(dir -> `package`)
+        }
+      })
+    } finally {
+      directoryStream.close()
+    }
   }
 
   def toTargetFile(file: Path) = {
@@ -26,25 +55,8 @@ object Paths {
     TargetDir.resolve(subpath).resolve(file.getFileName.toString.replaceAll("\\.vst$", ".js"))
   }
 
-  def getAllFiles(top: Path): Iterable[(Path, Seq[String])] = {
-    getAllFiles(top, Seq())
-  }
-
-  private def getAllFiles(top: Path, name: Seq[String]): Iterable[(Path, Seq[String])] = {
-    var directoryStream: DirectoryStream[Path] = null
-
-    try {
-      directoryStream = Files.newDirectoryStream(top)
-      directoryStream.flatMap(dir => {
-        if (dir.toFile.isDirectory) {
-          getAllFiles(dir, name :+ dir.toFile.getName)
-        } else {
-          Seq(dir -> name)
-        }
-      })
-    } finally {
-      directoryStream.close()
-    }
+  def toTargetFile(input: Package) = {
+    TargetDir.resolve(input.join + ".js")
   }
 
   private def deleteRecursively(f: File) {

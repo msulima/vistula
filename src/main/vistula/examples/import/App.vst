@@ -1,0 +1,10 @@
+class App {
+
+  def __init__() {
+    pass
+  }
+
+  def foo() {
+    1
+  }
+}

@@ -1,6 +1,6 @@
 package pl.msulima.vistula
 
-import java.nio.file.{Files, Path}
+import java.nio.file.{Files, Path, StandardOpenOption}
 
 import fastparse.all._
 import pl.msulima.vistula.parser.{Ast, Statements}
@@ -13,7 +13,7 @@ object Vistula {
 
   def compileAll() = {
     Paths.findAllSourceFiles().foreach({
-      case (file, path) =>
+      case (file, _) =>
         val script = Transpiler.scoped(read(file))
 
         val resolve = Paths.toTargetFile(file)
@@ -25,6 +25,19 @@ object Vistula {
 
   def toJavaScript(input: String): String = {
     Transpiler.scoped(parse(input))
+  }
+
+  def browserify(input: Package): Unit = {
+    val resolve = Paths.toTargetFile(input)
+    resolve.getParent.toFile.mkdirs()
+    resolve.toFile.delete()
+
+    Paths.findPackageSourceFiles(input).foreach({
+      case (file, _) =>
+        val script = Transpiler.scoped(read(file))
+
+        Files.write(resolve, script.split("\n").toSeq, StandardOpenOption.APPEND, StandardOpenOption.CREATE)
+    })
   }
 
   def loadFile(id: Ast.identifier) = {

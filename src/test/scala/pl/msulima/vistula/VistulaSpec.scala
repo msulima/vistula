@@ -27,6 +27,7 @@ class VistulaSpec extends Specification {
   "saves files with imports" in {
     Vistula.compileAll()
 
+    new File("target/vistula/classes/examples/import/App.js").exists() must beTrue
     new File("target/vistula/classes/vistula/lang/Integer.js").exists() must beTrue
   }
 }
