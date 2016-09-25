@@ -1,12 +1,13 @@
 package pl.msulima.vistula.transpiler
 
+import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 
 
 object Transpiler {
 
-  def scoped(program: Seq[Ast.stmt]): String = {
-    toJavaScript(Transformer.transform(program))
+  def scoped(program: Seq[Ast.stmt], `package`: Package): String = {
+    toJavaScript(Transformer.transform(program, `package`))
   }
 
   def toJavaScript(program: Seq[Expression]): String = {

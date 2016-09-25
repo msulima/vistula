@@ -1,23 +1,18 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
+import pl.msulima.vistula.Package
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.scope.{Scope, ScopeElement}
-
-object DereferencerImpl {
-
-  def apply(scope: Scope, token: Token): Expression = {
-    new DereferencerImpl(scope).dereference(token)
-  }
-}
 
 trait Dereferencer {
 
   val scope: Scope
+  val `package`: Package
 
   def dereference(token: Token): Expression
 }
 
-case class DereferencerImpl(scope: Scope) extends Dereferencer
+case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferencer
   with BoxDereferencer
   with ClassDereferencer
   with DeclareDereferencer

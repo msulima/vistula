@@ -59,6 +59,11 @@ case class FunctionDefinition(arguments: Seq[ScopeElement], resultType: ScopeEle
   }
 }
 
+case class FunctionReference(`package`: Package, name: Ast.identifier) {
+
+  def toIdentifier = Ast.identifier((`package`.path :+ name).map(_.name).mkString("."))
+}
+
 case class ClassReference(`package`: Package, name: Ast.identifier) extends ClassType
 
 case class ClassDefinition(fields: Map[Ast.identifier, ScopeElement])

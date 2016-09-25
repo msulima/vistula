@@ -6,8 +6,14 @@ case class Package(path: Seq[Ast.identifier]) {
 
   def join = path.map(_.name).mkString(".")
 
+  def toIdentifier = Ast.identifier(join)
+
   def resolve(child: String): Package = {
-    copy(path = path :+ Ast.identifier(child))
+    resolve(Ast.identifier(child))
+  }
+
+  def resolve(child: Ast.identifier): Package = {
+    copy(path = path :+ child)
   }
 }
 

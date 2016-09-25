@@ -13,8 +13,8 @@ object Vistula {
 
   def compileAll() = {
     Paths.findAllSourceFiles().foreach({
-      case (file, _) =>
-        val script = Transpiler.scoped(read(file))
+      case (file, pack) =>
+        val script = Transpiler.scoped(read(file), pack)
 
         val resolve = Paths.toTargetFile(file)
 
@@ -24,7 +24,7 @@ object Vistula {
   }
 
   def toJavaScript(input: String): String = {
-    Transpiler.scoped(parse(input))
+    Transpiler.scoped(parse(input), Package.Root)
   }
 
   def browserify(input: Package): Unit = {
@@ -33,8 +33,8 @@ object Vistula {
     resolve.toFile.delete()
 
     Paths.findPackageSourceFiles(input).foreach({
-      case (file, _) =>
-        val script = Transpiler.scoped(read(file))
+      case (file, pack) =>
+        val script = Transpiler.scoped(read(file), pack)
 
         Files.write(resolve, script.split("\n").toSeq, StandardOpenOption.APPEND, StandardOpenOption.CREATE)
     })

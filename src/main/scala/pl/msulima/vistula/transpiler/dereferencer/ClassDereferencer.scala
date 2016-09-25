@@ -34,7 +34,7 @@ trait ClassDereferencer {
     val introduceConstructor = constructor(identifier, fields, constructorFunc)
 
     val definitions = methods.map(method => {
-      val prototypeName = Ast.identifier(identifier.name + ".prototype." + method.name.name)
+      val prototypeName = FunctionReference(`package`, Ast.identifier(identifier.name + ".prototype." + method.name.name)).toIdentifier
 
       Declare(prototypeName, Operation(method.copy(name = Ast.identifier("")), Seq()), mutable = false, declare = false)
     })
@@ -59,7 +59,7 @@ trait ClassDereferencer {
   private def createConstructor(identifier: Ast.identifier, fields: Seq[Variable], constructorBody: Seq[Ast.stmt]) = {
     val body = initializeFields(identifier, fields) ++ constructorBody.map(Tokenizer.applyStmt) :+ Operation(Return, Seq())
 
-    FunctionDef(identifier, fields, body)
+    FunctionDef(FunctionReference(`package`, identifier).toIdentifier, fields, body)
   }
 
   private def initializeFields(classIdentifier: identifier, arguments: Seq[Variable]): Seq[Token] = {

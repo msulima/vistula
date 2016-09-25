@@ -1,7 +1,6 @@
-const examples = {};
-examples.import = {};
-examples.import.App = function () {
+examples.import.App = function App() {
+    ;
 };
-examples.import.App.prototype.bar = function () {
+examples.import.App.prototype.foo = function () {
     return 1;
 };

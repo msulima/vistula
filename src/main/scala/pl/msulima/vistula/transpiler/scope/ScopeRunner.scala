@@ -1,5 +1,6 @@
 package pl.msulima.vistula.transpiler.scope
 
+import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
@@ -7,12 +8,12 @@ import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 
 case object ScopeRunner {
 
-  def run(scope: Scope)(token: Token): ScopedResult = {
-    val dereferencer = new DereferencerImpl(scope)
+  def run(scope: Scope, `package`: Package)(token: Token): ScopedResult = {
+    val dereferencer = DereferencerImpl(scope, `package`)
 
     token match {
       case Introduce(variable, body) =>
-        val result = DereferencerImpl(scope, token)
+        val result = dereferencer.dereference(token)
         val ns = scope.addToScope(inferType(variable, result))
         ScopedResult(ns, Seq(result))
       case ImportVariable(variable) =>
@@ -25,14 +26,14 @@ case object ScopeRunner {
         val classReference = ClassReference(Seq(classDef.name))
         val ns = scope.addToScope(classReference, classDefinition)
 
-        val scopedResult = run(ns)(constructor)
+        val scopedResult = run(ns, `package`)(constructor)
         scopedResult.copy(program = scopedResult.program ++ methods)
       case op@Operation(func@FunctionDef(id, _, _), _) =>
-        val body = DereferencerImpl(scope, op)
+        val body = dereferencer.dereference(op)
         val ns = scope.addToScope(Variable(id, body.`type`))
         ScopedResult(ns, Seq(body))
       case _ =>
-        ScopedResult(scope, Seq(DereferencerImpl(scope, token)))
+        ScopedResult(scope, Seq(dereferencer.dereference(token)))
     }
   }
 
