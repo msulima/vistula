@@ -1,7 +1,7 @@
 function M(x) {
     this.x = x;
 };
-M.prototype.bar = function (y, z) {
+M.prototype.bar = function bar(y, z) {
     return 1;
 };
 const a = vistula.constantObservable(new M(1));

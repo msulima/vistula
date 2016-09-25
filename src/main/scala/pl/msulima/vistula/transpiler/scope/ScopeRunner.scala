@@ -30,7 +30,7 @@ case object ScopeRunner {
         scopedResult.copy(program = scopedResult.program ++ methods)
       case op@Operation(func@FunctionDef(id, _, _), _) =>
         val body = dereferencer.dereference(op)
-        val ns = scope.addToScope(Variable(id, body.`type`))
+        val ns = scope.addToScope(Variable(id.name, body.`type`))
         ScopedResult(ns, Seq(body))
       case _ =>
         ScopedResult(scope, Seq(dereferencer.dereference(token)))

@@ -64,6 +64,11 @@ case class FunctionReference(`package`: Package, name: Ast.identifier) {
   def toIdentifier = Ast.identifier((`package`.path :+ name).map(_.name).mkString("."))
 }
 
+object FunctionReference {
+
+  val Anonymous = FunctionReference(Package.Root, Ast.identifier(""))
+}
+
 case class ClassReference(`package`: Package, name: Ast.identifier) extends ClassType
 
 case class ClassDefinition(fields: Map[Ast.identifier, ScopeElement])

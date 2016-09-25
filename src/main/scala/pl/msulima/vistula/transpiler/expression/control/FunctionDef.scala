@@ -1,5 +1,6 @@
 package pl.msulima.vistula.transpiler.expression.control
 
+import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.scope._
@@ -11,7 +12,7 @@ object FunctionDef {
     case Ast.stmt.FunctionDef(name, args, body, _) =>
       val arguments = mapArguments(args)
 
-      FunctionDef(name, arguments, body.map(Tokenizer.applyStmt))
+      FunctionDef(FunctionReference(Package.Root, name), arguments, body.map(Tokenizer.applyStmt))
   }
 
   def mapArguments(arguments: Ast.arguments) = {
@@ -30,22 +31,22 @@ object FunctionDef {
   }
 
   def anonymous(arguments: Seq[Variable], body: Seq[Token]): Token = {
-    apply(Ast.identifier(""), arguments, body)
+    apply(FunctionReference.Anonymous, arguments, body)
   }
 
-  def apply(name: Ast.identifier, arguments: Seq[Variable], body: Seq[Token]): Token = {
+  def apply(name: FunctionReference, arguments: Seq[Variable], body: Seq[Token]): Token = {
     val declarations = arguments.map(ImportVariable)
 
     Operation(FunctionDef(name, declarations ++ body, arguments), Seq())
   }
 }
 
-case class FunctionDef(name: Ast.identifier, program: Seq[Token], arguments: Seq[Variable]) extends Operator {
+case class FunctionDef(name: FunctionReference, program: Seq[Token], arguments: Seq[Variable]) extends Operator {
 
   override def apply(operands: List[Constant]): String = {
     val body = operands.head
 
-    s"""function ${name.name}(${arguments.map(_.id.name).mkString(", ")}) {
+    s"""function ${name.name.name}(${arguments.map(_.id.name).mkString(", ")}) {
         |${Indent.leftPad(body.value)}
         |}""".stripMargin
   }
