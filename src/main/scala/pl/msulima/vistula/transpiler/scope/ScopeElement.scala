@@ -1,5 +1,6 @@
 package pl.msulima.vistula.transpiler.scope
 
+import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 
 
@@ -58,7 +59,7 @@ case class FunctionDefinition(arguments: Seq[ScopeElement], resultType: ScopeEle
   }
 }
 
-case class ClassReference(name: String) extends ClassType
+case class ClassReference(`package`: Package, name: Ast.identifier) extends ClassType
 
 case class ClassDefinition(fields: Map[Ast.identifier, ScopeElement])
 
@@ -66,11 +67,15 @@ object ClassReference {
 
   val Object = ClassReference("vistula.lang.Object")
 
+  def apply(path: String): ClassReference = {
+    ClassReference(path.split("\\.").map(Ast.identifier))
+  }
+
   def apply(typedef: Seq[Ast.identifier]): ClassReference = {
     if (typedef.isEmpty) {
       Object
     } else {
-      ClassReference(typedef.map(_.name).mkString("."))
+      ClassReference(Package(typedef.init), typedef.last)
     }
   }
 }
