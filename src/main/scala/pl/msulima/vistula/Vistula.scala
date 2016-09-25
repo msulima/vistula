@@ -12,17 +12,11 @@ import scala.collection.JavaConversions._
 object Vistula {
 
   def compileAll() = {
-    val sourceDir = java.nio.file.Paths.get("src", "main", "vistula")
-    val targetDir = java.nio.file.Paths.get("target", "vistula", "classes")
-
-    Paths.deleteRecursively(targetDir.toFile)
-
-    Paths.getAllFiles(sourceDir).foreach({
+    Paths.findAllSourceFiles().foreach({
       case (file, path) =>
         val script = Transpiler.scoped(read(file))
 
-        val subpath = file.subpath(sourceDir.getNameCount, file.getNameCount - 1)
-        val resolve = targetDir.resolve(subpath).resolve(file.getFileName.toString.replaceAll("\\.vst$", ".js"))
+        val resolve = Paths.toTargetFile(file)
 
         resolve.getParent.toFile.mkdirs()
         Files.write(resolve, script.split("\n").toSeq)
@@ -33,8 +27,8 @@ object Vistula {
     Transpiler.scoped(parse(input))
   }
 
-  def loadFile(file: Path) = {
-    Transformer.extractScope(read(file))
+  def loadFile(id: Ast.identifier) = {
+    Transformer.extractScope(read(Paths.findSourceFile(id)))
   }
 
   def read(file: Path): Seq[Ast.stmt] = {

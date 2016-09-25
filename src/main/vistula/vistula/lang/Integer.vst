@@ -4,3 +4,9 @@ class Integer() {
     pass
   }
 }
+
+def parseInt(x: vistula.lang.Object) {
+  '''#javascript
+  parseInt(x)
+  '''
+}

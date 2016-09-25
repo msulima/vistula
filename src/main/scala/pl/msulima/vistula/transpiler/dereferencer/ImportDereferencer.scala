@@ -1,7 +1,5 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
-import java.nio.file.Paths
-
 import pl.msulima.vistula.Vistula
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopedResult}
@@ -15,7 +13,7 @@ trait ImportDereferencer {
       val prefix = imported.init
       val path = (Seq("main", "vistula") ++ prefix) :+ (imported.last + ".vst")
 
-      val declarations = Vistula.loadFile(Paths.get("src", path: _*)).declarations
+      val declarations = Vistula.loadFile(identifier).declarations
 
       val scopePart = declarations.copy(classes = declarations.classes.map({
         case (id, definition) =>
