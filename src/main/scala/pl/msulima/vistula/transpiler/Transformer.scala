@@ -15,8 +15,8 @@ object Transformer {
     run(program, scope, `package`).program
   }
 
-  def extractScope(program: Seq[Ast.stmt]): Scope = {
-    run(program.map(Tokenizer.applyStmt), Scope.Empty, Package.Root).scope
+  def extractScope(program: Seq[Ast.stmt], `package`: Package): Scope = {
+    run(program.map(Tokenizer.applyStmt), Scope.Empty, `package`).scope
   }
 
   private def run(program: Seq[Token], scope: Scope, `package`: Package): ScopedResult = {

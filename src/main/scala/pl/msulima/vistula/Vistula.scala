@@ -1,9 +1,12 @@
 package pl.msulima.vistula
 
-import java.nio.file.{Files, Path, StandardOpenOption}
+import java.io.{BufferedOutputStream, FileOutputStream, PrintStream}
+import java.nio.file.{Files, Path}
 
 import fastparse.all._
 import pl.msulima.vistula.parser.{Ast, Statements}
+import pl.msulima.vistula.transpiler.dereferencer.ImportDereferencer
+import pl.msulima.vistula.transpiler.scope.Scope
 import pl.msulima.vistula.transpiler.{Transformer, Transpiler}
 import pl.msulima.vistula.util.Paths
 
@@ -32,16 +35,21 @@ object Vistula {
     resolve.getParent.toFile.mkdirs()
     resolve.toFile.delete()
 
+    val outputStream = new PrintStream(new BufferedOutputStream(new FileOutputStream(resolve.toFile)))
+
+    outputStream.println(Transpiler.toJavaScript(Transformer.transform(ImportDereferencer.packagePreambule(input), Scope.Empty, input)));
+
     Paths.findPackageSourceFiles(input).foreach({
       case (file, pack) =>
         val script = Transpiler.scoped(read(file), pack)
 
-        Files.write(resolve, script.split("\n").toSeq, StandardOpenOption.APPEND, StandardOpenOption.CREATE)
+        script.split("\\n").foreach(outputStream.println)
     })
+    outputStream.close()
   }
 
   def loadFile(id: Ast.identifier) = {
-    Transformer.extractScope(read(Paths.findSourceFile(id)))
+    Transformer.extractScope(read(Paths.findSourceFile(id)), Package(id.name))
   }
 
   def read(file: Path): Seq[Ast.stmt] = {

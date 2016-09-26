@@ -1,3 +1,5 @@
+const examples = {};
+examples.modules = {};
 examples.modules.App = function App() {
     ;
 };
