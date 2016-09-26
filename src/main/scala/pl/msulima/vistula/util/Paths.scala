@@ -45,7 +45,9 @@ object Paths {
         }
       })
     } finally {
-      directoryStream.close()
+      if (directoryStream != null) {
+        directoryStream.close()
+      }
     }
   }
 
