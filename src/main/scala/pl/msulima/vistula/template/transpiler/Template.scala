@@ -33,8 +33,8 @@ object Template {
       body
     } else {
       val variableDeclarations = variables.map(variable => {
-        Declare(variable, mutable = true,
-          body = Operation(Reference, Seq(Constant("new vistula.ObservableImpl()"))), typedef = ClassReference.Object) // FIXME
+        Declare.introduce(variable, body = Operation(Reference, Seq(Constant("new vistula.ObservableImpl()"))),
+          typedef = ClassReference.Object, mutable = true) // FIXME
       })
 
       val code = FunctionDef.anonymous(variableDeclarations :+ body)

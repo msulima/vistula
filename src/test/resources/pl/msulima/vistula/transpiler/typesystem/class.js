@@ -1,4 +1,4 @@
-function M(x, y) {
+const M = function M(x, y) {
     this.x = x;
     this.y = y;
 };

@@ -1,5 +1,6 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
+import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.identifier
 import pl.msulima.vistula.transpiler._
@@ -49,11 +50,17 @@ trait ClassDereferencer {
     }).get
   }
 
-  private def constructor(identifier: Ast.identifier, fields: Seq[Variable], constructorFunc: Ast.stmt.FunctionDef): Introduce = {
+  private def constructor(identifier: Ast.identifier, fields: Seq[Variable], constructorFunc: Ast.stmt.FunctionDef) = {
+    val name = if (`package` == Package.Root) {
+      identifier
+    } else {
+      FunctionReference(`package`, identifier).toIdentifier
+    }
+
     val constructor = createConstructor(identifier, fields, constructorFunc.body)
     val definition = FunctionDefinition(fields.map(_.`type`), resultType = ScopeElement.const(ClassReference(Seq(identifier))), constructor = true)
 
-    Introduce(Variable(identifier, ScopeElement.const(definition)), constructor)
+    Declare.introduce(name, constructor, definition, mutable = false, declare = `package` == Package.Root)
   }
 
   private def createConstructor(identifier: Ast.identifier, fields: Seq[Variable], constructorBody: Seq[Ast.stmt]) = {

@@ -1,4 +1,4 @@
-function M(x) {
+const M = function M(x) {
     this.x = x;
 };
 M.prototype.bar = function bar(y, z) {

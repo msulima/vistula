@@ -2,7 +2,7 @@ package pl.msulima.vistula.transpiler.expression.reference
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement, Variable}
+import pl.msulima.vistula.transpiler.scope.{ClassReference, ClassType, ScopeElement, Variable}
 
 object Declare {
 
@@ -10,13 +10,13 @@ object Declare {
     case Ast.stmt.DeclareStmt(identifier, stmt, mutable, typedef) =>
       val body = Tokenizer.applyStmt(stmt)
 
-      Declare(identifier, mutable, body, ClassReference(typedef))
+      Declare.introduce(identifier, body, ClassReference(typedef), mutable = mutable)
   }
 
-  def apply(identifier: Ast.identifier, mutable: Boolean, body: Token, typedef: ClassReference): Token = {
+  def introduce(identifier: Ast.identifier, body: Token, typedef: ClassType, mutable: Boolean, declare: Boolean = true): Token = {
     val variable = Variable(identifier, ScopeElement(mutable, typedef))
 
-    Introduce(variable, apply(identifier, body, mutable, declare = true))
+    Introduce(variable, apply(identifier, body, mutable = mutable, declare = declare))
   }
 
   def apply(identifier: Ast.identifier, body: Token, mutable: Boolean, declare: Boolean): Operation = {
