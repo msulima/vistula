@@ -15,7 +15,7 @@ class RpnSpec extends Specification {
         |}""".stripMargin
 
     Vistula.toJavaScript(program) must_==
-      """function Object() {
+      """const Object = function Object() {
         |    ;
         |};""".stripMargin
   }

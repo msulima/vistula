@@ -1,6 +1,5 @@
 package pl.msulima.vistula.transpiler.expression.control
 
-import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.scope._
@@ -9,10 +8,8 @@ import pl.msulima.vistula.util.Indent
 object FunctionDef {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
-    case Ast.stmt.FunctionDef(name, args, body, _) =>
-      val arguments = mapArguments(args)
-
-      FunctionDef(FunctionReference(Package.Root, name), arguments, body.map(Tokenizer.applyStmt))
+    case funcDef@Ast.stmt.FunctionDef(name, args, body, _) =>
+      Direct(funcDef)
   }
 
   def mapArguments(arguments: Ast.arguments) = {
@@ -31,13 +28,7 @@ object FunctionDef {
   }
 
   def anonymous(arguments: Seq[Variable], body: Seq[Token]): Token = {
-    apply(FunctionReference.Anonymous, arguments, body)
-  }
-
-  def apply(name: FunctionReference, arguments: Seq[Variable], body: Seq[Token]): Token = {
-    val declarations = arguments.map(ImportVariable)
-
-    Operation(FunctionDef(name, declarations ++ body, arguments), Seq())
+    Operation(new FunctionDef(FunctionReference.Anonymous, body, arguments), Seq())
   }
 }
 

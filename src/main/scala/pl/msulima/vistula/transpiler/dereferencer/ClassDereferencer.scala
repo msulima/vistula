@@ -4,12 +4,13 @@ import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.identifier
 import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.dereferencer.function.FunctionDereferencer
 import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, Return}
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, Reference}
 import pl.msulima.vistula.transpiler.scope._
 
 trait ClassDereferencer {
-  this: Dereferencer with FunctionDereferencer =>
+  this: Dereferencer with DeclareDereferencer with FunctionDereferencer =>
 
   private val ConstructorId = Ast.identifier("__init__")
   private val ThisId = Ast.identifier("this")
@@ -32,15 +33,12 @@ trait ClassDereferencer {
       field.id -> field.`type`
     }).toMap ++ declarations
 
-    val introduceConstructor = constructor(identifier, fields, constructorFunc)
+    val dereferencerImpl = DereferencerImpl(scope.addToScope(ClassReference(`package`, identifier), ClassDefinition(members)), `package`)
+    val definitions = getMethodDefinitions(dereferencerImpl, identifier, methods)
 
-    val definitions = methods.map(method => {
-      val prototypeName = FunctionReference(`package`, Ast.identifier(identifier.name + ".prototype." + method.name.name.name)).toIdentifier
+    val scopedResult = constructor(dereferencerImpl, identifier, fields, constructorFunc)
 
-      Declare(prototypeName, Operation(method, Seq()), mutable = false, declare = false)
-    })
-
-    (ClassDefinition(members), introduceConstructor, definitions.map(dereference))
+    scopedResult.copy(program = scopedResult.program ++ definitions)
   }
 
   private def findConstructor(classIdentifier: Ast.identifier, body: Seq[Ast.stmt]): Ast.stmt.FunctionDef = {
@@ -50,7 +48,7 @@ trait ClassDereferencer {
     }).get
   }
 
-  private def constructor(identifier: Ast.identifier, fields: Seq[Variable], constructorFunc: Ast.stmt.FunctionDef) = {
+  private def constructor(dereferencerImpl: DereferencerImpl, identifier: Ast.identifier, fields: Seq[Variable], constructorFunc: Ast.stmt.FunctionDef) = {
     val name = if (`package` == Package.Root) {
       identifier
     } else {
@@ -58,15 +56,22 @@ trait ClassDereferencer {
     }
 
     val constructor = createConstructor(identifier, fields, constructorFunc.body)
-    val definition = FunctionDefinition(fields.map(_.`type`), resultType = ScopeElement.const(ClassReference(Seq(identifier))), constructor = true)
+    val definition = FunctionDefinition(
+      fields.map(_.`type`),
+      resultType = ScopeElement.const(ClassReference(Seq(identifier))),
+      constructor = true
+    )
 
-    Declare.introduce(name, constructor, definition, mutable = false, declare = `package` == Package.Root)
+    val variable = Variable(identifier, ScopeElement(observable = false, definition))
+    val introduceConstructor = Declare(name, constructor, mutable = false, declare = `package` == Package.Root)
+
+    dereferencerImpl.dereferenceIntroduce(variable, introduceConstructor)
   }
 
   private def createConstructor(identifier: Ast.identifier, fields: Seq[Variable], constructorBody: Seq[Ast.stmt]) = {
     val body = initializeFields(identifier, fields) ++ constructorBody.map(Tokenizer.applyStmt) :+ Operation(Return, Seq())
 
-    FunctionDef(FunctionReference(`package`, identifier), fields, body)
+    Operation(new FunctionDef(FunctionReference(`package`, identifier), body, fields), Seq())
   }
 
   private def initializeFields(classIdentifier: identifier, arguments: Seq[Variable]): Seq[Token] = {
@@ -82,8 +87,15 @@ trait ClassDereferencer {
   private def findMethods(body: Seq[Ast.stmt]): Seq[FunctionDef] = {
     body.collect({
       case func: Ast.stmt.FunctionDef if func.name != ConstructorId =>
-        // FIXME hacky
-        FunctionDef.apply(func).asInstanceOf[Operation].operator.asInstanceOf[FunctionDef]
+        toFunctionDef(func)
+    })
+  }
+
+  private def getMethodDefinitions(dereferencer: DeclareDereferencer, identifier: Ast.identifier, methods: Seq[FunctionDef]): Seq[Expression] = {
+    methods.map(method => {
+      val prototypeName = FunctionReference(`package`, Ast.identifier(identifier.name + ".prototype." + method.name.name.name)).toIdentifier
+
+      dereferencer.dereferenceDeclare(Constant(prototypeName.name), Operation(method, Seq()), mutable = false, declare = false)
     })
   }
 }

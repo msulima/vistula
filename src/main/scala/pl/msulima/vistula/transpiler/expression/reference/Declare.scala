@@ -13,7 +13,7 @@ object Declare {
       Declare.introduce(identifier, body, ClassReference(typedef), mutable = mutable)
   }
 
-  def introduce(identifier: Ast.identifier, body: Token, typedef: ClassType, mutable: Boolean, declare: Boolean = true): Token = {
+  def introduce(identifier: Ast.identifier, body: Token, typedef: ClassType, mutable: Boolean, declare: Boolean = true): Introduce = {
     val variable = Variable(identifier, ScopeElement(mutable, typedef))
 
     Introduce(variable, apply(identifier, body, mutable = mutable, declare = declare))

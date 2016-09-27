@@ -2,6 +2,7 @@ package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.Package
 import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.dereferencer.function.{FunctionDereferencer, ReturnDereferencer}
 import pl.msulima.vistula.transpiler.scope.{Scope, ScopeElement}
 
 trait Dereferencer {
@@ -22,6 +23,7 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
   with ImportDereferencer
   with OperationDereferencer
   with ReferenceDereferencer
+  with ReturnDereferencer
   with TupleDereferencer {
 
   override def dereference(token: Token): Expression = {
@@ -40,7 +42,5 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
   private def default: PartialFunction[Token, Expression] = {
     case x: Constant =>
       ExpressionConstant(x.value, ScopeElement.DefaultConst)
-    case Introduce(variable, body) =>
-      copy(scope.addToScope(variable)).dereference(body)
   }
 }

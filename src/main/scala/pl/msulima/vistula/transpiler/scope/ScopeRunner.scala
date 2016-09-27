@@ -13,35 +13,22 @@ case object ScopeRunner {
 
     token match {
       case Introduce(variable, body) =>
-        val result = dereferencer.dereference(token)
-        val ns = scope.addToScope(inferType(variable, result))
-        ScopedResult(ns, Seq(result))
+        dereferencer.dereferenceIntroduce(variable, body)
       case ImportVariable(variable) =>
         val ns = scope.addToScope(variable)
         ScopedResult(ns, Seq())
       case Direct(stmt: Ast.stmt.Import) =>
         dereferencer.importDereferencer(stmt)
       case Direct(classDef: Ast.stmt.ClassDef) =>
-        val (classDefinition, constructor, methods) = dereferencer.classDereferencer(classDef)
-        val classReference = ClassReference(Seq(classDef.name))
-        val ns = scope.addToScope(classReference, classDefinition)
-
-        val scopedResult = run(ns, `package`)(constructor)
-        scopedResult.copy(program = scopedResult.program ++ methods)
+        dereferencer.classDereferencer(classDef)
+      case op@Direct(func: Ast.stmt.FunctionDef) =>
+        dereferencer.dereferenceAndAddToScope(func)
       case op@Operation(func@FunctionDef(id, _, _), _) =>
         val body = dereferencer.dereference(op)
         val ns = scope.addToScope(Variable(id.name, body.`type`))
         ScopedResult(ns, Seq(body))
       case _ =>
         ScopedResult(scope, Seq(dereferencer.dereference(token)))
-    }
-  }
-
-  private def inferType(variable: Variable, result: Expression): Variable = {
-    if (variable.`type`.`type` == ClassReference.Object) {
-      variable.copy(`type` = variable.`type`.copy(`type` = result.`type`.`type`))
-    } else {
-      variable
     }
   }
 }
