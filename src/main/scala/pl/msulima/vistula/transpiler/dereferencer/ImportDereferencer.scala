@@ -42,7 +42,7 @@ trait ImportDereferencer {
 
       val right = classReference.`package`.path.inits.toList.dropRight(2)
 
-      val scopeWithIntemediatePackageObjects = right.foldLeft(scopeWithPackageObject)({
+      val scopeWithIntermediatePackageObjects = right.foldLeft(scopeWithPackageObject)({
         case (acc, path) =>
           val parentReference = ClassReference(Package(path.init), Ast.identifier("$Object"))
           val nestedReference = ClassReference(Package(path), Ast.identifier("$Object"))
@@ -54,7 +54,7 @@ trait ImportDereferencer {
           acc.addToScope(parentReference, definition).addToScope(variable)
       })
 
-      val ns = declarations.classes.foldLeft(scopeWithIntemediatePackageObjects)({
+      val ns = declarations.classes.foldLeft(scopeWithIntermediatePackageObjects)({
         case (acc, (id, definition)) =>
           acc.addToScope(id, definition)
       })

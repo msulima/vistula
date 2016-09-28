@@ -49,21 +49,22 @@ trait ClassDereferencer {
   }
 
   private def constructor(dereferencerImpl: DereferencerImpl, identifier: Ast.identifier, fields: Seq[Variable], constructorFunc: Ast.stmt.FunctionDef) = {
-    val name = if (`package` == Package.Root) {
-      identifier
-    } else {
-      FunctionReference(`package`, identifier).toIdentifier
+    val introduceConstructor = {
+      val name = FunctionReference(`package`, identifier).toIdentifier
+      val constructor = createConstructor(identifier, fields, constructorFunc.body)
+
+      Declare(name, constructor, mutable = false, declare = `package` == Package.Root)
     }
 
-    val constructor = createConstructor(identifier, fields, constructorFunc.body)
-    val definition = FunctionDefinition(
-      fields.map(_.`type`),
-      resultType = ScopeElement.const(ClassReference(Seq(identifier))),
-      constructor = true
-    )
+    val variable = {
+      val definition = FunctionDefinition(
+        fields.map(_.`type`),
+        resultType = ScopeElement.const(ClassReference(`package`, identifier)),
+        constructor = true
+      )
 
-    val variable = Variable(identifier, ScopeElement(observable = false, definition))
-    val introduceConstructor = Declare(name, constructor, mutable = false, declare = `package` == Package.Root)
+      Variable(identifier, ScopeElement(observable = false, definition))
+    }
 
     dereferencerImpl.dereferenceIntroduce(variable, introduceConstructor)
   }
