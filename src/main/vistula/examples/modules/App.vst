@@ -6,7 +6,7 @@ class App {
     pass
   }
 
-  def foo() {
+  def main() {
     const bar = examples.modules.Bar()
     bar.bar()
   }

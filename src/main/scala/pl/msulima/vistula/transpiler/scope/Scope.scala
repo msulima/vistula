@@ -19,9 +19,7 @@ case class Scope(private val imports: ScopePart, declarations: ScopePart) {
   private val classes = imports.classes ++ declarations.classes
 
   def findById(id: Ast.identifier): Option[ScopeElement] = {
-    variables.get(id).orElse(functions.get(Constant(id.name)).map(fn => {
-      ScopeElement(observable = false, fn)
-    }))
+    variables.get(id).orElse(functions.get(Constant(id.name)).map(ScopeElement.const))
   }
 
   def findClass(id: ClassReference): ClassDefinition = {
@@ -48,8 +46,8 @@ object Scope {
     Scope(
       imports = ScopePart(
         variables = Map(
-          Ast.identifier("vistula") -> ScopeElement(observable = false, `type` = ClassDefinitionHelper.Vistula),
-          Ast.identifier("stdlib") -> ScopeElement(observable = true, `type` = ClassDefinitionHelper.Stdlib)
+          Ast.identifier("vistula") -> ScopeElement.const(ClassDefinitionHelper.Vistula),
+          Ast.identifier("stdlib") -> ScopeElement.observable(ClassDefinitionHelper.Stdlib)
         ),
         functions = Map(),
         classes = ClassDefinitionHelper.defaults

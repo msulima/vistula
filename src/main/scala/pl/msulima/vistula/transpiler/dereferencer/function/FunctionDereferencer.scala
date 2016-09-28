@@ -38,7 +38,7 @@ trait FunctionDereferencer {
     val body = dereferenceScope(func.arguments, func.program, box = false)
     val funcDefinition = FunctionDefinition(func.arguments.map(_.`type`), body.`type`)
 
-    ExpressionOperation(func, Seq(body), ScopeElement(observable = false, funcDefinition))
+    ExpressionOperation(func, Seq(body), ScopeElement.const(funcDefinition))
   }
 
   private def dereferenceScope(arguments: Seq[Variable], program: Seq[Token], box: Boolean): ExpressionOperation = {

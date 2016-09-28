@@ -18,7 +18,7 @@ object Attributes {
       case parser.AttributeEvent(key, value) =>
         val ev = Ast.identifier("ev")
         val function = FunctionDef.anonymous(
-          Variable(ev, ScopeElement(observable = false, ClassDefinitionHelper.Event)),
+          Variable(ev, ScopeElement.const(ClassDefinitionHelper.Event)),
           Seq(Tokenizer.apply(value))
         )
 

@@ -3,7 +3,7 @@ examples.modules = {};
 examples.modules.App = function App() {
     ;
 };
-examples.modules.App.prototype.foo = function foo() {
+examples.modules.App.prototype.main = function main() {
     const bar = new examples.modules.Bar();
     return bar.bar();
 };

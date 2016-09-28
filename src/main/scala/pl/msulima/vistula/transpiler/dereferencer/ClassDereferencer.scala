@@ -63,7 +63,7 @@ trait ClassDereferencer {
         constructor = true
       )
 
-      Variable(identifier, ScopeElement(observable = false, definition))
+      Variable(identifier, ScopeElement.const(definition))
     }
 
     dereferencerImpl.dereferenceIntroduce(variable, introduceConstructor)

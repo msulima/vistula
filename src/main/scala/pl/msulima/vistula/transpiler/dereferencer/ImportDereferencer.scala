@@ -35,7 +35,7 @@ trait ImportDereferencer {
       val packageObjectClassReference = ClassReference(classReference.`package`, Ast.identifier("$Object"))
       val packageObjectDefinition = ClassDefinition(declarations.functions.collect({
         case (Constant(id), func) if func.constructor =>
-          (Ast.identifier(id), ScopeElement(observable = false, func))
+          (Ast.identifier(id), ScopeElement.const(func))
       }))
 
       val scopeWithPackageObject = scope.addToScope(packageObjectClassReference, packageObjectDefinition)
@@ -47,7 +47,7 @@ trait ImportDereferencer {
           val parentReference = ClassReference(Package(path.init), Ast.identifier("$Object"))
           val nestedReference = ClassReference(Package(path), Ast.identifier("$Object"))
 
-          val definition = ClassDefinition(Map(path.last -> ScopeElement(observable = false, nestedReference)))
+          val definition = ClassDefinition(Map(path.last -> ScopeElement.const(nestedReference)))
           val variable = Variable(parentReference.`package`.toIdentifier, ScopeElement.const(parentReference))
 
           // FIXME should merge with other modules

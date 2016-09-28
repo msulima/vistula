@@ -18,10 +18,10 @@ object ClassDefinitionHelper {
 
   private val stdlib = Map(
     Stdlib -> ClassDefinition(Map(
-      Ast.identifier("time") -> ScopeElement(observable = false, `type` = StdlibTime)
+      Ast.identifier("time") -> ScopeElement.const(StdlibTime)
     )),
     StdlibTime -> ClassDefinition(Map(
-      Ast.identifier("clock") -> ScopeElement(observable = true, `type` = Date)
+      Ast.identifier("clock") -> ScopeElement.observable(Date)
     )),
     Date -> ClassDefinition(Map(
       constDef("getTime"),
@@ -40,12 +40,12 @@ object ClassDefinitionHelper {
       obsDef("ifStatement", obs, obs, obs),
       obsDef("wrap", const),
       obsDef("zipAndFlatten", const),
-      Ast.identifier("Seq") -> ScopeElement(observable = false, `type` = VistulaSeqFactory),
-      Ast.identifier("dom") -> ScopeElement(observable = false, `type` = VistulaDom)
+      Ast.identifier("Seq") -> ScopeElement.const(VistulaSeqFactory),
+      Ast.identifier("dom") -> ScopeElement.const(VistulaDom)
     )),
     VistulaSeqFactory -> ClassDefinition(Map(
-      Ast.identifier("apply") -> ScopeElement(observable = false, FunctionDefinition(Seq(obs),
-        resultType = ScopeElement(observable = true, `type` = VistulaSeq), varargs = true))
+      Ast.identifier("apply") -> ScopeElement.const(FunctionDefinition(Seq(obs),
+        resultType = ScopeElement.observable(VistulaSeq), varargs = true))
     )),
     VistulaSeq -> ClassDefinition(Map(
       obsDef("filter", const)
@@ -62,12 +62,10 @@ object ClassDefinitionHelper {
   )
 
   private def constDef(name: String, arguments: ScopeElement*) = {
-    Ast.identifier(name) -> ScopeElement(observable = false,
-      FunctionDefinition(arguments, resultType = ScopeElement.DefaultConst))
+    Ast.identifier(name) -> ScopeElement.const(FunctionDefinition(arguments, resultType = ScopeElement.DefaultConst))
   }
 
   private def obsDef(name: String, arguments: ScopeElement*) = {
-    Ast.identifier(name) -> ScopeElement(observable = false,
-      FunctionDefinition(arguments, resultType = ScopeElement.Default))
+    Ast.identifier(name) -> ScopeElement.const(FunctionDefinition(arguments, resultType = ScopeElement.Default))
   }
 }

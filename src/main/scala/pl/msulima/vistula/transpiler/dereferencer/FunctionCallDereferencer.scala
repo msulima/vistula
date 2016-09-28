@@ -21,7 +21,7 @@ trait FunctionCallDereferencer {
       case ExpressionConstant(value, ScopeElement(true, _: ClassReference)) =>
         val definition = FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = true,
           resultIsObservable = true)
-        ExpressionConstant(value, ScopeElement(observable = false, definition))
+        ExpressionConstant(value, ScopeElement.const(definition))
       case func =>
         func
     }
