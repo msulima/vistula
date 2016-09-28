@@ -15,6 +15,8 @@ case class Package(path: Seq[Ast.identifier]) {
   def resolve(child: Ast.identifier): Package = {
     copy(path = path :+ child)
   }
+
+  override def toString: String = s"Package(${toIdentifier.name})"
 }
 
 object Package {

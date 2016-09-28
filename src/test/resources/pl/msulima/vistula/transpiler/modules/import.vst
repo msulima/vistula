@@ -1,6 +1,4 @@
-import vistula.lang.Integer
+import examples.modules.Bar
 
-const a: vistula.lang.Integer = 2
-a.toString()
-const b: vistula.lang.Integer = vistula.lang.Integer.parseInt("2")
-b.toString()
+let a: examples.modules.Bar = examples.modules.Bar()
+a.bar()
