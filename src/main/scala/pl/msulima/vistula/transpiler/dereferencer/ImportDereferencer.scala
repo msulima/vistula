@@ -28,16 +28,13 @@ trait ImportDereferencer {
   this: Dereferencer =>
 
   def importDereferencer(`import`: Ast.stmt.Import) = `import` match {
-    case classDef@Ast.stmt.Import(Ast.alias(identifier, None) +: _) =>
-      val declarations = Vistula.loadFile(identifier).declarations
+    case Ast.stmt.Import(Ast.alias(identifier, None) +: _) =>
+      val classReference = ClassReference(identifier.name)
+      val declarations = Vistula.loadFile(classReference).declarations
 
-      val scopePart = declarations.copy(classes = declarations.classes.map({
-        case (id, definition) =>
-          ClassReference(identifier.name) -> definition
-      }))
-
-      val ns = scopePart.classes.toSeq.foldLeft(scope)({
-        case (acc, (id, definition)) => acc.addToScope(id, definition)
+      val ns = declarations.classes.foldLeft(scope)({
+        case (acc, (id, definition)) =>
+          acc.addToScope(id, definition)
       })
 
       ScopedResult(ns, Seq())

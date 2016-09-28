@@ -4,7 +4,7 @@ import java.io.File
 import java.nio.file.{DirectoryStream, Files, Path, Paths => JavaPaths}
 
 import pl.msulima.vistula.Package
-import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.transpiler.scope.ClassReference
 
 import scala.collection.JavaConversions._
 
@@ -68,9 +68,8 @@ object Paths {
     f.delete()
   }
 
-  def findSourceFile(id: Ast.identifier) = {
-    val imported = id.name.split("\\.")
-    val prefix = imported.init :+ (imported.last + ".vst")
+  def findSourceFile(id: ClassReference) = {
+    val prefix = id.`package`.path.map(_.name) :+ (id.name.name + ".vst")
 
     prefix.foldLeft(SourceDir)((acc, file) => {
       acc.resolve(file)
