@@ -12,6 +12,13 @@ case class ScopePart(variables: Map[Ast.identifier, ScopeElement],
                      functions: Map[Token, FunctionDefinition],
                      classes: Map[ClassReference, ClassDefinition]) {
 
+  def addToScope(other: ScopePart): ScopePart = {
+    copy(
+      functions = functions ++ other.functions,
+      classes = classes ++ other.classes
+    )
+  }
+
   def mergeIntoScope(definition: ClassReferenceAndDefinition): ScopePart = {
     val mergedClassDefinition = classes.get(definition.reference) match {
       case Some(existingDefinition) =>
@@ -35,6 +42,9 @@ case class Scope(private val imports: ScopePart, declarations: ScopePart) {
   }
 
   def findClass(id: ClassReference): ClassDefinition = {
+    if (!classes.contains(id)) {
+      println("asdf")
+    }
     classes(id)
   }
 
@@ -57,19 +67,22 @@ case class Scope(private val imports: ScopePart, declarations: ScopePart) {
     copy(declarations = declarations.mergeIntoScope(definition))
   }
 
+  def mergeImport(other: ScopePart): Scope = {
+    copy(imports = imports.addToScope(other))
+  }
+
   def addToScope(definition: ClassReferenceAndDefinition): Scope = {
     copy(declarations = declarations.copy(classes = declarations.classes + (definition.reference -> definition.definition)))
   }
 
   def addToScope(other: ScopePart): Scope = {
-    copy(declarations = declarations.copy(
-      functions = declarations.functions ++ other.functions,
-      classes = declarations.classes ++ other.classes
-    ))
+    copy(declarations = declarations.addToScope(other))
   }
 }
 
 object Scope {
+
+  val EmptyScopePart = ScopePart(Map(), Map(), Map())
 
   val Empty = {
     Scope(
@@ -81,7 +94,7 @@ object Scope {
         functions = Map(),
         classes = ClassDefinitionHelper.defaults
       ),
-      declarations = ScopePart(Map(), Map(), Map())
+      declarations = EmptyScopePart
     )
   }
 }

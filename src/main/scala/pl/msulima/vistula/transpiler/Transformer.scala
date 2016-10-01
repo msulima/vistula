@@ -7,8 +7,10 @@ import pl.msulima.vistula.transpiler.scope._
 
 object Transformer {
 
-  def transform(program: Seq[Ast.stmt], `package`: Package): Seq[Expression] = {
-    transform(program.map(Tokenizer.applyStmt), Scope.Empty, `package`)
+  def transform(program: Seq[Ast.stmt], `package`: Package, predef: ScopePart = Scope.EmptyScopePart): Seq[Expression] = {
+    val mergeImport = Scope.Empty.mergeImport(predef)
+
+    transform(program.map(Tokenizer.applyStmt), mergeImport, `package`)
   }
 
   def transform(program: Seq[Token], scope: Scope, `package`: Package): Seq[Expression] = {

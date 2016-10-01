@@ -1,14 +1,17 @@
 package pl.msulima.vistula.transpiler.scope
 
+import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.scope.FunctionDefinitionHelper._
 
 object ClassDefinitionHelper {
 
+  val VistulaRoot = Package(Seq(Ast.identifier("vistula")))
+
   private val VistulaSeqFactory = ClassReference("vistula.collection.SeqFactory")
   private val VistulaSeq = ClassReference("vistula.collection.Seq")
   private val VistulaDom = ClassReference("vistula.dom.Dom")
-  val Vistula = ClassReference("vistula.Predef")
+  val Vistula = VistulaRoot.packageObjectReference
 
   val Stdlib = ClassReference("stdlib.Predef")
   private val StdlibTime = ClassReference("stdlib.time")

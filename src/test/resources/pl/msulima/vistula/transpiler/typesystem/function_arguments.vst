@@ -1,9 +1,9 @@
-def a(X: vistula.Predef) {
-  X.wrap(1)
+def a(X: vistula.lang.Integer) {
+  X.toString()
 }
 
-def b(X: *vistula.Predef) {
-  X.wrap(1)
+def b(X: *vistula.lang.Integer) {
+  X.toString()
 }
 
 def c(X: vistula.lang.Object) {

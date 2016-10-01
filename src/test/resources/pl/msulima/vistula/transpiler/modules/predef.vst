@@ -1,0 +1,2 @@
+const a: vistula.lang.Integer = 1
+a.toString()

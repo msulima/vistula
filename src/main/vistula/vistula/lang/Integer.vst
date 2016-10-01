@@ -3,6 +3,10 @@ class Integer() {
   def __init__() {
     pass
   }
+
+  def toString() {
+    "implementation missing"
+  }
 }
 
 def parseInt(x: vistula.lang.Object) {

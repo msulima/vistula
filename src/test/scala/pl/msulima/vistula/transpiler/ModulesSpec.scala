@@ -9,6 +9,7 @@ class ModulesSpec extends Specification with TranspilerSpecification {
   def test = transpileAndCompare("modules") _
 
   test("import")
+  test("predef")
 
   "merge multiple files from package into one" in {
     Vistula.browserify(Package("examples.modules"))

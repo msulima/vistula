@@ -1,8 +1,8 @@
 function a(X) {
-    return X.wrap(1);
+    return X.toString();
 };
 function b(X) {
-    return X.rxFlatMap($arg => ($arg.wrap(1)));
+    return X.rxMap($arg => ($arg.toString()));
 };
 function c(X) {
     return 2;
