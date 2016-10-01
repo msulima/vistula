@@ -50,7 +50,7 @@ trait ImportDereferencer {
     scope.addToScope(getTopLevelPackageObject(classReference))
       .addToScope(intermediatePackageObjects)
       .addToScope(getPackageObject(classReference, declarations))
-      .addToScope(declarations.classes.map(ClassReferenceAndDefinition.tupled).toSeq)
+      .addToScope(declarations)
   }
 
   private def getTopLevelPackageObject(classReference: ClassReference): Variable = {
@@ -62,6 +62,8 @@ trait ImportDereferencer {
   private def getPackageObject(classReference: ClassReference, declarations: ScopePart) = {
     val packageObjectDefinition = ClassDefinition(declarations.functions.collect({
       case (Constant(id), func) if func.constructor =>
+        (Ast.identifier(id), ScopeElement.const(func))
+      case (Constant(id), func) =>
         (Ast.identifier(id), ScopeElement.const(func))
     }))
 

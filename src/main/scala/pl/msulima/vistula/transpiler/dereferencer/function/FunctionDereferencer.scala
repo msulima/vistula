@@ -5,6 +5,7 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, FunctionScope}
+import pl.msulima.vistula.transpiler.expression.reference.Declare
 import pl.msulima.vistula.transpiler.scope._
 
 trait FunctionDereferencer {
@@ -18,17 +19,26 @@ trait FunctionDereferencer {
   }
 
   def dereferenceAndAddToScope(func: Ast.stmt.FunctionDef) = {
-    val id = toFunctionDef(func).name
-    val body = dereferenceFunction(toFunctionDef(func))
+    val functionDef = toFunctionDef(func)
+
+    val id = functionDef.name
+    val body = dereferenceFunction(functionDef)
+    val wat = if (`package` == Package.Root) {
+      body
+    } else {
+      // FIXME simplify
+      dereference(Declare(id.toIdentifier, Operation(functionDef, Seq()), mutable = false, declare = false))
+    }
+
     val ns = scope.addToScope(Variable(id.name, body.`type`))
-    ScopedResult(ns, Seq(body))
+    ScopedResult(ns, Seq(wat))
   }
 
   def toFunctionDef(func: Ast.stmt.FunctionDef): FunctionDef = {
     val arguments = FunctionDef.mapArguments(func.args)
 
     new FunctionDef(
-      FunctionReference(Package.Root, func.name),
+      FunctionReference(`package`, func.name),
       func.body.map(Tokenizer.applyStmt),
       arguments
     )

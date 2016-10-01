@@ -13,3 +13,6 @@ examples.modules.Bar = function Bar() {
 examples.modules.Bar.prototype.bar = function bar() {
     return 1;
 };
+examples.modules.staticBar = function staticBar(x) {
+    return x;
+};

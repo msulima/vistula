@@ -2,3 +2,4 @@ import examples.modules.Bar
 
 let a: examples.modules.Bar = examples.modules.Bar()
 a.bar()
+let b = examples.modules.staticBar(1)

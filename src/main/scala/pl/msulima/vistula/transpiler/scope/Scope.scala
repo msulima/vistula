@@ -44,6 +44,13 @@ case class Scope(private val imports: ScopePart, declarations: ScopePart) {
   def addToScope(definition: ClassReferenceAndDefinition): Scope = {
     copy(declarations = declarations.copy(classes = declarations.classes + (definition.reference -> definition.definition)))
   }
+
+  def addToScope(other: ScopePart): Scope = {
+    copy(declarations = declarations.copy(
+      functions = declarations.functions ++ other.functions,
+      classes = declarations.classes ++ other.classes
+    ))
+  }
 }
 
 object Scope {

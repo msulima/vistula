@@ -8,3 +8,7 @@ class Bar {
     1
   }
 }
+
+def staticBar(x: *vistula.lang.Object) {
+  x
+}
