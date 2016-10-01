@@ -35,8 +35,14 @@ case class Scope(private val imports: ScopePart, declarations: ScopePart) {
     }
   }
 
-  def addToScope(id: ClassReference, classDefinition: ClassDefinition): Scope = {
-    copy(declarations = declarations.copy(classes = declarations.classes + (id -> classDefinition)))
+  def addToScope(definitions: Seq[ClassReferenceAndDefinition]): Scope = {
+    definitions.foldLeft(this)({
+      case (acc, variable) => acc.addToScope(variable)
+    })
+  }
+
+  def addToScope(definition: ClassReferenceAndDefinition): Scope = {
+    copy(declarations = declarations.copy(classes = declarations.classes + (definition.reference -> definition.definition)))
   }
 }
 

@@ -1,6 +1,7 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.parser.Ast.identifier
 import pl.msulima.vistula.transpiler.expression.data.StaticDict
 import pl.msulima.vistula.transpiler.expression.reference.Declare
 import pl.msulima.vistula.transpiler.scope._
@@ -27,45 +28,43 @@ object ImportDereferencer {
 trait ImportDereferencer {
   this: Dereferencer =>
 
-  private val ModuleIdentifier = Ast.identifier("$Module")
-
   def importDereferencer(`import`: Ast.stmt.Import) = `import` match {
     case Ast.stmt.Import(Ast.alias(identifier, None) +: _) =>
-      val classReference = ClassReference(identifier.name)
-      val declarations = Vistula.loadFile(classReference).declarations
-
-      val scopeWithPackageObject = addPackageObjectToScope(classReference, declarations)
-
-      val right = classReference.`package`.path.inits.toList.dropRight(2)
-
-      val scopeWithIntermediatePackageObjects = right.foldLeft(scopeWithPackageObject)({
-        case (acc, path) =>
-          val parentReference = ClassReference(Package(path.init), ModuleIdentifier)
-          val nestedReference = ClassReference(Package(path), ModuleIdentifier)
-
-          val definition = ClassDefinition(Map(path.last -> ScopeElement.const(nestedReference)))
-          val variable = Variable(parentReference.`package`.toIdentifier, ScopeElement.const(parentReference))
-
-          // FIXME should merge with other modules
-          acc.addToScope(parentReference, definition).addToScope(variable)
-      })
-
-      val ns = declarations.classes.foldLeft(scopeWithIntermediatePackageObjects)({
-        case (acc, (id, definition)) =>
-          acc.addToScope(id, definition)
-      })
-
-      ScopedResult(ns, Seq())
+      ScopedResult(dereferenceImport(identifier), Seq())
   }
 
-  private def addPackageObjectToScope(classReference: ClassReference, declarations: ScopePart): Scope = {
-    val packageObjectClassReference = ClassReference(classReference.`package`, ModuleIdentifier)
+  private def dereferenceImport(identifier: identifier): Scope = {
+    val classReference = ClassReference(identifier.name)
+    val declarations = Vistula.loadFile(classReference).declarations
 
+    val intermediatePackageObjects = classReference.`package`.parents.map(path => {
+      val parentReference = path.parent.packageObjectReference
+      val nestedReference = path.packageObjectReference
+
+      // FIXME should merge with other modules
+      ClassReferenceAndDefinition(
+        parentReference, ClassDefinition(Map(path.path.last -> ScopeElement.const(nestedReference)))
+      )
+    })
+
+    scope.addToScope(getTopLevelPackageObject(classReference))
+      .addToScope(intermediatePackageObjects)
+      .addToScope(getPackageObject(classReference, declarations))
+      .addToScope(declarations.classes.map(ClassReferenceAndDefinition.tupled).toSeq)
+  }
+
+  private def getTopLevelPackageObject(classReference: ClassReference): Variable = {
+    val topLevelPackage = classReference.`package`.parents.head.parent
+
+    Variable(topLevelPackage.toIdentifier, ScopeElement.const(topLevelPackage.packageObjectReference))
+  }
+
+  private def getPackageObject(classReference: ClassReference, declarations: ScopePart) = {
     val packageObjectDefinition = ClassDefinition(declarations.functions.collect({
       case (Constant(id), func) if func.constructor =>
         (Ast.identifier(id), ScopeElement.const(func))
     }))
 
-    scope.addToScope(packageObjectClassReference, packageObjectDefinition)
+    ClassReferenceAndDefinition(classReference.`package`.packageObjectReference, packageObjectDefinition)
   }
 }

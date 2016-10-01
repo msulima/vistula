@@ -33,7 +33,7 @@ trait ClassDereferencer {
       field.id -> field.`type`
     }).toMap ++ declarations
 
-    val dereferencerImpl = DereferencerImpl(scope.addToScope(ClassReference(`package`, identifier), ClassDefinition(members)), `package`)
+    val dereferencerImpl = DereferencerImpl(scope.addToScope(ClassReferenceAndDefinition(ClassReference(`package`, identifier), ClassDefinition(members))), `package`)
     val definitions = getMethodDefinitions(dereferencerImpl, identifier, methods)
 
     val scopedResult = constructor(dereferencerImpl, identifier, fields, constructorFunc)

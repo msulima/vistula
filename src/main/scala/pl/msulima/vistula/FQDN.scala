@@ -1,8 +1,11 @@
 package pl.msulima.vistula
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.transpiler.scope.ClassReference
 
 case class Package(path: Seq[Ast.identifier]) {
+
+  override def toString: String = s"Package(${toIdentifier.name})"
 
   def join = path.map(_.name).mkString(".")
 
@@ -16,12 +19,23 @@ case class Package(path: Seq[Ast.identifier]) {
     copy(path = path :+ child)
   }
 
-  override def toString: String = s"Package(${toIdentifier.name})"
+  def packageObjectReference: ClassReference = {
+    ClassReference(this, Package.ModuleIdentifier)
+  }
+
+  def parent: Package = {
+    Package(path.init)
+  }
+
+  def parents: Seq[Package] = {
+    path.inits.toList.dropRight(2).map(Package.apply)
+  }
 }
 
 object Package {
 
   val Root = Package(Seq())
+  private val ModuleIdentifier = Ast.identifier("$Module")
 
   def apply(input: String) = {
     new Package(input.split("\\.").map(Ast.identifier))
