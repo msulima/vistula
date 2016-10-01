@@ -1,5 +1,8 @@
 import examples.modules.Bar
+import examples.modules.Foo
 
 let a: examples.modules.Bar = examples.modules.Bar()
 a.bar()
 let b = examples.modules.staticBar(1)
+let c: examples.modules.Foo = examples.modules.Foo()
+c.foo()

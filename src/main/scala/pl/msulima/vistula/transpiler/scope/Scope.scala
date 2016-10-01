@@ -10,7 +10,19 @@ case class ScopedResult(scope: Scope, program: Seq[Expression])
 
 case class ScopePart(variables: Map[Ast.identifier, ScopeElement],
                      functions: Map[Token, FunctionDefinition],
-                     classes: Map[ClassReference, ClassDefinition])
+                     classes: Map[ClassReference, ClassDefinition]) {
+
+  def mergeIntoScope(definition: ClassReferenceAndDefinition): ScopePart = {
+    val mergedClassDefinition = classes.get(definition.reference) match {
+      case Some(existingDefinition) =>
+        existingDefinition.copy(fields = existingDefinition.fields ++ definition.definition.fields)
+      case None =>
+        definition.definition
+    }
+
+    copy(classes = classes + (definition.reference -> mergedClassDefinition))
+  }
+}
 
 case class Scope(private val imports: ScopePart, declarations: ScopePart) {
 
@@ -35,10 +47,14 @@ case class Scope(private val imports: ScopePart, declarations: ScopePart) {
     }
   }
 
-  def addToScope(definitions: Seq[ClassReferenceAndDefinition]): Scope = {
+  def mergeIntoScope(definitions: Seq[ClassReferenceAndDefinition]): Scope = {
     definitions.foldLeft(this)({
-      case (acc, variable) => acc.addToScope(variable)
+      case (acc, variable) => acc.mergeIntoScope(variable)
     })
+  }
+
+  def mergeIntoScope(definition: ClassReferenceAndDefinition): Scope = {
+    copy(declarations = declarations.mergeIntoScope(definition))
   }
 
   def addToScope(definition: ClassReferenceAndDefinition): Scope = {

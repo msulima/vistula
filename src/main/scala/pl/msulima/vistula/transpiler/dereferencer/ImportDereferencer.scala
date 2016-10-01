@@ -37,19 +37,9 @@ trait ImportDereferencer {
     val classReference = ClassReference(identifier.name)
     val declarations = Vistula.loadFile(classReference).declarations
 
-    val intermediatePackageObjects = classReference.`package`.parents.map(path => {
-      val parentReference = path.parent.packageObjectReference
-      val nestedReference = path.packageObjectReference
-
-      // FIXME should merge with other modules
-      ClassReferenceAndDefinition(
-        parentReference, ClassDefinition(Map(path.path.last -> ScopeElement.const(nestedReference)))
-      )
-    })
-
     scope.addToScope(getTopLevelPackageObject(classReference))
-      .addToScope(intermediatePackageObjects)
-      .addToScope(getPackageObject(classReference, declarations))
+      .mergeIntoScope(getIntermediatePackageObjects(classReference))
+      .mergeIntoScope(getPackageObject(classReference, declarations))
       .addToScope(declarations)
   }
 
@@ -57,6 +47,17 @@ trait ImportDereferencer {
     val topLevelPackage = classReference.`package`.parents.head.parent
 
     Variable(topLevelPackage.toIdentifier, ScopeElement.const(topLevelPackage.packageObjectReference))
+  }
+
+  private def getIntermediatePackageObjects(classReference: ClassReference): Seq[ClassReferenceAndDefinition] = {
+    classReference.`package`.parents.map(path => {
+      val parentReference = path.parent.packageObjectReference
+      val nestedReference = path.packageObjectReference
+
+      ClassReferenceAndDefinition(
+        parentReference, ClassDefinition(Map(path.path.last -> ScopeElement.const(nestedReference)))
+      )
+    })
   }
 
   private def getPackageObject(classReference: ClassReference, declarations: ScopePart) = {

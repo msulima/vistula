@@ -16,3 +16,9 @@ examples.modules.Bar.prototype.bar = function bar() {
 examples.modules.staticBar = function staticBar(x) {
     return x;
 };
+examples.modules.Foo = function Foo() {
+    ;
+};
+examples.modules.Foo.prototype.foo = function foo() {
+    return 1;
+};
