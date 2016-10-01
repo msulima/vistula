@@ -27,25 +27,21 @@ object ImportDereferencer {
 trait ImportDereferencer {
   this: Dereferencer =>
 
+  private val ModuleIdentifier = Ast.identifier("$Module")
+
   def importDereferencer(`import`: Ast.stmt.Import) = `import` match {
     case Ast.stmt.Import(Ast.alias(identifier, None) +: _) =>
       val classReference = ClassReference(identifier.name)
       val declarations = Vistula.loadFile(classReference).declarations
 
-      val packageObjectClassReference = ClassReference(classReference.`package`, Ast.identifier("$Object"))
-      val packageObjectDefinition = ClassDefinition(declarations.functions.collect({
-        case (Constant(id), func) if func.constructor =>
-          (Ast.identifier(id), ScopeElement.const(func))
-      }))
-
-      val scopeWithPackageObject = scope.addToScope(packageObjectClassReference, packageObjectDefinition)
+      val scopeWithPackageObject = addPackageObjectToScope(classReference, declarations)
 
       val right = classReference.`package`.path.inits.toList.dropRight(2)
 
       val scopeWithIntermediatePackageObjects = right.foldLeft(scopeWithPackageObject)({
         case (acc, path) =>
-          val parentReference = ClassReference(Package(path.init), Ast.identifier("$Object"))
-          val nestedReference = ClassReference(Package(path), Ast.identifier("$Object"))
+          val parentReference = ClassReference(Package(path.init), ModuleIdentifier)
+          val nestedReference = ClassReference(Package(path), ModuleIdentifier)
 
           val definition = ClassDefinition(Map(path.last -> ScopeElement.const(nestedReference)))
           val variable = Variable(parentReference.`package`.toIdentifier, ScopeElement.const(parentReference))
@@ -60,5 +56,16 @@ trait ImportDereferencer {
       })
 
       ScopedResult(ns, Seq())
+  }
+
+  private def addPackageObjectToScope(classReference: ClassReference, declarations: ScopePart): Scope = {
+    val packageObjectClassReference = ClassReference(classReference.`package`, ModuleIdentifier)
+
+    val packageObjectDefinition = ClassDefinition(declarations.functions.collect({
+      case (Constant(id), func) if func.constructor =>
+        (Ast.identifier(id), ScopeElement.const(func))
+    }))
+
+    scope.addToScope(packageObjectClassReference, packageObjectDefinition)
   }
 }
