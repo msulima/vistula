@@ -8,13 +8,10 @@ import pl.msulima.vistula.transpiler.scope.{ScopeElement, Variable}
 object Loop {
 
   def apply: PartialFunction[Ast.stmt, Token] = {
-    case Ast.stmt.For(Ast.expr.Name(name, Ast.expr_context.Load), iterExpr, body) =>
-      Loop(iterExpr, name, body.init.map(Tokenizer.applyStmt) :+ Box(Tokenizer.applyStmt(body.last)))
-  }
+    case Ast.stmt.For(Ast.expr.Name(argument, Ast.expr_context.Load), iterable, body) =>
+      val program = body.init.map(Tokenizer.applyStmt) :+ Box(Tokenizer.applyStmt(body.last))
+      val mapFunction = Reference(Tokenizer.apply(iterable), Ast.identifier("map"))
 
-  def apply(iterable: Ast.expr, argument: Ast.identifier, body: Seq[Token]) = {
-    val iter = Reference(Tokenizer.apply(iterable), Constant("map"))
-
-    FunctionCall(iter, Seq(FunctionDef.anonymous(Variable(argument, ScopeElement.Default), body)))
+      FunctionCall(mapFunction, Seq(FunctionDef.anonymous(Variable(argument, ScopeElement.Default), program)))
   }
 }

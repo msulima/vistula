@@ -1,14 +1,20 @@
 package pl.msulima.vistula.transpiler.expression.data
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement}
 import pl.msulima.vistula.transpiler.{Tokenizer, _}
 import pl.msulima.vistula.util.ToArray
 
 object Primitives {
 
+  val StaticNull = TypedConstant("null", ScopeElement.DefaultConst)
+
   def apply: PartialFunction[Ast.expr, Token] = {
     case expr: Ast.expr if static.isDefinedAt(expr) =>
-      Constant(static(expr))
+      val (value, t) = static(expr)
+      TypedConstant(value, ScopeElement.const(t))
+    case Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load) =>
+      StaticNull
     case Ast.expr.Str(x) =>
       StaticString(x)
     case Ast.expr.Dict(keys, values) =>
@@ -19,22 +25,20 @@ object Primitives {
       Operation(StaticDict, dict)
   }
 
-  private def static: PartialFunction[Ast.expr, String] = {
+  private def static: PartialFunction[Ast.expr, (String, ClassReference)] = {
     case Ast.expr.Num(x) =>
-      x.toString
-    case Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load) =>
-      "null"
+      x.toString -> ClassReference("vistula.lang.Integer")
     case Ast.expr.Name(Ast.identifier("False"), Ast.expr_context.Load) =>
-      "false"
+      "false" -> ClassReference("vistula.lang.Boolean")
     case Ast.expr.Name(Ast.identifier("True"), Ast.expr_context.Load) =>
-      "true"
+      "true" -> ClassReference("vistula.lang.Boolean")
   }
 }
 
 case object StaticString extends Operator {
 
   def apply(x: String): Token = {
-    Operation(StaticString, Seq(Constant(x)))
+    Operation(StaticString, Seq(TypedConstant(x, ScopeElement.const(ClassReference("vistula.lang.String")))))
   }
 
   override def apply(operands: List[Constant]) = {

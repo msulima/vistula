@@ -53,7 +53,7 @@ trait ConstructorDereferencer {
   private def initializeFields(classIdentifier: identifier, arguments: Seq[Variable]): Seq[Token] = {
     val introduceThis = ImportVariable(Variable(ThisId, ScopeElement.const(ClassReference(classIdentifier.name))))
     val fieldInitialization = arguments.map(arg => {
-      val source = Reference(Reference(ThisId), Constant(arg.id.name))
+      val source = Reference(Reference(ThisId), arg.id)
       Operation(Declare(declare = false, mutable = arg.`type`.observable), Seq(source, Reference(arg.id)))
     })
 

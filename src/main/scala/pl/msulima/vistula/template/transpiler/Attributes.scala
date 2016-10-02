@@ -4,7 +4,7 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.control.FunctionDef
-import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
+import pl.msulima.vistula.transpiler.expression.data.{Primitives, StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.scope.{ClassDefinitionHelper, ScopeElement, Variable}
 
 object Attributes {
@@ -14,7 +14,7 @@ object Attributes {
       case parser.AttributeValue(key, value) =>
         tuple(key, Box(Tokenizer.apply(value)))
       case parser.AttributeMarker(key) =>
-        tuple(key, Box(Constant("null")))
+        tuple(key, Box(Primitives.StaticNull))
       case parser.AttributeEvent(key, value) =>
         val ev = Ast.identifier("ev")
         val function = FunctionDef.anonymous(
