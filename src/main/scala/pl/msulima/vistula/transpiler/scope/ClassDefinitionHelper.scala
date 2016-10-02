@@ -25,12 +25,6 @@ object ClassDefinitionHelper {
     )),
     StdlibTime -> ClassDefinition(Map(
       Ast.identifier("clock") -> ScopeElement.observable(Date)
-    )),
-    Date -> ClassDefinition(Map(
-      constDef("getTime"),
-      constDef("getSeconds"),
-      constDef("getMinutes"),
-      constDef("getHours")
     ))
   )
 

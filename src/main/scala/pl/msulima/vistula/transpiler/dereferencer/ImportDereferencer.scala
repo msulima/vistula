@@ -37,9 +37,14 @@ trait ImportDereferencer {
     val classReference = ClassReference(identifier.name)
     val declarations = Vistula.loadFile(classReference).declarations
 
-    scope.addToScope(getTopLevelPackageObject(classReference))
-      .mergeIntoScope(getIntermediatePackageObjects(classReference))
-      .mergeIntoScope(getPackageObject(classReference, declarations))
+    val scopeWithTopPackages = if (classReference.`package`.parent == Package.Root) {
+      scope
+    } else {
+      scope.addToScope(getTopLevelPackageObject(classReference))
+        .mergeIntoScope(getIntermediatePackageObjects(classReference))
+    }
+
+    scopeWithTopPackages.mergeIntoScope(getPackageObject(classReference, declarations))
       .addToScope(declarations)
   }
 

@@ -1,0 +1,22 @@
+class Date {
+
+  def __init__() {
+    pass
+  }
+
+  def getTime() {
+    -1
+  }
+
+  def getSeconds() {
+    -1
+  }
+
+  def getMinutes() {
+    -1
+  }
+
+  def getHours() {
+    -1
+  }
+}

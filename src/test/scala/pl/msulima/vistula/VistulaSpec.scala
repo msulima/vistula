@@ -24,6 +24,14 @@ class VistulaSpec extends Specification {
     script must not(beEmpty)
   }
 
+  "transpiles vistula" in {
+    Vistula.browserify(Package("vistula"))
+    Vistula.browserify(Package("js"))
+
+    new File("target/vistula/modules/js.js").exists() must beTrue
+    new File("target/vistula/modules/vistula.js").exists() must beTrue
+  }
+
   "saves files with imports" in {
     Vistula.compileAll()
 

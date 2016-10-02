@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
 object Paths {
 
   private val SourceDir = JavaPaths.get("src", "main", "vistula")
-  private val TargetDir = JavaPaths.get("target", "vistula", "classes")
+  private val TargetDir = JavaPaths.get("target", "vistula")
 
   def cleanTarget() = {
     deleteRecursively(TargetDir.toFile)
@@ -54,11 +54,11 @@ object Paths {
   def toTargetFile(file: Path) = {
     val subpath = file.subpath(SourceDir.getNameCount, file.getNameCount - 1)
 
-    TargetDir.resolve(subpath).resolve(file.getFileName.toString.replaceAll("\\.vst$", ".js"))
+    TargetDir.resolve("classes").resolve(subpath).resolve(file.getFileName.toString.replaceAll("\\.vst$", ".js"))
   }
 
   def toTargetFile(input: Package) = {
-    TargetDir.resolve(input.join + ".js")
+    TargetDir.resolve("modules").resolve(input.join + ".js")
   }
 
   private def deleteRecursively(f: File) {
