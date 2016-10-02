@@ -2,10 +2,10 @@ package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.identifier
+import pl.msulima.vistula.transpiler.Operation
 import pl.msulima.vistula.transpiler.expression.data.StaticDict
 import pl.msulima.vistula.transpiler.expression.reference.Declare
 import pl.msulima.vistula.transpiler.scope._
-import pl.msulima.vistula.transpiler.{Constant, Operation}
 import pl.msulima.vistula.{Package, Vistula}
 
 object ImportDereferencer {
@@ -66,12 +66,7 @@ trait ImportDereferencer {
   }
 
   private def getPackageObject(classReference: ClassReference, declarations: ScopePart) = {
-    val packageObjectDefinition = ClassDefinition(declarations.functions.collect({
-      case (Constant(id), func) if func.constructor =>
-        (Ast.identifier(id), ScopeElement.const(func))
-      case (Constant(id), func) =>
-        (Ast.identifier(id), ScopeElement.const(func))
-    }))
+    val packageObjectDefinition = ClassDefinition(declarations.functions.mapValues(ScopeElement.const))
 
     ClassReferenceAndDefinition(classReference.`package`.packageObjectReference, packageObjectDefinition)
   }

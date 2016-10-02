@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.scope
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler.{Constant, Expression, Token}
+import pl.msulima.vistula.transpiler.Expression
 
 
 case class Variable(id: Ast.identifier, `type`: ScopeElement)
@@ -9,7 +9,7 @@ case class Variable(id: Ast.identifier, `type`: ScopeElement)
 case class ScopedResult(scope: Scope, program: Seq[Expression])
 
 case class ScopePart(variables: Map[Ast.identifier, ScopeElement],
-                     functions: Map[Token, FunctionDefinition],
+                     functions: Map[Ast.identifier, FunctionDefinition],
                      classes: Map[ClassReference, ClassDefinition]) {
 
   def addToScope(other: ScopePart): ScopePart = {
@@ -38,20 +38,17 @@ case class Scope(private val imports: ScopePart, declarations: ScopePart) {
   private val classes = imports.classes ++ declarations.classes
 
   def findById(id: Ast.identifier): Option[ScopeElement] = {
-    variables.get(id).orElse(functions.get(Constant(id.name)).map(ScopeElement.const))
+    variables.get(id).orElse(functions.get(id).map(ScopeElement.const))
   }
 
   def findClass(id: ClassReference): ClassDefinition = {
-    if (!classes.contains(id)) {
-      println("asdf")
-    }
     classes(id)
   }
 
   def addToScope(variable: Variable): Scope = {
     variable.`type` match {
       case ScopeElement(false, definition: FunctionDefinition) =>
-        copy(declarations = declarations.copy(functions = declarations.functions + (Constant(variable.id.name) -> definition)))
+        copy(declarations = declarations.copy(functions = declarations.functions + (variable.id -> definition)))
       case t: ScopeElement =>
         copy(declarations = declarations.copy(variables = declarations.variables + (variable.id -> t)))
     }

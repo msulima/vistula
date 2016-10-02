@@ -16,7 +16,14 @@ trait FunctionCallDereferencer {
       functionCall(function, funcDefinition, arguments)
   }
 
-  private def dereferenceFunction(function: Token, arguments: Seq[Token]) = {
+  def functionCall(func: Token, arguments: Seq[Expression]): ExpressionOperation = {
+    val function = dereferenceFunction(func, arguments)
+    val funcDefinition = getDefinition(function, arguments)
+
+    functionCall(function, funcDefinition, arguments)
+  }
+
+  private def dereferenceFunction(function: Token, arguments: Seq[_]) = {
     dereference(function) match {
       case ExpressionConstant(value, ScopeElement(true, _: ClassReference)) =>
         val definition = FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = true,
@@ -27,7 +34,7 @@ trait FunctionCallDereferencer {
     }
   }
 
-  private def getDefinition(function: Expression, arguments: Seq[Token]) = {
+  private def getDefinition(function: Expression, arguments: Seq[_]) = {
     function.`type`.`type` match {
       case definition: FunctionDefinition =>
         definition
@@ -48,7 +55,7 @@ trait FunctionCallDereferencer {
     }).map(dereference)
   }
 
-  def functionCall(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): ExpressionOperation = {
+  private def functionCall(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): ExpressionOperation = {
     val (observables, inputs) = findSubstitutes(function, funcDefinition, arguments)
     val body = ExpressionOperation(FunctionCall(funcDefinition.constructor), inputs, funcDefinition.resultType)
 
