@@ -1,8 +1,5 @@
 
 class Integer() {
-  def __init__() {
-    pass
-  }
 
   def toString() {
     "implementation missing"

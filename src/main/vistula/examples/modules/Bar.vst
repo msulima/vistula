@@ -1,9 +1,5 @@
 class Bar {
 
-  def __init__() {
-    pass
-  }
-
   def bar() {
     1
   }

@@ -2,10 +2,6 @@ import examples.modules.Bar
 
 class App {
 
-  def __init__() {
-    pass
-  }
-
   def main() {
     const bar = examples.modules.Bar()
     bar.bar()

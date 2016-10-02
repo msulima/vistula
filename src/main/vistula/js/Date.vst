@@ -1,9 +1,5 @@
 class Date {
 
-  def __init__() {
-    pass
-  }
-
   def getTime() {
     -1
   }
