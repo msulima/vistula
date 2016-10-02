@@ -52,9 +52,6 @@ object ClassDefinitionHelper {
       obsDef("textNode", const),
       obsDef("createBoundElement", const, const, const, const),
       obsDef("createElement", const, const, const)
-    )),
-    Event -> ClassDefinition(Map(
-      constDef("preventDefault")
     ))
   )
 
