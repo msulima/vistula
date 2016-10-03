@@ -5,7 +5,7 @@ import pl.msulima.vistula.transpiler.expression.reference.FunctionCall
 import pl.msulima.vistula.transpiler.scope._
 
 trait FunctionCallDereferencer {
-  this: Dereferencer =>
+  this: Dereferencer with BoxDereferencer =>
 
   def functionCallDereferencer: PartialFunction[Token, Expression] = {
     case Operation(_: FunctionCall, func +: args) =>
@@ -45,14 +45,14 @@ trait FunctionCallDereferencer {
   }
 
   private def dereferenceArguments(funcDefinition: FunctionDefinition, arguments: Seq[Token]) = {
-    arguments.zip(funcDefinition.adapt(arguments)).map({
+    arguments.map(dereference).zip(funcDefinition.adapt(arguments)).map({
       case (arg, argDefinition) =>
-        if (argDefinition.observable) {
-          Box(arg)
+        if (argDefinition.observable && !arg.`type`.`type`.isInstanceOf[FunctionDefinition]) {
+          toObservable(arg)
         } else {
           arg
         }
-    }).map(dereference)
+    })
   }
 
   private def functionCall(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): ExpressionOperation = {
