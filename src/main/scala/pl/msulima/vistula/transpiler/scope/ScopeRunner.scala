@@ -13,7 +13,7 @@ case object ScopeRunner {
 
     token match {
       case Introduce(variable, body) =>
-        dereferencer.dereferenceIntroduce(variable, body)
+        dereferencer.dereferenceIntroduce(variable, dereferencer.dereference(body))
       case ImportVariable(variable) =>
         val ns = scope.addToScope(variable)
         ScopedResult(ns, Seq())

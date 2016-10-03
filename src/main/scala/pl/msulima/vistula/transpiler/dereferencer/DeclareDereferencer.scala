@@ -16,18 +16,17 @@ trait DeclareDereferencer {
       dereferenceDeclare(name, body, dec.mutable, dec.declare)
   }
 
+  def dereferenceIntroduce(variable: Variable, body: Expression): ScopedResult = {
+    val ns = scope.addToScope(inferType(variable, body))
+    ScopedResult(ns, Seq(body))
+  }
+
   private def inferType(variable: Variable, result: Expression): Variable = {
     if (variable.`type`.`type` == ClassReference.Object) {
       variable.copy(`type` = variable.`type`.copy(`type` = result.`type`.`type`))
     } else {
       variable
     }
-  }
-
-  def dereferenceIntroduce(variable: Variable, body: Token) = {
-    val result = DereferencerImpl(scope, `package`).dereference(body)
-    val ns = scope.addToScope(inferType(variable, result))
-    ScopedResult(ns, Seq(result))
   }
 
   def introduce(identifier: Ast.identifier, body: Token, typedef: ClassType, mutable: Boolean, declare: Boolean = true) = {
@@ -37,7 +36,11 @@ trait DeclareDereferencer {
     ScopedResult(scope.addToScope(variable), Seq(result))
   }
 
-  def dereferenceDeclare(identifier: Token, body: Token, mutable: Boolean, declare: Boolean) = {
+  def dereferenceDeclare(identifier: Token, body: Token, mutable: Boolean, declare: Boolean): Expression = {
+    dereferenceDeclare(dereference(identifier), body, mutable, declare)
+  }
+
+  def dereferenceDeclare(identifier: Expression, body: Token, mutable: Boolean, declare: Boolean): Expression = {
     val value = if (mutable) {
       Box(body)
     } else {
@@ -46,6 +49,6 @@ trait DeclareDereferencer {
     val dereferencedBody = dereference(value)
     val underlyingType = dereference(body).`type`
 
-    ExpressionOperation(Declare(declare, mutable), Seq(dereference(identifier), dereferencedBody), underlyingType)
+    ExpressionOperation(Declare(declare, mutable), Seq(identifier, dereferencedBody), underlyingType)
   }
 }

@@ -24,13 +24,6 @@ trait ConstructorDereferencer {
 
   def constructor(dereferencerImpl: DereferencerImpl, identifier: Ast.identifier,
                   fields: Seq[Variable], constructorFunc: Ast.stmt.FunctionDef) = {
-    val introduceConstructor = {
-      val name = FunctionReference(`package`, identifier).toIdentifier
-      val constructor = createConstructor(identifier, fields, constructorFunc.body)
-
-      Declare(name, constructor, mutable = false, declare = `package` == Package.Root)
-    }
-
     val variable = {
       val definition = FunctionDefinition(
         fields.map(_.`type`),
@@ -39,6 +32,13 @@ trait ConstructorDereferencer {
       )
 
       Variable(identifier, ScopeElement.const(definition))
+    }
+
+    val introduceConstructor = {
+      val name = ExpressionConstant(FunctionReference(`package`, identifier).toIdentifier.name, ScopeElement.DefaultConst)
+      val constructor = createConstructor(identifier, fields, constructorFunc.body)
+
+      dereferencerImpl.dereferenceDeclare(name, constructor, mutable = false, declare = `package` == Package.Root)
     }
 
     dereferencerImpl.dereferenceIntroduce(variable, introduceConstructor)
