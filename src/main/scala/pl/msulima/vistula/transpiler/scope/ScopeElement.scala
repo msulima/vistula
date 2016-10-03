@@ -30,13 +30,13 @@ sealed trait ClassType
 case class FunctionDefinition(arguments: Seq[ScopeElement], resultType: ScopeElement,
                               varargs: Boolean = false, constructor: Boolean = false) extends ClassType {
 
-  def adapt(arguments: Seq[_]): Seq[ScopeElement] = {
+  def adapt(arguments: Seq[_]): FunctionDefinition = {
     if (varargs) {
-      FunctionDefinitionHelper.adaptArguments(arguments.size, this.arguments.head.observable)
+      copy(arguments = FunctionDefinitionHelper.adaptArguments(arguments.size, this.arguments.head.observable))
     } else {
       require(arguments.size == this.arguments.size,
         s"Wrong number of arguments: given ${arguments.size} expected ${this.arguments.size}")
-      this.arguments
+      this
     }
   }
 

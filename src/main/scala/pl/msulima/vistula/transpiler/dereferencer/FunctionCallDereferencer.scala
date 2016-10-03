@@ -35,17 +35,19 @@ trait FunctionCallDereferencer {
   }
 
   private def getDefinition(function: Expression, arguments: Seq[_]) = {
-    function.`type`.`type` match {
+    val functionType = function.`type`
+
+    functionType.`type` match {
       case definition: FunctionDefinition =>
-        definition
+        definition.adapt(arguments)
       case _: ClassReference =>
-        FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = function.`type`.observable,
-          resultIsObservable = function.`type`.observable)
+        FunctionDefinitionHelper.adapt(arguments.size, argumentsAreObservable = functionType.observable,
+          resultIsObservable = functionType.observable)
     }
   }
 
   private def dereferenceArguments(funcDefinition: FunctionDefinition, arguments: Seq[Token]) = {
-    arguments.map(dereference).zip(funcDefinition.adapt(arguments)).map({
+    arguments.map(dereference).zip(funcDefinition.arguments).map({
       case (arg, argDefinition) =>
         if (argDefinition.observable && !arg.`type`.`type`.isInstanceOf[FunctionDefinition]) {
           toObservable(arg)
@@ -64,7 +66,7 @@ trait FunctionCallDereferencer {
 
   private def findSubstitutes(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): (Seq[Expression], Seq[Expression]) = {
     val functionSubstitutes = OperationDereferencer.extractObservables(function)
-    val argumentsSubstitutes = arguments.zip(funcDefinition.adapt(arguments)).map({
+    val argumentsSubstitutes = arguments.zip(funcDefinition.arguments).map({
       case (arg, argDefinition) =>
         if (argDefinition.observable) {
           Seq() -> arg

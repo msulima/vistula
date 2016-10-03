@@ -55,10 +55,6 @@ object ClassDefinitionHelper {
     ))
   )
 
-  private def constDef(name: String, arguments: ScopeElement*) = {
-    Ast.identifier(name) -> ScopeElement.const(FunctionDefinition(arguments, resultType = ScopeElement.DefaultConst))
-  }
-
   private def obsDef(name: String, arguments: ScopeElement*) = {
     Ast.identifier(name) -> ScopeElement.const(FunctionDefinition(arguments, resultType = ScopeElement.Default))
   }
