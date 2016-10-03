@@ -10,5 +10,7 @@ object Other {
       Direct(stmt)
     case stmt@Ast.stmt.Import(Ast.alias(identifier, None) +: _) =>
       Direct(stmt)
+    case stmt@Ast.stmt.For(Ast.expr.Name(argument, Ast.expr_context.Load), iterable, body) =>
+      Direct(stmt)
   }
 }

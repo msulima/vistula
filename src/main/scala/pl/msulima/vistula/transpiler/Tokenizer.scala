@@ -24,7 +24,6 @@ object Tokenizer {
       .orElse(If.apply)
       .orElse(Other.apply)
       .orElse(Return.apply)
-      .orElse(Loop.apply)
       .orElse(pl.msulima.vistula.transpiler.expression.control.Pass.apply)
   }
 

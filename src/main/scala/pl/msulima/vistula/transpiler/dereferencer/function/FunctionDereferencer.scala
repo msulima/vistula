@@ -14,8 +14,6 @@ trait FunctionDereferencer {
   def functionDereferencer: PartialFunction[Token, Expression] = {
     case operation@Operation(func: FunctionDef, Nil) =>
       dereferenceFunction(func)
-    case operation@Operation(FunctionScope, program) =>
-      dereferenceScope(Seq(), program, box = true)
   }
 
   def dereferenceAndAddToScope(func: Ast.stmt.FunctionDef) = {
@@ -45,15 +43,15 @@ trait FunctionDereferencer {
   }
 
   def dereferenceFunction(func: FunctionDef): ExpressionOperation = {
-    val body = dereferenceScope(func.arguments, func.program, box = false)
+    val body = dereferenceScope(func.arguments, func.program)
     val funcDefinition = FunctionDefinition(func.arguments.map(_.`type`), body.`type`)
 
     ExpressionOperation(func, Seq(body), ScopeElement.const(funcDefinition))
   }
 
-  private def dereferenceScope(arguments: Seq[Variable], program: Seq[Token], box: Boolean): ExpressionOperation = {
+  private def dereferenceScope(arguments: Seq[Variable], program: Seq[Token]): ExpressionOperation = {
     val result = Transformer.transform(arguments.map(ImportVariable) ++ program, scope, `package`)
-    val maybeLast = findReturn(result, box)
+    val maybeLast = findReturn(result, box = false)
     val body = result.init ++ maybeLast.toSeq
 
     ExpressionOperation(FunctionScope, body, body.last.`type`)
