@@ -42,6 +42,10 @@ trait FunctionDereferencer {
     )
   }
 
+  def anonymousFunction(arguments: Seq[Variable], body: Token): ExpressionOperation = {
+    dereferenceFunction(FunctionDef(FunctionReference.Anonymous, Seq(body), arguments))
+  }
+
   def dereferenceFunction(func: FunctionDef): ExpressionOperation = {
     val body = dereferenceScope(func.arguments, func.program)
     val funcDefinition = FunctionDefinition(func.arguments.map(_.`type`), body.`type`)

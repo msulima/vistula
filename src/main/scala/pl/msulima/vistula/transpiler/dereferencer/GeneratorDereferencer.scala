@@ -1,8 +1,9 @@
-package pl.msulima.vistula.transpiler.expression.control
+package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.expression.reference.{FunctionCall, Reference}
+import pl.msulima.vistula.transpiler.dereferencer.function.FunctionDereferencer
+import pl.msulima.vistula.transpiler.expression.reference.Reference
 import pl.msulima.vistula.transpiler.scope.{ScopeElement, Variable}
 
 object GeneratorBody {
@@ -23,19 +24,21 @@ object GeneratorSource {
   }
 }
 
-case object Generator {
+trait GeneratorDereferencer {
+  this: Dereferencer with FunctionCallDereferencer with FunctionDereferencer =>
 
-  def apply: PartialFunction[Ast.expr, Token] = {
-    case Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)) =>
+  def generatorDereferencer: PartialFunction[Token, Expression] = {
+    case Direct(Ast.stmt.Expr(Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)))) =>
       val arguments = Seq(
         Variable(acc, ScopeElement.DefaultConst),
         Variable(source, ScopeElement.DefaultConst)
       )
-      val innerBody = FunctionDef.anonymous(arguments, Seq(Box(Tokenizer.applyStmt(body))))
+      val transpiledBody = Box(Tokenizer.applyStmt(body))
+      val innerBody = anonymousFunction(arguments, transpiledBody)
 
-      FunctionCall("vistula.aggregate", Seq(
-        Reference(source),
-        Tokenizer.applyStmt(initial),
+      functionCall(Reference("vistula.aggregate"), Seq(
+        dereference(Reference(source)),
+        dereference(Tokenizer.applyStmt(initial)),
         innerBody
       ))
   }

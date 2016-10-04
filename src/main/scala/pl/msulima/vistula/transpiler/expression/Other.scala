@@ -23,6 +23,8 @@ object Other {
   def applyExpr: PartialFunction[Ast.expr, Token] = {
     case expr: Ast.expr.Dereference =>
       Direct(Ast.stmt.Expr(expr))
+    case expr: Ast.expr.GeneratorExp =>
+      Direct(Ast.stmt.Expr(expr))
     case expr: Ast.expr.Lambda =>
       Direct(Ast.stmt.Expr(expr))
   }
