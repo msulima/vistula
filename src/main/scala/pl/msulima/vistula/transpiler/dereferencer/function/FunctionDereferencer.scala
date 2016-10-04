@@ -54,6 +54,6 @@ trait FunctionDereferencer {
     val maybeLast = findReturn(result, box = false)
     val body = result.init ++ maybeLast.toSeq
 
-    ExpressionOperation(FunctionScope, body, body.last.`type`)
+    ExpressionOperation(FunctionScope, body, maybeLast.map(_.`type`).getOrElse(ScopeElement.const(ClassReference.Unit)))
   }
 }

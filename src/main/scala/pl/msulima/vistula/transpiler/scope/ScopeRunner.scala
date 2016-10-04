@@ -17,6 +17,8 @@ case object ScopeRunner {
       case ImportVariable(variable) =>
         val ns = scope.addToScope(variable)
         ScopedResult(ns, Seq())
+      case Direct(Ast.stmt.Pass) =>
+        ScopedResult(scope, Seq())
       case Direct(stmt: Ast.stmt.Import) =>
         dereferencer.importDereferencer(stmt)
       case Direct(classDef: Ast.stmt.ClassDef) =>

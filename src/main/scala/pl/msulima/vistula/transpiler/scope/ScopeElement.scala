@@ -85,6 +85,7 @@ case class ClassReference(`package`: Package, name: Ast.identifier) extends Clas
 object ClassReference {
 
   val Object = ClassReference("vistula.lang.Object")
+  val Unit = ClassReference("vistula.lang.Unit")
 
   def apply(path: String): ClassReference = {
     ClassReference(path.split("\\.").map(Ast.identifier))

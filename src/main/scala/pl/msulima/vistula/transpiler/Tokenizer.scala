@@ -24,7 +24,6 @@ object Tokenizer {
       .orElse(If.apply)
       .orElse(Other.apply)
       .orElse(Return.apply)
-      .orElse(pl.msulima.vistula.transpiler.expression.control.Pass.apply)
   }
 
   def apply: PartialFunction[Ast.expr, Token] = {
