@@ -33,7 +33,6 @@ object Tokenizer {
     priorities
       .orElse(BinOp.apply)
       .orElse(Compare.apply)
-      .orElse(Dereference.apply)
       .orElse(FunctionCall.apply)
       .orElse(Generator.apply)
       .orElse(If.applyExpr)
@@ -42,5 +41,6 @@ object Tokenizer {
       .orElse(Tuple.apply)
       .orElse(BoolOp.apply)
       .orElse(UnaryOp.apply)
+      .orElse(Other.applyExpr)
   }
 }

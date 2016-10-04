@@ -1,19 +1,30 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
+import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.expression.reference.Dereference
 
 trait DereferenceDereferencer {
   this: Dereferencer =>
 
   def dereferenceDereferencer: PartialFunction[Token, Expression] = {
-    case Operation(Dereference, target :: Nil) =>
-      val dereferenced = dereference(target)
+    case Direct(Ast.stmt.Expr(Ast.expr.Dereference(value))) =>
+      val dereferenced = dereference(Tokenizer.apply(value))
 
-      if (dereferenced.`type`.observable) {
-        ExpressionOperation(Dereference, Seq(dereferenced), dereferenced.`type`.copy(observable = false))
-      } else {
-        dereferenced
-      }
+      toConstant(dereferenced)
+  }
+
+  def toConstant(expression: Expression): Expression = {
+    if (expression.`type`.observable) {
+      ExpressionOperation(Dereference, Seq(expression), expression.`type`.copy(observable = false))
+    } else {
+      expression
+    }
+  }
+}
+
+case object Dereference extends Operator {
+
+  override def apply(operands: List[Constant]): String = {
+    s"${operands.head.value}.rxLastValue()"
   }
 }

@@ -8,16 +8,10 @@ class RpnSpec extends Specification {
   "test" in {
 
     val program =
-      """class Object() {
-        |  def __init__() {
-        |    pass
-        |  }
-        |}""".stripMargin
+      """const a = 42""".stripMargin
 
     Vistula.toJavaScript(program) must_==
-      """const Object = function Object() {
-        |    ;
-        |};""".stripMargin
+      """const a = 42;""".stripMargin
   }
 
   "transpiles generator" in {

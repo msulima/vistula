@@ -8,6 +8,8 @@ object Other {
   def apply: PartialFunction[Ast.stmt, Token] = {
     case stmt: Ast.stmt.AssignStmt =>
       Direct(stmt)
+    case stmt: Ast.expr.Dereference =>
+      Direct(stmt)
     case stmt@Ast.stmt.Pass =>
       Direct(stmt)
     case stmt@Ast.stmt.ClassDef(identifier, Nil, body, Nil) =>
@@ -16,5 +18,10 @@ object Other {
       Direct(stmt)
     case stmt@Ast.stmt.For(Ast.expr.Name(argument, Ast.expr_context.Load), iterable, body) =>
       Direct(stmt)
+  }
+
+  def applyExpr: PartialFunction[Ast.expr, Token] = {
+    case expr: Ast.expr.Dereference =>
+      Direct(Ast.stmt.Expr(expr))
   }
 }
