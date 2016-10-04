@@ -12,7 +12,7 @@ trait TupleDereferencer {
       if (body.`type`.observable) {
         body
       } else {
-        ExpressionOperation(Tuple, Seq(body), body.`type`)
+        ExpressionOperation(Tuple, body)
       }
   }
 }

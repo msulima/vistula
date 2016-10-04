@@ -4,7 +4,8 @@ import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.identifier
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, Return}
+import pl.msulima.vistula.transpiler.dereferencer.function.Return
+import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, Reference}
 import pl.msulima.vistula.transpiler.scope._
 

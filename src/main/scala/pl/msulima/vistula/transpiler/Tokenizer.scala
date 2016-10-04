@@ -23,7 +23,6 @@ object Tokenizer {
       .orElse(FunctionDef.apply)
       .orElse(If.apply)
       .orElse(Other.apply)
-      .orElse(Return.apply)
   }
 
   def apply: PartialFunction[Ast.expr, Token] = {

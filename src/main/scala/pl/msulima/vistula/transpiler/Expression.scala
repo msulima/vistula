@@ -27,6 +27,13 @@ case class ExpressionOperation(operator: Operator, inputs: Seq[Expression], `typ
     }
 }
 
+object ExpressionOperation {
+
+  def apply(operator: Operator, input: Expression): ExpressionOperation = {
+    ExpressionOperation(operator, Seq(input), input.`type`)
+  }
+}
+
 case class RxMap(output: ExpressionOperation) extends Operator {
 
   override def apply(inputs: List[Constant]): String = {
