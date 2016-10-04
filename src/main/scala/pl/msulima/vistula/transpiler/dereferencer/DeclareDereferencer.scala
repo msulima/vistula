@@ -2,16 +2,13 @@ package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.expression.reference.{Assign, Declare, Dereference}
+import pl.msulima.vistula.transpiler.expression.reference.{Declare, Dereference}
 import pl.msulima.vistula.transpiler.scope._
 
 trait DeclareDereferencer {
   this: Dereferencer =>
 
   def declareDereferencer: PartialFunction[Token, Expression] = {
-    case Operation(Assign, target :: source :: Nil) =>
-      val dereferencedTarget = dereference(target)
-      ExpressionOperation(Assign, Seq(dereferencedTarget, dereference(source)), dereferencedTarget.`type`)
     case Operation(dec: Declare, name :: body :: Nil) =>
       dereferenceDeclare(name, body, dec.mutable, dec.declare)
   }

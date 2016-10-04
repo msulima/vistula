@@ -14,6 +14,7 @@ trait Dereferencer {
 }
 
 case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferencer
+  with AssignDereferencer
   with BoxDereferencer
   with ClassDereferencer
   with ConstructorDereferencer
@@ -30,6 +31,7 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
 
   override def dereference(token: Token): Expression = {
     declareDereferencer
+      .orElse(assignDereferencer)
       .orElse(boxDereferencer)
       .orElse(dereferenceDereferencer)
       .orElse(functionDereferencer)
