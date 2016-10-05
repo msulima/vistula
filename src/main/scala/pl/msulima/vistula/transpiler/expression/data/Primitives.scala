@@ -1,8 +1,8 @@
 package pl.msulima.vistula.transpiler.expression.data
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement}
-import pl.msulima.vistula.transpiler.{Tokenizer, _}
 import pl.msulima.vistula.util.ToArray
 
 object Primitives {
@@ -17,12 +17,6 @@ object Primitives {
       StaticNull
     case Ast.expr.Str(x) =>
       StaticString(x)
-    case Ast.expr.Dict(keys, values) =>
-      val dict = keys.zip(values).flatMap({
-        case (Ast.expr.Str(key), expr) =>
-          Seq(StaticString(key), Box(Tokenizer.apply(expr)))
-      })
-      Operation(StaticDict, dict)
   }
 
   private def static: PartialFunction[Ast.expr, (String, ClassReference)] = {
@@ -38,7 +32,11 @@ object Primitives {
 case object StaticString extends Operator {
 
   def apply(x: String): Token = {
-    Operation(StaticString, Seq(TypedConstant(x, ScopeElement.const(ClassReference("vistula.lang.String")))))
+    Operation(StaticString, Seq(TypedConstant(x, ScopeElement.const(ClassReference.String))))
+  }
+
+  def toExpression(x: String): Expression = {
+    ExpressionOperation(StaticString, ExpressionConstant(x, ScopeElement.const(ClassReference.String)))
   }
 
   override def apply(operands: List[Constant]) = {

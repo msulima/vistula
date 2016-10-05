@@ -19,6 +19,7 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
   with ClassDereferencer
   with ConstructorDereferencer
   with DeclareDereferencer
+  with DictDereferencer
   with DereferenceDereferencer
   with FunctionDereferencer
   with FunctionCallDereferencer
@@ -36,6 +37,7 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
       .orElse(assignDereferencer)
       .orElse(boxDereferencer)
       .orElse(dereferenceDereferencer)
+      .orElse(dictDereferencer)
       .orElse(functionDereferencer)
       .orElse(functionCallDereferencer)
       .orElse(generatorDereferencer)

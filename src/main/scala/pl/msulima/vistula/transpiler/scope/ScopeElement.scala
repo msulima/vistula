@@ -19,6 +19,7 @@ object ScopeElement {
 
   val Default = observable(ClassReference.Object)
   val DefaultConst = const(ClassReference.Object)
+  val Unit = const(ClassReference.Unit)
 
   def const(`type`: ClassType) = ScopeElement(observable = false, `type`)
 
@@ -86,6 +87,7 @@ object ClassReference {
 
   val Object = ClassReference("vistula.lang.Object")
   val Unit = ClassReference("vistula.lang.Unit")
+  val String = ClassReference("vistula.lang.String")
 
   def apply(path: String): ClassReference = {
     ClassReference(path.split("\\.").map(Ast.identifier))
