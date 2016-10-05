@@ -88,6 +88,8 @@ object ClassReference {
   val Object = ClassReference("vistula.lang.Object")
   val Unit = ClassReference("vistula.lang.Unit")
   val String = ClassReference("vistula.lang.String")
+  val Integer = ClassReference("vistula.lang.Integer")
+  val Boolean = ClassReference("vistula.lang.Boolean")
 
   def apply(path: String): ClassReference = {
     ClassReference(path.split("\\.").map(Ast.identifier))

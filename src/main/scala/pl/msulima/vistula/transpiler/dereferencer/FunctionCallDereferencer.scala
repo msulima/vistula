@@ -11,9 +11,8 @@ trait FunctionCallDereferencer {
     case Operation(_: FunctionCall, func +: args) =>
       val function = dereferenceFunction(func, args)
       val funcDefinition = getDefinition(function, args)
-      val arguments = dereferenceArguments(funcDefinition, args)
 
-      functionCall(function, funcDefinition, arguments)
+      functionCall(function, funcDefinition, args.map(dereference))
   }
 
   def functionCall(func: Token, arguments: Seq[Expression]): ExpressionOperation = {
@@ -46,17 +45,6 @@ trait FunctionCallDereferencer {
     }
   }
 
-  private def dereferenceArguments(funcDefinition: FunctionDefinition, arguments: Seq[Token]) = {
-    arguments.map(dereference).zip(funcDefinition.arguments).map({
-      case (arg, argDefinition) =>
-        if (argDefinition.observable && !arg.`type`.`type`.isInstanceOf[FunctionDefinition]) {
-          toObservable(arg)
-        } else {
-          arg
-        }
-    })
-  }
-
   private def functionCall(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): ExpressionOperation = {
     val (observables, inputs) = findSubstitutes(function, funcDefinition, arguments)
     val body = ExpressionOperation(FunctionCall(funcDefinition.constructor), inputs, funcDefinition.resultType)
@@ -68,8 +56,8 @@ trait FunctionCallDereferencer {
     val functionSubstitutes = OperationDereferencer.extractObservables(function)
     val argumentsSubstitutes = arguments.zip(funcDefinition.arguments).map({
       case (arg, argDefinition) =>
-        if (argDefinition.observable) {
-          Seq() -> arg
+        if (argDefinition.observable && !arg.`type`.`type`.isInstanceOf[FunctionDefinition]) {
+          Seq() -> toObservable(arg)
         } else {
           OperationDereferencer.extractObservables(arg)
         }

@@ -21,11 +21,11 @@ object Primitives {
 
   private def static: PartialFunction[Ast.expr, (String, ClassReference)] = {
     case Ast.expr.Num(x) =>
-      x.toString -> ClassReference("vistula.lang.Integer")
+      x.toString -> ClassReference.Integer
     case Ast.expr.Name(Ast.identifier("False"), Ast.expr_context.Load) =>
-      "false" -> ClassReference("vistula.lang.Boolean")
+      "false" -> ClassReference.Boolean
     case Ast.expr.Name(Ast.identifier("True"), Ast.expr_context.Load) =>
-      "true" -> ClassReference("vistula.lang.Boolean")
+      "true" -> ClassReference.Boolean
   }
 }
 

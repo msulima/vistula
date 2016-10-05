@@ -10,10 +10,6 @@ object FunctionCall {
       FunctionCall(Tokenizer.apply(func), args.map(Tokenizer.apply))
   }
 
-  def apply(func: String, args: Seq[Token]): Operation = {
-    Operation(FunctionCall(constructor = false), Reference(func) +: args)
-  }
-
   def apply(func: Token, args: Seq[Token]): Operation = {
     Operation(FunctionCall(constructor = false), func +: args)
   }

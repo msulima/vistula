@@ -7,18 +7,27 @@ import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, FunctionCall, Reference}
-import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement, Variable}
+import pl.msulima.vistula.transpiler.scope.{ClassReference, Scope, ScopeElement, Variable}
 
 case class Scoped(variables: Seq[Ast.identifier], body: Token)
 
 object Template {
+
+  private val ZipAndFlatten = Reference(Reference(Scope.VistulaHelper), Ast.identifier("zipAndFlatten"))
+  private val Wrap = Reference(Reference(Scope.VistulaHelper), Ast.identifier("wrap"))
+  private val IfChangedArrays = Reference(Reference(Scope.VistulaHelper), Ast.identifier("ifChangedArrays"))
+  private val Dom = Reference(Reference(Scope.VistulaHelper), Ast.identifier("dom"))
+  private val CreateBoundElement = Reference(Dom, Ast.identifier("createBoundElement"))
+  private val CreateElement = Reference(Dom, Ast.identifier("createElement"))
+  private val TextNode = Reference(Dom, Ast.identifier("textNode"))
+  private val TextObservable = Reference(Dom, Ast.identifier("textObservable"))
 
   def apply(program: String): Token = {
     val nodes = apply((parser.Parser.document ~ End).parse(program).get.value)
     if (nodes.size == 1) {
       nodes.head
     } else {
-      FunctionCall("vistula.zipAndFlatten", Seq(StaticArray(nodes.map(Box))))
+      FunctionCall(ZipAndFlatten, Seq(StaticArray(nodes.map(Box))))
     }
   }
 
@@ -39,7 +48,7 @@ object Template {
 
       val code = FunctionDef.anonymous(variableDeclarations :+ body)
 
-      FunctionCall("vistula.wrap", Seq(code))
+      FunctionCall(Wrap, Seq(code))
     }
   }
 
@@ -50,12 +59,12 @@ object Template {
       val body = StaticArray(children.map(scoped => Box(scoped.body)))
 
       tag.id.map(id => {
-        val code = FunctionCall("vistula.dom.createBoundElement", Seq(
+        val code = FunctionCall(CreateBoundElement, Seq(
           StaticString(tag.name), Constant(id.name), Attributes(tag), body
         ))
         Scoped(variables :+ id, code)
       }).getOrElse({
-        val code = FunctionCall("vistula.dom.createElement", Seq(
+        val code = FunctionCall(CreateElement, Seq(
           StaticString(tag.name), Attributes(tag), body
         ))
 
@@ -67,17 +76,17 @@ object Template {
 
   private def apply: PartialFunction[parser.Node, Token] = {
     case parser.ObservableNode(identifier) =>
-      FunctionCall("vistula.dom.textObservable", Seq(
+      FunctionCall(TextObservable, Seq(
         Tokenizer.apply(identifier)
       ))
     case parser.IfNode(expr, body, elseBody) =>
-      FunctionCall("vistula.ifChangedArrays", Seq(
+      FunctionCall(IfChangedArrays, Seq(
         Tokenizer.apply(expr),
         StaticArray(apply(body).map(Box.apply)),
         StaticArray(apply(elseBody).map(Box.apply))
       ))
     case parser.TextNode(text) =>
-      FunctionCall("vistula.dom.textNode", Seq(
+      FunctionCall(TextNode, Seq(
         StaticString(text)
       ))
     case parser.LoopNode(identifier, expression, body) =>
@@ -86,7 +95,7 @@ object Template {
       ), Seq())
 
       val inner = FunctionDef.anonymous(Variable(identifier, ScopeElement.Default), Seq(
-        FunctionCall("vistula.zipAndFlatten", Seq(
+        FunctionCall(ZipAndFlatten, Seq(
           StaticArray(apply(body).map(Box.apply))
         ))
       ))
@@ -94,7 +103,7 @@ object Template {
       val elementsId = Ast.identifier("$arg")
 
       val outer = FunctionDef.anonymous(Variable(elementsId, ScopeElement.DefaultConst), Seq(
-        FunctionCall("vistula.zipAndFlatten", Seq(
+        FunctionCall(ZipAndFlatten, Seq(
           FunctionCall(Reference(Reference(elementsId), Ast.identifier("map")), Seq(inner))
         ))
       ))

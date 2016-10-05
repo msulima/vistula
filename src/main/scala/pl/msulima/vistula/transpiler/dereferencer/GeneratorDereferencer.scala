@@ -4,7 +4,7 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.function.FunctionDereferencer
 import pl.msulima.vistula.transpiler.expression.reference.Reference
-import pl.msulima.vistula.transpiler.scope.{ScopeElement, Variable}
+import pl.msulima.vistula.transpiler.scope.{Scope, ScopeElement, Variable}
 
 object GeneratorBody {
 
@@ -34,9 +34,9 @@ trait GeneratorDereferencer {
         Variable(source, ScopeElement.DefaultConst)
       )
       val transpiledBody = Box(Tokenizer.applyStmt(body))
-      val innerBody = anonymousFunction(arguments, transpiledBody)
+      val innerBody = anonymousFunction(arguments, Seq(transpiledBody))
 
-      functionCall(Reference("vistula.aggregate"), Seq(
+      functionCall(Reference(Reference(Scope.VistulaHelper), Ast.identifier("aggregate")), Seq(
         dereference(Reference(source)),
         dereference(Tokenizer.applyStmt(initial)),
         innerBody

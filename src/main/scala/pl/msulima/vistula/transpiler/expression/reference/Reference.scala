@@ -12,13 +12,6 @@ case object Reference extends Operator {
       Reference(Tokenizer.apply(expr), id)
   }
 
-  def apply(func: String): Token = {
-    val path = func.split("\\.").toSeq
-    path.tail.foldLeft(Reference(Ast.identifier(path.head)))((acc, pathElement) => {
-      Reference(acc, Ast.identifier(pathElement))
-    })
-  }
-
   def apply(id: Ast.identifier): Token = {
     Operation(Reference, Seq(Constant(id.name)))
   }

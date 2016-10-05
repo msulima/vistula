@@ -13,6 +13,6 @@ trait LambdaDereferencer {
       val arguments = FunctionDef.mapArguments(args)
       val transpiledBody = Tokenizer.apply(body)
 
-      anonymousFunction(arguments, transpiledBody)
+      anonymousFunction(arguments, Seq(transpiledBody))
   }
 }

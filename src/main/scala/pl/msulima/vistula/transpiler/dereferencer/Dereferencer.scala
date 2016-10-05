@@ -2,6 +2,7 @@ package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.Package
 import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.dereferencer.control.IfDereferencer
 import pl.msulima.vistula.transpiler.dereferencer.function.{FunctionDereferencer, ReturnDereferencer}
 import pl.msulima.vistula.transpiler.scope.{Scope, ScopeElement}
 
@@ -24,6 +25,7 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
   with FunctionDereferencer
   with FunctionCallDereferencer
   with GeneratorDereferencer
+  with IfDereferencer
   with ImportDereferencer
   with LambdaDereferencer
   with LoopDereferencer
@@ -41,6 +43,7 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
       .orElse(functionDereferencer)
       .orElse(functionCallDereferencer)
       .orElse(generatorDereferencer)
+      .orElse(ifDereferencer)
       .orElse(referenceDereferencer)
       .orElse(tupleDereferencer)
       .orElse(lambdaDereferencer)

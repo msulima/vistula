@@ -79,13 +79,14 @@ case class Scope(private val imports: ScopePart, declarations: ScopePart) {
 
 object Scope {
 
+  val VistulaHelper = Ast.identifier("vistula")
   val EmptyScopePart = ScopePart(Map(), Map(), Map())
 
   val Empty = {
     Scope(
       imports = ScopePart(
         variables = Map(
-          Ast.identifier("vistula") -> ScopeElement.const(ClassDefinitionHelper.Vistula),
+          VistulaHelper -> ScopeElement.const(ClassDefinitionHelper.Vistula),
           Ast.identifier("stdlib") -> ScopeElement.observable(ClassDefinitionHelper.Stdlib)
         ),
         functions = Map(),

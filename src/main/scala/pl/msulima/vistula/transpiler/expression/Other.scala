@@ -14,6 +14,8 @@ object Other {
       Direct(stmt)
     case stmt@Ast.stmt.For(Ast.expr.Name(argument, Ast.expr_context.Load), iterable, body) =>
       Direct(stmt)
+    case stmt: Ast.stmt.If =>
+      Direct(stmt)
     case stmt@Ast.stmt.Import(Ast.alias(identifier, None) +: _) =>
       Direct(stmt)
     case stmt@Ast.stmt.Pass =>
@@ -26,6 +28,8 @@ object Other {
     case expr: Ast.expr.Dict =>
       Direct(Ast.stmt.Expr(expr))
     case expr: Ast.expr.GeneratorExp =>
+      Direct(Ast.stmt.Expr(expr))
+    case expr: Ast.expr.IfExp =>
       Direct(Ast.stmt.Expr(expr))
     case expr: Ast.expr.Lambda =>
       Direct(Ast.stmt.Expr(expr))

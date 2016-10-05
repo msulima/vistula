@@ -42,8 +42,8 @@ trait FunctionDereferencer {
     )
   }
 
-  def anonymousFunction(arguments: Seq[Variable], body: Token): ExpressionOperation = {
-    dereferenceFunction(FunctionDef(FunctionReference.Anonymous, Seq(body), arguments))
+  def anonymousFunction(arguments: Seq[Variable], body: Seq[Token]): ExpressionOperation = {
+    dereferenceFunction(FunctionDef(FunctionReference.Anonymous, body, arguments))
   }
 
   def dereferenceFunction(func: FunctionDef): ExpressionOperation = {

@@ -20,7 +20,6 @@ object Tokenizer {
     expr
       .orElse(Declare.apply)
       .orElse(FunctionDef.apply)
-      .orElse(If.apply)
       .orElse(Other.apply)
   }
 
@@ -34,7 +33,6 @@ object Tokenizer {
       .orElse(BinOp.apply)
       .orElse(Compare.apply)
       .orElse(FunctionCall.apply)
-      .orElse(If.applyExpr)
       .orElse(Reference.apply)
       .orElse(Tuple.apply)
       .orElse(BoolOp.apply)
