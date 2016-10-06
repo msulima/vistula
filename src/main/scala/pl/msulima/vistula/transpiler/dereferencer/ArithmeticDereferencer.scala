@@ -2,13 +2,16 @@ package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.scope.ClassReference
 
 trait ArithmeticDereferencer {
-  this: Dereferencer =>
+  this: Dereferencer with OperationDereferencer =>
 
   def arithmeticDereferencer: PartialFunction[Token, Expression] = {
-    case Direct(Ast.stmt.Expr(Ast.expr.UnaryOp(Ast.unaryop.Not, operand))) =>
-      dereference(Operation(UnaryOp, Seq(Tokenizer.apply(operand))))
+    case Direct(Ast.stmt.Expr(Ast.expr.UnaryOp(Ast.unaryop.Not, operandExpr))) =>
+      val operand = dereference(operandExpr)
+
+      dereferenceOperation(UnaryOp, operand, ClassReference.Boolean)
     case Direct(Ast.stmt.Expr(Ast.expr.BoolOp(op, xs))) =>
       val symbol = op match {
         case Ast.boolop.Or => "||"

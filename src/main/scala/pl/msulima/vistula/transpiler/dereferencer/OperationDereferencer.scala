@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.scope.ScopeElement
+import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement}
 
 trait OperationDereferencer {
   this: Dereferencer =>
@@ -28,6 +28,19 @@ trait OperationDereferencer {
     })
 
     (xs.flatMap(_._1), xs.map(_._2))
+  }
+
+  def dereferenceOperation(operator: Operator, operation: Expression, `type`: ClassReference) = {
+    val (observables, inputs) = OperationDereferencer.extractObservables(operation)
+    val shouldMap = observables.nonEmpty
+
+    val body = ExpressionOperation(operator, Seq(inputs), ScopeElement(observable = shouldMap, `type` = `type`))
+
+    if (shouldMap) {
+      ExpressionOperation(RxMap(body), observables, body.`type`)
+    } else {
+      body
+    }
   }
 }
 

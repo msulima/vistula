@@ -8,22 +8,10 @@ class RpnSpec extends Specification {
   "test" in {
 
     val program =
-      """if (True) {
-        |  1
-        |} else {
-        |  const x = 0
-        |  x
-        |}""".stripMargin
+      """not X < 0""".stripMargin
 
     Vistula.toJavaScript(program) must_==
-      """vistula.wrap(function () {
-        |    if (true) {
-        |        return 1;
-        |    } else {
-        |        const x = 0;
-        |        return x;
-        |    }
-        |});""".stripMargin
+      """X.rxMap($arg => (!($arg < 0)));""".stripMargin
   }
 
   "transpiles generator" in {
