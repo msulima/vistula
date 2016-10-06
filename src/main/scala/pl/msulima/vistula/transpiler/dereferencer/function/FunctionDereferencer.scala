@@ -43,18 +43,24 @@ trait FunctionDereferencer {
   }
 
   def anonymousFunction(arguments: Seq[Variable], body: Seq[Token]): ExpressionOperation = {
-    dereferenceFunction(FunctionDef(FunctionReference.Anonymous, body, arguments))
+    dereferenceFunction(FunctionReference.Anonymous, arguments, body)
   }
 
   def dereferenceFunction(func: FunctionDef): ExpressionOperation = {
-    val result = Transformer.transform(func.arguments.map(ImportVariable) ++ func.program, scope, `package`)
-    val body = dereferenceScope(result)
-    val funcDefinition = FunctionDefinition(func.arguments.map(_.`type`), body.`type`)
+    dereferenceFunction(func.name, func.arguments, func.program)
+  }
+
+  private def dereferenceFunction(name: FunctionReference, arguments: Seq[Variable], program: Seq[Token]): ExpressionOperation = {
+    val body = dereferenceScope(arguments.map(ImportVariable) ++ program)
+
+    val func = FunctionDef(name, program, arguments)
+    val funcDefinition = FunctionDefinition(arguments.map(_.`type`), body.`type`)
 
     ExpressionOperation(func, Seq(body), ScopeElement.const(funcDefinition))
   }
 
-  def dereferenceScope(result: Seq[Expression]): ExpressionOperation = {
+  def dereferenceScope(program: Seq[Token]): ExpressionOperation = {
+    val result = Transformer.transform(program, scope, `package`)
     val maybeLast = findReturn(result, box = false)
     val body = result.init ++ maybeLast.toSeq
     val returnType = body.lastOption.map(_.`type`).getOrElse(ScopeElement.const(ClassReference.Unit))

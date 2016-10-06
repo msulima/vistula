@@ -25,23 +25,17 @@ trait IfDereferencer {
 
   private def dereferenceIf(testExpr: expr, tokenizedBody: Seq[Token], tokenizedOrElse: Seq[Token]): Expression = {
     val test = dereference(Tokenizer.apply(testExpr))
-    val body = wrapScope(tokenizedBody)
-    val orElse = wrapScope(tokenizedOrElse)
+    val body = dereferenceScope(tokenizedBody)
+    val orElse = dereferenceScope(tokenizedOrElse)
 
     if (test.`type`.observable || body.`type`.observable || orElse.`type`.observable) {
       functionCall(IfStatement, Seq(
         test,
-        body,
-        orElse
+        wrapScope(tokenizedBody),
+        wrapScope(tokenizedOrElse)
       ))
     } else {
-      val branches = Seq(
-        test,
-        dereferenceScope(tokenizedBody.map(dereference)),
-        dereferenceScope(tokenizedOrElse.map(dereference))
-      )
-
-      val innerBody = ExpressionOperation(If, branches, body.`type`)
+      val innerBody = ExpressionOperation(If, Seq(test, body, orElse), body.`type`)
 
       val func = FunctionDef(FunctionReference.Anonymous, Seq(), Seq())
       val funcDefinition = FunctionDefinition(Seq(), innerBody.`type`)

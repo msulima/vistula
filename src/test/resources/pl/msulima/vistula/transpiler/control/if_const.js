@@ -2,6 +2,7 @@ vistula.wrap(function () {
     if (true) {
         return 1;
     } else {
-        return 0;
+        const x = 0;
+        return x;
     }
 });
