@@ -11,14 +11,14 @@ trait ArithmeticDereferencer {
     case Direct(Ast.stmt.Expr(Ast.expr.UnaryOp(Ast.unaryop.Not, operandExpr))) =>
       val operand = dereference(operandExpr)
 
-      dereferenceOperation(UnaryOp, operand, ClassReference.Boolean)
+      dereferenceOperation(UnaryOp, Seq(operand), ClassReference.Boolean)
     case Direct(Ast.stmt.Expr(Ast.expr.BoolOp(op, xs))) =>
       val symbol = op match {
         case Ast.boolop.Or => "||"
         case Ast.boolop.And => "&&"
       }
 
-      dereference(Operation(BinOp(symbol), xs.map(Tokenizer.apply)))
+      dereferenceOperation(BinOp(symbol), xs.map(dereference), ClassReference.Boolean)
     case Direct(Ast.stmt.Expr(Ast.expr.Compare(x, op +: _, y +: _))) =>
       val symbol = op match {
         case Ast.cmpop.Lt => "<"
@@ -29,7 +29,7 @@ trait ArithmeticDereferencer {
         case Ast.cmpop.NotEq => "!="
       }
 
-      dereference(Operation(BinOp(symbol), Seq(Tokenizer.apply(x), Tokenizer.apply(y))))
+      dereferenceOperation(BinOp(symbol), Seq(dereference(x), dereference(y)), ClassReference.Boolean)
     case Direct(Ast.stmt.Expr(Ast.expr.BinOp(x, op, y))) =>
       val symbol = op match {
         case Ast.operator.Add => "+"
@@ -39,7 +39,7 @@ trait ArithmeticDereferencer {
         case Ast.operator.Mod => "%"
       }
 
-      dereference(Operation(BinOp(symbol), Seq(Tokenizer.apply(x), Tokenizer.apply(y))))
+      dereferenceOperation(BinOp(symbol), Seq(dereference(x), dereference(y)), ClassReference.Integer)
   }
 }
 

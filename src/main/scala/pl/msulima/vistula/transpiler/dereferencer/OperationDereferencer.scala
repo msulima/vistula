@@ -30,21 +30,25 @@ trait OperationDereferencer {
     (xs.flatMap(_._1), xs.map(_._2))
   }
 
-  def dereferenceOperation(operator: Operator, operation: Expression, `type`: ClassReference) = {
-    val (observables, inputs) = OperationDereferencer.extractObservables(operation)
-    val shouldMap = observables.nonEmpty
+  def dereferenceOperation(operator: Operator, operations: Seq[Expression], `type`: ClassReference) = {
+    val (observables, inputs) = OperationDereferencer.extractObservables(operations)
 
-    val body = ExpressionOperation(operator, Seq(inputs), ScopeElement(observable = shouldMap, `type` = `type`))
+    val body = ExpressionOperation(operator, inputs, ScopeElement.const(`type`)) // FIXME: Why const?
 
-    if (shouldMap) {
-      ExpressionOperation(RxMap(body), observables, body.`type`)
-    } else {
+    if (observables.isEmpty) {
       body
+    } else {
+      ExpressionOperation(RxMap(body), observables, body.`type`.copy(observable = true))
     }
   }
 }
 
 object OperationDereferencer {
+
+  def extractObservables(expression: Seq[Expression]): (Seq[Expression], Seq[Expression]) = {
+    val xs = expression.map(extractObservables)
+    (xs.flatMap(_._1), xs.map(_._2))
+  }
 
   def extractObservables(expression: Expression): (Seq[Expression], Expression) = {
     expression match {
