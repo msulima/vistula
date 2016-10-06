@@ -21,17 +21,4 @@ object Other {
     case stmt@Ast.stmt.Pass =>
       Direct(stmt)
   }
-
-  def applyExpr: PartialFunction[Ast.expr, Token] = {
-    case expr: Ast.expr.Dereference =>
-      Direct(Ast.stmt.Expr(expr))
-    case expr: Ast.expr.Dict =>
-      Direct(Ast.stmt.Expr(expr))
-    case expr: Ast.expr.GeneratorExp =>
-      Direct(Ast.stmt.Expr(expr))
-    case expr: Ast.expr.IfExp =>
-      Direct(Ast.stmt.Expr(expr))
-    case expr: Ast.expr.Lambda =>
-      Direct(Ast.stmt.Expr(expr))
-  }
 }

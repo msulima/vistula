@@ -11,7 +11,7 @@ trait ReturnDereferencer {
 
   def returnDereferencer: PartialFunction[Token, Expression] = {
     case Direct(Ast.stmt.Return(Some(value))) =>
-      val body = dereference(Tokenizer.apply(value))
+      val body = dereference(value)
       ExpressionOperation(Return, body)
   }
 

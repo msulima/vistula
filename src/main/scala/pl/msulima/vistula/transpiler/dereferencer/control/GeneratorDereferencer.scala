@@ -39,7 +39,7 @@ trait GeneratorDereferencer {
 
       functionCall(Reference(Reference(Scope.VistulaHelper), Ast.identifier("aggregate")), Seq(
         dereference(Reference(source)),
-        dereference(Tokenizer.applyStmt(initial)),
+        dereference(initial),
         innerBody
       ))
   }

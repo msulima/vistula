@@ -15,7 +15,7 @@ trait DictDereferencer {
       val dict: Seq[Expression] = keys.zip(values).flatMap({
         case (Ast.expr.Str(key), expr) =>
           val keyExpression = StaticString.toExpression(key)
-          val valueExpression = toObservable(dereference(Tokenizer.apply(expr)))
+          val valueExpression = toObservable(dereference(expr))
           Seq(keyExpression, valueExpression)
       })
 

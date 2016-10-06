@@ -9,7 +9,7 @@ trait DereferenceDereferencer {
 
   def dereferenceDereferencer: PartialFunction[Token, Expression] = {
     case Direct(Ast.stmt.Expr(Ast.expr.Dereference(value))) =>
-      val dereferenced = dereference(Tokenizer.apply(value))
+      val dereferenced = dereference(value)
 
       toConstant(dereferenced)
   }

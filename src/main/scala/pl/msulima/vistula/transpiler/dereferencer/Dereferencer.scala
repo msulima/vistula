@@ -1,6 +1,7 @@
 package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.Package
+import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.control._
 import pl.msulima.vistula.transpiler.dereferencer.data.{ClassDereferencer, ConstructorDereferencer, DictDereferencer, TupleDereferencer}
@@ -13,10 +14,15 @@ trait Dereferencer {
   val scope: Scope
   val `package`: Package
 
+  def dereference(expr: Ast.expr): Expression
+
+  def dereference(stmt: Ast.stmt): Expression
+
   def dereference(token: Token): Expression
 }
 
 case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferencer
+  with ArithmeticDereferencer
   with AssignDereferencer
   with BoxDereferencer
   with ClassDereferencer
@@ -36,8 +42,13 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
   with ReturnDereferencer
   with TupleDereferencer {
 
+  override def dereference(expr: Ast.expr): Expression = dereference(Tokenizer.apply(expr))
+
+  override def dereference(stmt: Ast.stmt): Expression = dereference(Tokenizer.applyStmt(stmt))
+
   override def dereference(token: Token): Expression = {
     declareDereferencer
+      .orElse(arithmeticDereferencer)
       .orElse(assignDereferencer)
       .orElse(boxDereferencer)
       .orElse(dereferenceDereferencer)

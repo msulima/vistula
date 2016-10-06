@@ -2,7 +2,6 @@ package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.expression.Other
-import pl.msulima.vistula.transpiler.expression.arithmetic.{BinOp, BoolOp, Compare, UnaryOp}
 import pl.msulima.vistula.transpiler.expression.control._
 import pl.msulima.vistula.transpiler.expression.data.{InlineHtml, InlineJavaScript, Primitives, Tuple}
 import pl.msulima.vistula.transpiler.expression.reference._
@@ -30,13 +29,11 @@ object Tokenizer {
         .orElse(Primitives.apply)
 
     priorities
-      .orElse(BinOp.apply)
-      .orElse(Compare.apply)
       .orElse(FunctionCall.apply)
       .orElse(Reference.apply)
       .orElse(Tuple.apply)
-      .orElse(BoolOp.apply)
-      .orElse(UnaryOp.apply)
-      .orElse(Other.applyExpr)
+      .orElse({
+        case e: Ast.expr => Direct(Ast.stmt.Expr(e))
+      })
   }
 }
