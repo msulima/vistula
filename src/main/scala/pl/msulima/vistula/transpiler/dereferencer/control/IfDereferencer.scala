@@ -3,8 +3,8 @@ package pl.msulima.vistula.transpiler.dereferencer.control
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.expr
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.dereferencer.function.FunctionDereferencer
-import pl.msulima.vistula.transpiler.dereferencer.{Dereferencer, FunctionCallDereferencer}
+import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
+import pl.msulima.vistula.transpiler.dereferencer.reference.FunctionCallDereferencer
 import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.expression.reference.Reference
 import pl.msulima.vistula.transpiler.scope.{FunctionDefinition, FunctionReference, Scope, ScopeElement}

@@ -1,6 +1,7 @@
-package pl.msulima.vistula.transpiler.dereferencer
+package pl.msulima.vistula.transpiler.dereferencer.reference
 
 import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.dereferencer.{Dereferencer, OperationDereferencer}
 import pl.msulima.vistula.transpiler.expression.reference.FunctionCall
 import pl.msulima.vistula.transpiler.scope._
 

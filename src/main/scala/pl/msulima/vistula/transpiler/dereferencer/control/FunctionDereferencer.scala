@@ -1,4 +1,4 @@
-package pl.msulima.vistula.transpiler.dereferencer.function
+package pl.msulima.vistula.transpiler.dereferencer.control
 
 import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast

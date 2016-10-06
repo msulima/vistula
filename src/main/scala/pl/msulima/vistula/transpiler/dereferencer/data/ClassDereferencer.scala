@@ -1,8 +1,10 @@
-package pl.msulima.vistula.transpiler.dereferencer
+package pl.msulima.vistula.transpiler.dereferencer.data
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.dereferencer.function.FunctionDereferencer
+import pl.msulima.vistula.transpiler.dereferencer.control.FunctionDereferencer
+import pl.msulima.vistula.transpiler.dereferencer.reference.DeclareDereferencer
+import pl.msulima.vistula.transpiler.dereferencer.{Dereferencer, DereferencerImpl}
 import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.scope._
 

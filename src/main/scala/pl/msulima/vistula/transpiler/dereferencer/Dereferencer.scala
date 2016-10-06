@@ -2,8 +2,10 @@ package pl.msulima.vistula.transpiler.dereferencer
 
 import pl.msulima.vistula.Package
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.dereferencer.control.IfDereferencer
-import pl.msulima.vistula.transpiler.dereferencer.function.{FunctionDereferencer, ReturnDereferencer}
+import pl.msulima.vistula.transpiler.dereferencer.control._
+import pl.msulima.vistula.transpiler.dereferencer.data.{ClassDereferencer, ConstructorDereferencer, DictDereferencer, TupleDereferencer}
+import pl.msulima.vistula.transpiler.dereferencer.modules.{ImportDereferencer, ReferenceDereferencer}
+import pl.msulima.vistula.transpiler.dereferencer.reference._
 import pl.msulima.vistula.transpiler.scope.{Scope, ScopeElement}
 
 trait Dereferencer {

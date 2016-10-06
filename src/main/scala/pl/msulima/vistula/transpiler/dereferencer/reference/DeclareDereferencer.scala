@@ -1,9 +1,10 @@
-package pl.msulima.vistula.transpiler.dereferencer
+package pl.msulima.vistula.transpiler.dereferencer.reference
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.expression.reference.Declare
 import pl.msulima.vistula.transpiler.scope._
+import pl.msulima.vistula.transpiler.{ExpressionOperation, _}
 
 trait DeclareDereferencer {
   this: Dereferencer with BoxDereferencer with DereferenceDereferencer =>

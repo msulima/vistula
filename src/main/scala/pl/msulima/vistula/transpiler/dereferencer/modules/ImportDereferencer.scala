@@ -1,8 +1,9 @@
-package pl.msulima.vistula.transpiler.dereferencer
+package pl.msulima.vistula.transpiler.dereferencer.modules
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.identifier
 import pl.msulima.vistula.transpiler.Operation
+import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.expression.data.StaticDict
 import pl.msulima.vistula.transpiler.expression.reference.Declare
 import pl.msulima.vistula.transpiler.scope._

@@ -1,8 +1,9 @@
-package pl.msulima.vistula.transpiler.dereferencer.function
+package pl.msulima.vistula.transpiler.dereferencer.control
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.dereferencer.{BoxDereferencer, Dereferencer}
+import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
+import pl.msulima.vistula.transpiler.dereferencer.reference.BoxDereferencer
 
 
 trait ReturnDereferencer {

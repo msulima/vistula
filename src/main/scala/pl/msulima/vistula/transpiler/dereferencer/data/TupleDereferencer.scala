@@ -1,6 +1,7 @@
-package pl.msulima.vistula.transpiler.dereferencer
+package pl.msulima.vistula.transpiler.dereferencer.data
 
 import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.expression.data.Tuple
 
 trait TupleDereferencer {

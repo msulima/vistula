@@ -5,7 +5,7 @@ import java.nio.file.{Files, Path}
 
 import fastparse.all._
 import pl.msulima.vistula.parser.{Ast, Statements}
-import pl.msulima.vistula.transpiler.dereferencer.ImportDereferencer
+import pl.msulima.vistula.transpiler.dereferencer.modules.ImportDereferencer
 import pl.msulima.vistula.transpiler.scope.{ClassDefinitionHelper, ClassReference, Scope}
 import pl.msulima.vistula.transpiler.{Transformer, Transpiler}
 import pl.msulima.vistula.util.Paths
