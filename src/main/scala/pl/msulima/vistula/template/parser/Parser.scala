@@ -5,6 +5,10 @@ import pl.msulima.vistula.template.parser.Statements._
 
 object Parser {
 
+  def apply(program: String): Seq[Node] = {
+    (document ~ End).parse(program).get.value
+  }
+
   private val element: P[Element] =
     P(TagParser.openTag ~/ node.rep(min = 0) ~ TagParser.closeTag).map(Element.tupled)
 

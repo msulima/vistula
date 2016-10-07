@@ -1,6 +1,5 @@
 package pl.msulima.vistula.template.transpiler
 
-import fastparse.all._
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
 import pl.msulima.vistula.transpiler._
@@ -26,7 +25,8 @@ object Template {
   private val TextObservable = Reference(Dom, Ast.identifier("textObservable"))
 
   def apply(program: String): Token = {
-    val nodes = apply((parser.Parser.document ~ End).parse(program).get.value)
+    val nodes = apply(parser.Parser(program))
+
     if (nodes.size == 1) {
       nodes.head
     } else {
