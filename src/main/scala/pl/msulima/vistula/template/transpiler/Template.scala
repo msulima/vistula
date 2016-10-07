@@ -13,6 +13,9 @@ case class Scoped(variables: Seq[Ast.identifier], body: Token)
 
 object Template {
 
+  val MagicInlineHtmlPrefix = "# html\n"
+  val MagicClasspathHtmlRegex = "^# html:(.+?)".r
+
   private val ZipAndFlatten = Reference(Reference(Scope.VistulaHelper), Ast.identifier("zipAndFlatten"))
   private val Wrap = Reference(Reference(Scope.VistulaHelper), Ast.identifier("wrap"))
   private val IfChangedArrays = Reference(Reference(Scope.VistulaHelper), Ast.identifier("ifChangedArrays"))

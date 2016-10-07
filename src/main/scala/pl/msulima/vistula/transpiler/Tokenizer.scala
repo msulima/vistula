@@ -1,9 +1,10 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
+import pl.msulima.vistula.template.transpiler.Template
 import pl.msulima.vistula.transpiler.expression.Other
 import pl.msulima.vistula.transpiler.expression.control._
-import pl.msulima.vistula.transpiler.expression.data.{InlineHtml, InlineJavaScript, Primitives, Tuple}
+import pl.msulima.vistula.transpiler.expression.data.{InlineJavaScript, Primitives, Tuple}
 import pl.msulima.vistula.transpiler.expression.reference._
 
 object Tokenizer {
@@ -24,7 +25,7 @@ object Tokenizer {
 
   def apply: PartialFunction[Ast.expr, Token] = {
     val priorities =
-      InlineHtml.apply
+      template
         .orElse(InlineJavaScript.apply)
         .orElse(Primitives.apply)
 
@@ -35,5 +36,12 @@ object Tokenizer {
       .orElse({
         case e: Ast.expr => Direct(Ast.stmt.Expr(e))
       })
+  }
+
+  private def template: PartialFunction[Ast.expr, Token] = {
+    case expr@Ast.expr.Str(Template.MagicClasspathHtmlRegex(sourceFile)) =>
+      Direct(Ast.stmt.Expr(expr))
+    case expr@Ast.expr.Str(x) if x.startsWith(Template.MagicInlineHtmlPrefix) =>
+      Direct(Ast.stmt.Expr(expr))
   }
 }
