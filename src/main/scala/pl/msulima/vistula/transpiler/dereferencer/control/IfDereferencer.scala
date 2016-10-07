@@ -13,7 +13,6 @@ trait IfDereferencer {
   this: Dereferencer with FunctionCallDereferencer with FunctionDereferencer =>
 
   private val IfStatement = Reference(Reference(Scope.VistulaHelper), Ast.identifier("ifStatement"))
-  private val Wrap = Reference(Reference(Scope.VistulaHelper), Ast.identifier("wrap"))
 
   def ifDereferencer: PartialFunction[Token, Expression] = {
     case Direct(Ast.stmt.If(testExpr, body, orElse)) =>

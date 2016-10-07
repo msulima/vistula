@@ -76,6 +76,10 @@ trait FunctionDereferencer {
 
   def dereferenceScope(program: Seq[Token]): ExpressionOperation = {
     val result = dereference(program)
+    dereferenceScopeExpr(result)
+  }
+
+  def dereferenceScopeExpr(result: Seq[Expression]): ExpressionOperation = {
     val maybeLast = findReturn(result, box = false)
     val body = result.init ++ maybeLast.toSeq
     val returnType = body.lastOption.map(_.`type`).getOrElse(ScopeElement.const(ClassReference.Unit))

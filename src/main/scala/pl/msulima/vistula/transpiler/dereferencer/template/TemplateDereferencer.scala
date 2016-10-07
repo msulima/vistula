@@ -6,7 +6,6 @@ import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.dereferencer.control.FunctionDereferencer
 import pl.msulima.vistula.transpiler.dereferencer.reference.{BoxDereferencer, FunctionCallDereferencer}
-import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, FunctionCall, Reference}
 import pl.msulima.vistula.transpiler.scope._
@@ -21,13 +20,18 @@ object TemplateDereferencer {
   val MagicClasspathHtmlRegex = "^# html:(.+?)".r
   val ElementsId = Ast.identifier("$arg")
 
+  def findVariables: PartialFunction[parser.Node, Seq[Ast.identifier]] = {
+    case parser.Element(tag, childNodes) =>
+      childNodes.flatMap(findVariables) ++ tag.id.toSeq
+    case _ =>
+      Seq()
+  }
 }
 
 trait TemplateDereferencer {
   this: Dereferencer with FunctionCallDereferencer with BoxDereferencer with FunctionDereferencer =>
 
   private val ZipAndFlatten = Reference(Reference(Scope.VistulaHelper), Ast.identifier("zipAndFlatten"))
-  private val Wrap = Reference(Reference(Scope.VistulaHelper), Ast.identifier("wrap"))
   private val IfChangedArrays = Reference(Reference(Scope.VistulaHelper), Ast.identifier("ifChangedArrays"))
   private val Dom = Reference(Reference(Scope.VistulaHelper), Ast.identifier("dom"))
   private val CreateBoundElement = Reference(Dom, Ast.identifier("createBoundElement"))
@@ -63,49 +67,37 @@ trait TemplateDereferencer {
   }
 
   def applyScope(node: parser.Node): Expression = {
-    val Scoped(variables, body) = applyWithScope(node)
+    val variables = TemplateDereferencer.findVariables(node)
+
+    val body = apply(node)
 
     if (variables.isEmpty) {
       body
     } else {
-      val variableDeclarations = variables.map(variable => {
-        dereference(Declare.introduce(variable, body = Operation(Reference, Seq(Constant("new vistula.ObservableImpl()"))),
-          typedef = ClassReference.Object, mutable = true)) // FIXME
-      })
+      val variableDeclarations = dereference(variables.map(variable => {
+        Declare.introduce(variable, body = Operation(Reference, Seq(Constant("new vistula.ObservableImpl()"))),
+          typedef = ClassReference.Object, mutable = true) // FIXME
+      }))
 
-      // FIXME IfDereferencer
       val innerBody = variableDeclarations :+ body
-      val func = FunctionDef(FunctionReference.Anonymous, Seq(), Seq())
-      val funcDefinition = FunctionDefinition(Seq(), body.`type`)
-      val innerFunction = ExpressionOperation(func, innerBody, ScopeElement.const(funcDefinition))
-
-      functionCall(Wrap, Seq(innerFunction))
+      wrap(dereferenceScopeExpr(innerBody))
     }
   }
 
-  private def applyWithScope: PartialFunction[parser.Node, Scoped] = {
+  private def apply: PartialFunction[parser.Node, Expression] = {
     case parser.Element(tag, childNodes) =>
-      val children = childNodes.map(applyWithScope)
-      val variables = children.flatMap(_.variables)
-      val body = StaticArray.expr(children.map(scoped => toObservable(scoped.body)))
+      val children = childNodes.map(apply)
+      val body = StaticArray.expr(children.map(toObservable))
 
       tag.id.map(id => {
-        val code = functionCall(CreateBoundElement, Seq(
+        functionCall(CreateBoundElement, Seq(
           dereference(StaticString(tag.name)), dereference(Constant(id.name)), dereference(Attributes(tag)), body
         ))
-        Scoped(variables :+ id, code)
       }).getOrElse({
-        val code = functionCall(CreateElement, Seq(
+        functionCall(CreateElement, Seq(
           dereference(StaticString(tag.name)), dereference(Attributes(tag)), body
         ))
-
-        Scoped(variables, code)
       })
-    case other: parser.Node =>
-      Scoped(Seq(), apply(other))
-  }
-
-  private def apply: PartialFunction[parser.Node, Expression] = {
     case parser.ObservableNode(identifier) =>
       functionCall(TextObservable, Seq(dereference(identifier)))
     case parser.IfNode(expr, body, elseBody) =>
@@ -121,9 +113,25 @@ trait TemplateDereferencer {
         Tokenizer.apply(expression), Ast.identifier("toArray")
       ), Seq())
 
-      val inner = functionCall(ZipAndFlatten, Seq(StaticArray.expr(apply(body).map(toObservable))))
+      val inner = functionCall(ZipAndFlatten, Seq(
+        StaticArray.expr(apply(body).map(toObservable))
+      ))
 
-      val outer = functionCall(Reference(Reference(TemplateDereferencer.ElementsId), Ast.identifier("map")), Seq(inner))
+      // val inner = FunctionDef.anonymous(Variable(identifier, ScopeElement.Default), Seq(
+      //   FunctionCall(ZipAndFlatten, Seq(
+      //     StaticArray(apply(body).map(Box.apply))
+      //   ))
+      // ))
+
+      val outer = functionCall(ZipAndFlatten, Seq(
+        functionCall(Reference(Reference(TemplateDereferencer.ElementsId), Ast.identifier("map")), Seq(inner))
+      ))
+
+      // val outer = FunctionDef.anonymous(Variable(elementsId, ScopeElement.DefaultConst), Seq(
+      //   FunctionCall(ZipAndFlatten, Seq(
+      //     FunctionCall(Reference(Reference(elementsId), Ast.identifier("map")), Seq(inner))
+      //   ))
+      // ))
 
       toObservable(functionCall(Reference(Box(iterable), Ast.identifier("rxFlatMap")), Seq(outer)))
   }
