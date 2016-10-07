@@ -1,11 +1,7 @@
 package pl.msulima.vistula.testutil
 
 import org.specs2.mutable.Specification
-import pl.msulima.vistula.template.transpiler.Template
-import pl.msulima.vistula.transpiler.Transpiler
-import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
-import pl.msulima.vistula.transpiler.scope.Scope
-import pl.msulima.vistula.{Package, Vistula}
+import pl.msulima.vistula.Vistula
 
 trait TranspilerSpecification {
   this: Specification =>
@@ -19,8 +15,9 @@ trait TranspilerSpecification {
 
   def transpileAndCompareHtml(basePath: String)(file: String) = {
     file in {
-      val token = Template(readFile(s"/pl/msulima/vistula/transpiler/$basePath/$file.vst.html"))
-      Transpiler.toJavaScript(Seq(DereferencerImpl(Scope.Empty, Package.Root).dereference(token))).dropRight(1) must_==
+      val token = s"/pl/msulima/vistula/transpiler/$basePath/$file.vst.html"
+
+      Vistula.toJavaScript(s""""# html:$token"""").dropRight(1) must_==
         readFile(s"/pl/msulima/vistula/transpiler/$basePath/$file.js")
     }
   }

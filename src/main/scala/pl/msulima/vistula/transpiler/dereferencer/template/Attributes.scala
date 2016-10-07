@@ -1,4 +1,4 @@
-package pl.msulima.vistula.template.transpiler
+package pl.msulima.vistula.transpiler.dereferencer.template
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser

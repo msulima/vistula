@@ -54,6 +54,10 @@ case object StaticArray extends Operator {
     Operation(StaticArray, elements)
   }
 
+  def expr(operands: Seq[Expression]): Expression = {
+    ExpressionOperation(StaticArray, operands, ScopeElement.DefaultConst)
+  }
+
   override def apply(operands: List[Constant]): String = {
     ToArray(operands.map(_.value))
   }

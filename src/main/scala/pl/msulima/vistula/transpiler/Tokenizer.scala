@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler
 
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.template.transpiler.Template
+import pl.msulima.vistula.transpiler.dereferencer.template.TemplateDereferencer
 import pl.msulima.vistula.transpiler.expression.Other
 import pl.msulima.vistula.transpiler.expression.control._
 import pl.msulima.vistula.transpiler.expression.data.{InlineJavaScript, Primitives, Tuple}
@@ -39,9 +39,9 @@ object Tokenizer {
   }
 
   private def template: PartialFunction[Ast.expr, Token] = {
-    case expr@Ast.expr.Str(Template.MagicClasspathHtmlRegex(sourceFile)) =>
+    case expr@Ast.expr.Str(TemplateDereferencer.MagicClasspathHtmlRegex(sourceFile)) =>
       Direct(Ast.stmt.Expr(expr))
-    case expr@Ast.expr.Str(x) if x.startsWith(Template.MagicInlineHtmlPrefix) =>
+    case expr@Ast.expr.Str(x) if x.startsWith(TemplateDereferencer.MagicInlineHtmlPrefix) =>
       Direct(Ast.stmt.Expr(expr))
   }
 }
