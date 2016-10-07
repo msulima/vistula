@@ -43,6 +43,17 @@ case class FunctionDef(name: FunctionReference, program: Seq[Token], arguments: 
   }
 }
 
+case class FunctionDef2(name: FunctionReference, arguments: Seq[Variable]) extends Operator {
+
+  override def apply(operands: List[Constant]): String = {
+    val body = operands.head
+
+    s"""function ${name.name.name}(${arguments.map(_.id.name).mkString(", ")}) {
+        |${Indent.leftPad(body.value)}
+        |}""".stripMargin
+  }
+}
+
 case object FunctionScope extends Operator {
 
   override def apply(operands: List[Constant]): String = {

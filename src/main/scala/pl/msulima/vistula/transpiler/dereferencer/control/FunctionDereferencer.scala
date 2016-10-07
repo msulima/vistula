@@ -2,14 +2,17 @@ package pl.msulima.vistula.transpiler.dereferencer.control
 
 import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
-import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
-import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, FunctionScope}
-import pl.msulima.vistula.transpiler.expression.reference.Declare
+import pl.msulima.vistula.transpiler.dereferencer.reference.FunctionCallDereferencer
+import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, FunctionDef2, FunctionScope}
+import pl.msulima.vistula.transpiler.expression.reference.{Declare, Reference}
 import pl.msulima.vistula.transpiler.scope._
+import pl.msulima.vistula.transpiler.{ExpressionOperation, _}
 
 trait FunctionDereferencer {
-  this: Dereferencer with ReturnDereferencer =>
+  this: Dereferencer with ReturnDereferencer with FunctionCallDereferencer =>
+
+  private val Wrap = Reference(Reference(Scope.VistulaHelper), Ast.identifier("wrap"))
 
   def functionDereferencer: PartialFunction[Token, Expression] = {
     case operation@Operation(func: FunctionDef, Nil) =>
@@ -42,6 +45,18 @@ trait FunctionDereferencer {
     )
   }
 
+  def wrap(innerBody: Seq[Token]): ExpressionOperation = {
+    wrap(dereferenceScope(innerBody))
+  }
+
+  def wrap(innerBody: Expression): ExpressionOperation = {
+    val func = FunctionDef(FunctionReference.Anonymous, Seq(), Seq())
+    val funcDefinition = FunctionDefinition(Seq(), innerBody.`type`)
+    val innerFunction = ExpressionOperation(func, Seq(innerBody), ScopeElement.const(funcDefinition))
+
+    functionCall(Wrap, Seq(innerFunction))
+  }
+
   def anonymousFunction(arguments: Seq[Variable], body: Seq[Token]): ExpressionOperation = {
     dereferenceFunction(FunctionReference.Anonymous, arguments, body)
   }
@@ -53,14 +68,14 @@ trait FunctionDereferencer {
   private def dereferenceFunction(name: FunctionReference, arguments: Seq[Variable], program: Seq[Token]): ExpressionOperation = {
     val body = dereferenceScope(arguments.map(ImportVariable) ++ program)
 
-    val func = FunctionDef(name, program, arguments)
+    val func = FunctionDef2(name, arguments)
     val funcDefinition = FunctionDefinition(arguments.map(_.`type`), body.`type`)
 
     ExpressionOperation(func, Seq(body), ScopeElement.const(funcDefinition))
   }
 
   def dereferenceScope(program: Seq[Token]): ExpressionOperation = {
-    val result = Transformer.transform(program, scope, `package`)
+    val result = dereference(program)
     val maybeLast = findReturn(result, box = false)
     val body = result.init ++ maybeLast.toSeq
     val returnType = body.lastOption.map(_.`type`).getOrElse(ScopeElement.const(ClassReference.Unit))

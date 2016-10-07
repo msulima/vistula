@@ -20,6 +20,8 @@ trait Dereferencer {
   def dereference(stmt: Ast.stmt): Expression
 
   def dereference(token: Token): Expression
+
+  def dereference(program: Seq[Token]): Seq[Expression]
 }
 
 case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferencer
@@ -43,6 +45,10 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
   with ReturnDereferencer
   with TemplateDereferencer
   with TupleDereferencer {
+
+  def dereference(program: Seq[Token]): Seq[Expression] = {
+    Transformer.transform(program, scope, `package`)
+  }
 
   override def dereference(expr: Ast.expr): Expression = dereference(Tokenizer.apply(expr))
 

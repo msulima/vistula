@@ -5,9 +5,8 @@ import pl.msulima.vistula.parser.Ast.expr
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.dereferencer.reference.FunctionCallDereferencer
-import pl.msulima.vistula.transpiler.expression.control.FunctionDef
 import pl.msulima.vistula.transpiler.expression.reference.Reference
-import pl.msulima.vistula.transpiler.scope.{FunctionDefinition, FunctionReference, Scope, ScopeElement}
+import pl.msulima.vistula.transpiler.scope.Scope
 import pl.msulima.vistula.util.Indent
 
 trait IfDereferencer {
@@ -37,11 +36,7 @@ trait IfDereferencer {
     } else {
       val innerBody = ExpressionOperation(If, Seq(test, body, orElse), body.`type`)
 
-      val func = FunctionDef(FunctionReference.Anonymous, Seq(), Seq())
-      val funcDefinition = FunctionDefinition(Seq(), innerBody.`type`)
-      val innerFunction = ExpressionOperation(func, Seq(innerBody), ScopeElement.const(funcDefinition))
-
-      functionCall(Wrap, Seq(innerFunction))
+      wrap(innerBody)
     }
   }
 
@@ -49,7 +44,7 @@ trait IfDereferencer {
     if (program.size == 1) {
       dereference(program.head)
     } else {
-      functionCall(Wrap, Seq(anonymousFunction(Seq(), program)))
+      wrap(program)
     }
   }
 }
