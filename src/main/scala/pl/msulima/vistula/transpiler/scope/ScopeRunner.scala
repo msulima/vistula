@@ -12,6 +12,8 @@ case object ScopeRunner {
     val dereferencer = DereferencerImpl(scope, `package`)
 
     token match {
+      case Direct(Ast.stmt.DeclareStmt(identifier, stmt, mutable, typedef)) =>
+        dereferencer.dereferenceAndIntroduce(identifier, stmt, mutable, typedef)
       case Introduce(variable, body) =>
         dereferencer.dereferenceIntroduce(variable, dereferencer.dereference(body))
       case ImportVariable(variable) =>
