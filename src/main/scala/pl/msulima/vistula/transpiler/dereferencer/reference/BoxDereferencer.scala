@@ -3,7 +3,7 @@ package pl.msulima.vistula.transpiler.dereferencer.reference
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
-import pl.msulima.vistula.transpiler.expression.reference.Reference
+import pl.msulima.vistula.transpiler.dereferencer.modules.Reference
 
 trait BoxDereferencer {
   this: Dereferencer with FunctionCallDereferencer =>

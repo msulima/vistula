@@ -1,7 +1,7 @@
 package pl.msulima.vistula.transpiler
 
+import pl.msulima.vistula.transpiler.dereferencer.modules.Reference
 import pl.msulima.vistula.transpiler.dereferencer.reference.FunctionCall
-import pl.msulima.vistula.transpiler.expression.reference.Reference
 import pl.msulima.vistula.transpiler.scope.ScopeElement
 import pl.msulima.vistula.util.ToArray
 

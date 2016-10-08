@@ -21,9 +21,7 @@ object Tokenizer {
   }
 
   def apply: PartialFunction[Ast.expr, Token] = {
-    Reference.apply
-      .orElse({
-        case e: Ast.expr => Direct(Ast.stmt.Expr(e))
-      })
+    case e: Ast.expr =>
+      Direct(Ast.stmt.Expr(e))
   }
 }

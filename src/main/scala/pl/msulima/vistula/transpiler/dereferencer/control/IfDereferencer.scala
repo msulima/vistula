@@ -4,8 +4,8 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.expr
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
+import pl.msulima.vistula.transpiler.dereferencer.modules.Reference
 import pl.msulima.vistula.transpiler.dereferencer.reference.FunctionCallDereferencer
-import pl.msulima.vistula.transpiler.expression.reference.Reference
 import pl.msulima.vistula.transpiler.scope.Scope
 import pl.msulima.vistula.util.Indent
 
