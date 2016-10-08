@@ -4,7 +4,7 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.identifier
 import pl.msulima.vistula.transpiler.Operation
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
-import pl.msulima.vistula.transpiler.expression.data.StaticDict
+import pl.msulima.vistula.transpiler.dereferencer.data.StaticDict
 import pl.msulima.vistula.transpiler.expression.reference.Declare
 import pl.msulima.vistula.transpiler.scope._
 import pl.msulima.vistula.{Package, Vistula}

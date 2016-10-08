@@ -6,7 +6,7 @@ import pl.msulima.vistula.transpiler.{Tokenizer, _}
 case object Reference extends Operator {
 
   def apply: PartialFunction[Ast.expr, Token] = {
-    case Ast.expr.Name(id, Ast.expr_context.Load) =>
+    case Ast.expr.Name(id, Ast.expr_context.Load) if !Seq("None", "False", "True").contains(id.name) =>
       Reference(id)
     case Ast.expr.Attribute(expr, id, Ast.expr_context.Load) =>
       Reference(Tokenizer.apply(expr), id)

@@ -4,8 +4,8 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
+import pl.msulima.vistula.transpiler.dereferencer.data.{PrimitivesDereferencer, StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.dereferencer.reference.{BoxDereferencer, LambdaDereferencer}
-import pl.msulima.vistula.transpiler.expression.data.{Primitives, StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.scope.{ClassDefinitionHelper, ScopeElement, Variable}
 
 trait AttributesDereferencer {
@@ -16,7 +16,7 @@ trait AttributesDereferencer {
       case parser.AttributeValue(key, value) =>
         tuple(key, toObservable(dereference(Tokenizer.apply(value))))
       case parser.AttributeMarker(key) =>
-        tuple(key, toObservable(dereference(Primitives.StaticNull)))
+        tuple(key, toObservable(PrimitivesDereferencer.StaticNull))
       case parser.AttributeEvent(key, value) =>
         val ev = Ast.identifier("ev")
         val function = dereferenceLambda(Seq(Variable(ev, ScopeElement.const(ClassDefinitionHelper.Event))), Seq(Tokenizer.apply(value)))

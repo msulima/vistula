@@ -1,22 +1,41 @@
-package pl.msulima.vistula.transpiler.expression.data
+package pl.msulima.vistula.transpiler.dereferencer.data
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement}
 import pl.msulima.vistula.util.ToArray
 
-object Primitives {
+object PrimitivesDereferencer {
 
-  val StaticNull = TypedConstant("null", ScopeElement.DefaultConst)
+  val StaticNull = ExpressionConstant("null", ScopeElement.DefaultConst)
 
-  def apply: PartialFunction[Ast.expr, Token] = {
-    case expr: Ast.expr if static.isDefinedAt(expr) =>
+}
+
+trait PrimitivesDereferencer {
+  this: Dereferencer =>
+
+  private val MagicInlineJavascriptPrefix = "# javascript\n"
+
+  def primitivesDereferencer: PartialFunction[Token, Expression] = {
+    case Direct(Ast.stmt.Expr(Ast.expr.Tuple(expr +: _, Ast.expr_context.Load))) =>
+      val body = dereference(expr)
+      if (body.`type`.observable) {
+        body
+      } else {
+        ExpressionOperation(Tuple, body)
+      }
+    case Direct(Ast.stmt.Expr(expr)) if static.isDefinedAt(expr) =>
       val (value, t) = static(expr)
-      TypedConstant(value, ScopeElement.const(t))
-    case Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load) =>
-      StaticNull
-    case Ast.expr.Str(x) =>
-      StaticString(x)
+      dereference(TypedConstant(value, ScopeElement.const(t)))
+    case Direct(Ast.stmt.Expr(Ast.expr.Name(Ast.identifier("None"), Ast.expr_context.Load))) =>
+      PrimitivesDereferencer.StaticNull
+    case Direct(Ast.stmt.Expr(Ast.expr.Str(x))) if x.startsWith(MagicInlineJavascriptPrefix) =>
+      val content = x.stripPrefix(MagicInlineJavascriptPrefix)
+
+      ExpressionConstant(content, ScopeElement.Unit)
+    case Direct(Ast.stmt.Expr(Ast.expr.Str(x))) =>
+      dereference(StaticString(x))
   }
 
   private def static: PartialFunction[Ast.expr, (String, ClassReference)] = {
@@ -72,5 +91,12 @@ case object StaticDict extends Operator {
       case key :: value :: Nil =>
         (key.value, value.value)
     }))
+  }
+}
+
+case object Tuple extends Operator {
+
+  override def apply(operands: List[Constant]): String = {
+    s"(${operands.head.value})"
   }
 }

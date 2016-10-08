@@ -4,7 +4,7 @@ import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.control._
-import pl.msulima.vistula.transpiler.dereferencer.data.{ClassDereferencer, ConstructorDereferencer, DictDereferencer, TupleDereferencer}
+import pl.msulima.vistula.transpiler.dereferencer.data.{ClassDereferencer, ConstructorDereferencer, DictDereferencer, PrimitivesDereferencer}
 import pl.msulima.vistula.transpiler.dereferencer.modules.{ImportDereferencer, ReferenceDereferencer}
 import pl.msulima.vistula.transpiler.dereferencer.reference._
 import pl.msulima.vistula.transpiler.dereferencer.template.{AttributesDereferencer, TemplateDereferencer}
@@ -45,7 +45,7 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
   with ReferenceDereferencer
   with ReturnDereferencer
   with TemplateDereferencer
-  with TupleDereferencer {
+  with PrimitivesDereferencer {
 
   def dereference(program: Seq[Token]): Seq[Expression] = {
     Transformer.transform(program, scope, `package`)
@@ -68,7 +68,7 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
       .orElse(generatorDereferencer)
       .orElse(ifDereferencer)
       .orElse(referenceDereferencer)
-      .orElse(tupleDereferencer)
+      .orElse(primitivesDereferencer)
       .orElse(lambdaDereferencer)
       .orElse(loopDereferencer)
       .orElse(operationDereferencer)

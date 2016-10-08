@@ -3,9 +3,9 @@ package pl.msulima.vistula.transpiler.dereferencer.template
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
 import pl.msulima.vistula.transpiler.dereferencer.control.FunctionDereferencer
+import pl.msulima.vistula.transpiler.dereferencer.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.dereferencer.reference.{BoxDereferencer, FunctionCallDereferencer, LambdaDereferencer}
 import pl.msulima.vistula.transpiler.dereferencer.{Dereferencer, DereferencerImpl}
-import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, Reference}
 import pl.msulima.vistula.transpiler.scope._
 import pl.msulima.vistula.transpiler.{ExpressionOperation, _}
@@ -16,8 +16,8 @@ case class Scoped(variables: Seq[Ast.identifier], body: Expression)
 
 object TemplateDereferencer {
 
-  val MagicInlineHtmlPrefix = "# html\n"
-  val MagicClasspathHtmlRegex = "^# html:(.+?)".r
+  private val MagicInlineHtmlPrefix = "# html\n"
+  private val MagicClasspathHtmlRegex = "^# html:(.+?)".r
   val ElementsId = Ast.identifier("$arg")
   val MapFunction = Ast.identifier("map")
   val RxFlatMapFunction = Ast.identifier("rxFlatMap")
