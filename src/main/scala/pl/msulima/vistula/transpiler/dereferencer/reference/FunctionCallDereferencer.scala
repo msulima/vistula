@@ -46,7 +46,7 @@ trait FunctionCallDereferencer {
     }
   }
 
-  private def functionCall(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): ExpressionOperation = {
+  def functionCall(function: Expression, funcDefinition: FunctionDefinition, arguments: Seq[Expression]): ExpressionOperation = {
     val (observables, inputs) = findSubstitutes(function, funcDefinition, arguments)
     val body = ExpressionOperation(FunctionCall(funcDefinition.constructor), inputs, funcDefinition.resultType)
 

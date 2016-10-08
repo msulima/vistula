@@ -20,6 +20,7 @@ object TemplateDereferencer {
   val MagicInlineHtmlPrefix = "# html\n"
   val MagicClasspathHtmlRegex = "^# html:(.+?)".r
   val ElementsId = Ast.identifier("$arg")
+  val MapFunction = Ast.identifier("map")
 
   def findVariables: PartialFunction[parser.Node, Seq[Ast.identifier]] = {
     case parser.Element(tag, childNodes) =>
@@ -133,8 +134,14 @@ trait TemplateDereferencer {
       // ))
 
       val outer = {
+        val source = dereference(Reference(TemplateDereferencer.ElementsId))
+
+        val mapFunctionDefinition = FunctionDefinition(Seq(ScopeElement.Default), ScopeElement.DefaultConst)
+
+        val y = ExpressionOperation(Reference, Seq(source, ExpressionConstant(TemplateDereferencer.MapFunction.name, ScopeElement.DefaultConst)), ScopeElement.const(mapFunctionDefinition))
+
         val x = functionCall(ZipAndFlatten, Seq(
-          functionCall(Reference(Reference(TemplateDereferencer.ElementsId), Ast.identifier("map")), Seq(inner))
+          functionCall(y, mapFunctionDefinition, Seq(inner))
         ))
         val arguments = Seq(Variable(TemplateDereferencer.ElementsId, ScopeElement.DefaultConst))
 
