@@ -12,7 +12,7 @@ trait AttributesDereferencer {
   this: Dereferencer with BoxDereferencer with LambdaDereferencer =>
 
   def dereferenceAttribute(tag: parser.Tag): Expression = {
-    StaticArray.expr(tag.attributes.map({
+    StaticArray(tag.attributes.map({
       case parser.AttributeValue(key, value) =>
         tuple(key, toObservable(dereference(value)))
       case parser.AttributeMarker(key) =>
@@ -26,6 +26,6 @@ trait AttributesDereferencer {
   }
 
   private def tuple(key: String, body: Expression) = {
-    StaticArray.expr(Seq(dereference(StaticString(key)), body))
+    StaticArray(Seq(StaticString(key), body))
   }
 }

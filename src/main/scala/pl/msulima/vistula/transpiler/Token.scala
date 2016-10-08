@@ -10,17 +10,15 @@ case class Observable(token: Token) extends Token
 
 case class Box(token: Token) extends Token
 
-case class Constant(value: String)
-
 case class IdConstant(value: Ast.identifier) extends Token
 
 case class TypedConstant(value: String, `type`: ScopeElement) extends Token
 
-case class Introduce(variable: Variable, body: Token) extends Token
-
 case class ImportVariable(variable: Variable) extends Token
 
 case class Direct(stmt: Ast.stmt) extends Token
+
+case class Constant(value: String)
 
 trait Operator {
 

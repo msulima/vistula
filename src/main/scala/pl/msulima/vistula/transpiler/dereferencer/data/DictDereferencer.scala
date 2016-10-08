@@ -4,7 +4,6 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.dereferencer.reference.BoxDereferencer
-import pl.msulima.vistula.transpiler.expression.data.{StaticDict, StaticString}
 import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement}
 
 trait DictDereferencer {
@@ -14,7 +13,7 @@ trait DictDereferencer {
     case Direct(Ast.stmt.Expr(Ast.expr.Dict(keys, values))) =>
       val dict: Seq[Expression] = keys.zip(values).flatMap({
         case (Ast.expr.Str(key), expr) =>
-          val keyExpression = StaticString.toExpression(key)
+          val keyExpression = StaticString(key)
           val valueExpression = toObservable(dereference(expr))
           Seq(keyExpression, valueExpression)
       })

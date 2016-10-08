@@ -35,7 +35,7 @@ trait PrimitivesDereferencer {
 
       ExpressionConstant(content, ScopeElement.Unit)
     case Direct(Ast.stmt.Expr(Ast.expr.Str(x))) =>
-      dereference(StaticString(x))
+      StaticString(x)
   }
 
   private def static: PartialFunction[Ast.expr, (String, ClassReference)] = {
@@ -50,11 +50,7 @@ trait PrimitivesDereferencer {
 
 case object StaticString extends Operator {
 
-  def apply(x: String): Token = {
-    Operation(StaticString, Seq(TypedConstant(x, ScopeElement.const(ClassReference.String))))
-  }
-
-  def toExpression(x: String): Expression = {
+  def apply(x: String): Expression = {
     ExpressionOperation(StaticString, ExpressionConstant(x, ScopeElement.const(ClassReference.String)))
   }
 
@@ -69,12 +65,8 @@ case object StaticString extends Operator {
 
 case object StaticArray extends Operator {
 
-  def apply(elements: Seq[Token]): Token = {
-    Operation(StaticArray, elements)
-  }
-
-  def expr(operands: Seq[Expression]): Expression = {
-    ExpressionOperation(StaticArray, operands, ScopeElement.DefaultConst)
+  def apply(elements: Seq[Expression]): Expression = {
+    ExpressionOperation(StaticArray, elements, ScopeElement.DefaultConst)
   }
 
   override def apply(operands: List[Constant]): String = {

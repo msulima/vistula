@@ -66,7 +66,7 @@ trait TemplateDereferencer {
     if (nodes.size == 1) {
       nodes.head
     } else {
-      functionCall(ZipAndFlatten, Seq(StaticArray.expr(nodes.map(toObservable))))
+      functionCall(ZipAndFlatten, Seq(StaticArray(nodes.map(toObservable))))
     }
   }
 
@@ -96,9 +96,9 @@ trait TemplateDereferencer {
   private def apply: PartialFunction[parser.Node, Expression] = {
     case parser.Element(tag, childNodes) =>
       val children = childNodes.map(apply)
-      val body = StaticArray.expr(children.map(toObservable))
+      val body = StaticArray(children.map(toObservable))
 
-      val tagName = dereference(StaticString(tag.name))
+      val tagName = StaticString(tag.name)
       val attribute = dereferenceAttribute(tag)
 
       tag.id match {
@@ -113,11 +113,11 @@ trait TemplateDereferencer {
     case parser.IfNode(expr, body, elseBody) =>
       functionCall(IfChangedArrays, Seq(
         dereference(expr),
-        StaticArray.expr(apply(body).map(toObservable)),
-        StaticArray.expr(apply(elseBody).map(toObservable))
+        StaticArray(apply(body).map(toObservable)),
+        StaticArray(apply(elseBody).map(toObservable))
       ))
     case parser.TextNode(text) =>
-      functionCall(TextNode, Seq(dereference(StaticString(text))))
+      functionCall(TextNode, Seq(StaticString(text)))
     case parser.LoopNode(identifier, expression, body) =>
       val inner = {
         val variable = Variable(identifier, ScopeElement.Default)
@@ -125,7 +125,7 @@ trait TemplateDereferencer {
         val dereferencer = DereferencerImpl(scope.addToScope(variable), `package`)
 
         val x = dereferencer.functionCall(ZipAndFlatten, Seq(
-          StaticArray.expr(apply(body).map(toObservable))
+          StaticArray(apply(body).map(toObservable))
         ))
 
         val arguments = Seq(variable)
