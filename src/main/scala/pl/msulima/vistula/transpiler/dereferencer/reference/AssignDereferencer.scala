@@ -6,12 +6,13 @@ import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement}
 
 trait AssignDereferencer {
-  this: Dereferencer =>
+  this: Dereferencer with BoxDereferencer =>
 
   def assignDereferencer: PartialFunction[Token, Expression] = {
     case Direct(Ast.stmt.AssignStmt(expr, value)) =>
-      val tokens = Seq(Tokenizer.apply(expr), Box(Tokenizer.applyStmt(value)))
-      ExpressionOperation(Assign, tokens.map(dereference), ScopeElement.const(ClassReference.Unit))
+      val tokens = Seq(dereference(expr), toObservable(dereference(value)))
+
+      ExpressionOperation(Assign, tokens, ScopeElement.const(ClassReference.Unit))
   }
 }
 

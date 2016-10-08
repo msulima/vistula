@@ -14,7 +14,7 @@ trait AttributesDereferencer {
   def dereferenceAttribute(tag: parser.Tag): Expression = {
     StaticArray.expr(tag.attributes.map({
       case parser.AttributeValue(key, value) =>
-        tuple(key, toObservable(dereference(Tokenizer.apply(value))))
+        tuple(key, toObservable(dereference(value)))
       case parser.AttributeMarker(key) =>
         tuple(key, toObservable(PrimitivesDereferencer.StaticNull))
       case parser.AttributeEvent(key, value) =>

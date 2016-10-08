@@ -21,6 +21,10 @@ trait Dereferencer {
 
   def dereference(token: Token): Expression
 
+  def dereferenceStmt(program: Seq[Ast.stmt]): Seq[Expression] = {
+    dereference(program.map(Direct.apply))
+  }
+
   def dereference(program: Seq[Token]): Seq[Expression]
 }
 
@@ -51,9 +55,9 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
     Transformer.transform(program, scope, `package`)
   }
 
-  override def dereference(expr: Ast.expr): Expression = dereference(Tokenizer.apply(expr))
+  override def dereference(expr: Ast.expr): Expression = dereference(Direct(Ast.stmt.Expr(expr)))
 
-  override def dereference(stmt: Ast.stmt): Expression = dereference(Tokenizer.applyStmt(stmt))
+  override def dereference(stmt: Ast.stmt): Expression = dereference(Direct(stmt))
 
   override def dereference(token: Token): Expression = {
     declareDereferencer

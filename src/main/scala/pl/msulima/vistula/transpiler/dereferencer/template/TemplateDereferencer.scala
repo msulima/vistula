@@ -150,9 +150,7 @@ trait TemplateDereferencer {
       val mapFunctionDefinition = FunctionDefinition(Seq(ScopeElement.Default), ScopeElement.Default)
 
       val source = {
-        val iterable = toObservable(functionCall(Reference(
-          Tokenizer.apply(expression), Ast.identifier("toArray")
-        ), Seq()))
+        val iterable = toObservable(functionCall(Reference(Tokenizer.apply(expression), Ast.identifier("toArray")), Seq()))
 
         ExpressionOperation(Reference, Seq(iterable, ExpressionConstant(TemplateDereferencer.RxFlatMapFunction.name, ScopeElement.DefaultConst)), ScopeElement.const(mapFunctionDefinition))
       }

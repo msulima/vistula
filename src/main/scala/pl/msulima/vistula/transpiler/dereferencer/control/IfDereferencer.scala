@@ -16,15 +16,15 @@ trait IfDereferencer {
 
   def ifDereferencer: PartialFunction[Token, Expression] = {
     case Direct(Ast.stmt.If(testExpr, body, orElse)) =>
-      dereferenceIf(testExpr, body.map(Tokenizer.applyStmt), orElse.map(Tokenizer.applyStmt))
+      dereferenceIf(testExpr, dereferenceStmt(body), dereferenceStmt(orElse))
     case Direct(Ast.stmt.Expr(Ast.expr.IfExp(testExpr, body, orElse))) =>
-      dereferenceIf(testExpr, Seq(Tokenizer.apply(body)), Seq(Tokenizer.apply(orElse)))
+      dereferenceIf(testExpr, Seq(dereference(body)), Seq(dereference(orElse)))
   }
 
-  private def dereferenceIf(testExpr: expr, tokenizedBody: Seq[Token], tokenizedOrElse: Seq[Token]): Expression = {
-    val test = dereference(Tokenizer.apply(testExpr))
-    val body = dereferenceScope(tokenizedBody)
-    val orElse = dereferenceScope(tokenizedOrElse)
+  private def dereferenceIf(testExpr: expr, tokenizedBody: Seq[Expression], tokenizedOrElse: Seq[Expression]): Expression = {
+    val test = dereference(testExpr)
+    val body = dereferenceScopeExpr(tokenizedBody)
+    val orElse = dereferenceScopeExpr(tokenizedOrElse)
 
     if (test.`type`.observable || body.`type`.observable || orElse.`type`.observable) {
       functionCall(IfStatement, Seq(
@@ -39,11 +39,11 @@ trait IfDereferencer {
     }
   }
 
-  private def wrapScope(program: Seq[Token]): Expression = {
+  private def wrapScope(program: Seq[Expression]): Expression = {
     if (program.size == 1) {
-      dereference(program.head)
+      program.head
     } else {
-      wrap(program)
+      wrap(dereferenceScopeExpr(program))
     }
   }
 }

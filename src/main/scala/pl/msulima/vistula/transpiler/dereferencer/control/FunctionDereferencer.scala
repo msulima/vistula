@@ -44,10 +44,6 @@ trait FunctionDereferencer {
     )
   }
 
-  def wrap(innerBody: Seq[Token]): ExpressionOperation = {
-    wrap(dereferenceScope(innerBody))
-  }
-
   def wrap(innerBody: Expression): ExpressionOperation = {
     val func = FunctionDef(FunctionReference.Anonymous, Seq(), Seq())
     val funcDefinition = FunctionDefinition(Seq(), innerBody.`type`)

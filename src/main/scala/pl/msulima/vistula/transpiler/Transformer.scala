@@ -10,7 +10,7 @@ object Transformer {
   def transform(program: Seq[Ast.stmt], `package`: Package, predef: ScopePart = Scope.EmptyScopePart): Seq[Expression] = {
     val mergeImport = Scope.Empty.mergeImport(predef)
 
-    transform(program.map(Tokenizer.applyStmt), mergeImport, `package`)
+    transform(program.map(Direct.apply), mergeImport, `package`)
   }
 
   def transform(program: Seq[Token], scope: Scope, `package`: Package): Seq[Expression] = {
@@ -18,7 +18,7 @@ object Transformer {
   }
 
   def extractScope(program: Seq[Ast.stmt], `package`: Package): Scope = {
-    run(program.map(Tokenizer.applyStmt), Scope.Empty, `package`).scope
+    run(program.map(Direct.apply), Scope.Empty, `package`).scope
   }
 
   private def run(program: Seq[Token], scope: Scope, `package`: Package): ScopedResult = {
