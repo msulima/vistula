@@ -26,3 +26,10 @@ trait Operator {
 }
 
 case class Operation(operator: Operator, inputs: Seq[Token]) extends Token
+
+object IdConstant {
+
+  def expr(value: Ast.identifier): Expression = {
+    ExpressionConstant(value.name, ScopeElement.DefaultConst)
+  }
+}

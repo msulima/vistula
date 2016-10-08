@@ -103,7 +103,7 @@ trait TemplateDereferencer {
 
       tag.id match {
         case Some(id) =>
-          val idReference = dereference(IdConstant(id))
+          val idReference = IdConstant.expr(id)
           functionCall(CreateBoundElement, Seq(tagName, idReference, attribute, body))
         case None =>
           functionCall(CreateElement, Seq(tagName, attribute, body))

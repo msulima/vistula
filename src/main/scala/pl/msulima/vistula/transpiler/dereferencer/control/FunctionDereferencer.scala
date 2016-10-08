@@ -23,15 +23,13 @@ trait FunctionDereferencer {
 
     val id = functionDef.name
     val body = dereferenceFunction(functionDef)
-    val wat = if (`package` == Package.Root) {
+    val declaration = if (`package` == Package.Root) {
       body
     } else {
-      // FIXME simplify
-      dereferenceDeclare(IdConstant(id.toIdentifier), Operation(functionDef, Seq()), mutable = false, declare = false)
+      dereferenceDeclare(IdConstant.expr(id.toIdentifier), body, mutable = false, declare = false)
     }
 
-    val ns = scope.addToScope(Variable(id.name, body.`type`))
-    ScopedResult(ns, Seq(wat))
+    ScopedResult(scope.addToScope(Variable(id.name, body.`type`)), Seq(declaration))
   }
 
   def toFunctionDef(func: Ast.stmt.FunctionDef): FunctionDef = {

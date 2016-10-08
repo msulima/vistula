@@ -8,7 +8,7 @@ import pl.msulima.vistula.transpiler.dereferencer.data.{ClassDereferencer, Const
 import pl.msulima.vistula.transpiler.dereferencer.modules.{ImportDereferencer, ReferenceDereferencer}
 import pl.msulima.vistula.transpiler.dereferencer.reference._
 import pl.msulima.vistula.transpiler.dereferencer.template.{AttributesDereferencer, TemplateDereferencer}
-import pl.msulima.vistula.transpiler.scope.{Scope, ScopeElement}
+import pl.msulima.vistula.transpiler.scope.Scope
 
 trait Dereferencer {
 
@@ -82,7 +82,7 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
 
   private def default: PartialFunction[Token, Expression] = {
     case x: IdConstant =>
-      ExpressionConstant(x.value.name, ScopeElement.DefaultConst)
+      IdConstant.expr(x.value)
     case x: TypedConstant =>
       ExpressionConstant(x.value, x.`type`)
   }

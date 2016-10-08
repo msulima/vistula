@@ -48,8 +48,10 @@ trait DeclareDereferencer {
   }
 
   def dereferenceDeclare(identifier: Expression, body: Token, mutable: Boolean, declare: Boolean): Expression = {
-    val value = dereference(body)
+    dereferenceDeclare(identifier, dereference(body), mutable, declare)
+  }
 
+  def dereferenceDeclare(identifier: Expression, value: Expression, mutable: Boolean, declare: Boolean): ExpressionOperation = {
     val dereferencedBody = if (mutable) {
       toObservable(value)
     } else {
