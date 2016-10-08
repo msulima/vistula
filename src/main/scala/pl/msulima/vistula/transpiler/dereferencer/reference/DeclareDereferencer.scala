@@ -3,7 +3,6 @@ package pl.msulima.vistula.transpiler.dereferencer.reference
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.{identifier, stmt}
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
-import pl.msulima.vistula.transpiler.expression.reference.Declare
 import pl.msulima.vistula.transpiler.scope._
 import pl.msulima.vistula.transpiler.{ExpressionOperation, _}
 
@@ -58,5 +57,18 @@ trait DeclareDereferencer {
     }
 
     ExpressionOperation(Declare(declare, mutable), Seq(identifier, dereferencedBody), value.`type`)
+  }
+}
+
+case class Declare(declare: Boolean, mutable: Boolean) extends Operator {
+
+  override def apply(operands: List[Constant]): String = {
+    val prefix = if (declare) {
+      "const "
+    } else {
+      ""
+    }
+
+    s"$prefix${operands(0).value} = ${operands(1).value}"
   }
 }

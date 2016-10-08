@@ -6,8 +6,8 @@ import pl.msulima.vistula.parser.Ast.identifier
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.control.{FunctionDef, Return}
 import pl.msulima.vistula.transpiler.dereferencer.modules.Reference
+import pl.msulima.vistula.transpiler.dereferencer.reference.Declare
 import pl.msulima.vistula.transpiler.dereferencer.{Dereferencer, DereferencerImpl}
-import pl.msulima.vistula.transpiler.expression.reference.Declare
 import pl.msulima.vistula.transpiler.scope._
 
 trait ConstructorDereferencer {

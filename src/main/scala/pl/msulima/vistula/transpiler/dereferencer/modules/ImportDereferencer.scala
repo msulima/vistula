@@ -2,27 +2,35 @@ package pl.msulima.vistula.transpiler.dereferencer.modules
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.parser.Ast.identifier
-import pl.msulima.vistula.transpiler.Operation
+import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.dereferencer.data.StaticDict
-import pl.msulima.vistula.transpiler.expression.reference.Declare
+import pl.msulima.vistula.transpiler.dereferencer.reference.Declare
 import pl.msulima.vistula.transpiler.scope._
 import pl.msulima.vistula.{Package, Vistula}
 
 object ImportDereferencer {
 
-  private val EmptyDict = Operation(StaticDict, Seq())
-
-  def packagePreambule(`package`: Package) = {
+  def packagePreambule(`package`: Package): Seq[Expression] = {
     if (`package` == Package.Root) {
       Seq()
     } else {
-      val root = Declare(`package`.path.head, EmptyDict, mutable = false, declare = true)
+      val id = `package`.path.head
+      val root = declareAsEmptyDict(id, declare = true)
+
       val modules = `package`.path.inits.toSeq.reverse.drop(2).map(path => {
-        Declare(Package(path).toIdentifier, EmptyDict, mutable = false, declare = false)
+        val id = Package(path).toIdentifier
+        declareAsEmptyDict(id, declare = false)
       })
       root +: modules
     }
+  }
+
+  private def declareAsEmptyDict(id: identifier, declare: Boolean): ExpressionOperation = {
+    val identifier = ExpressionConstant(id.name, ScopeElement.DefaultConst)
+    val body = ExpressionOperation(StaticDict, Seq(), ScopeElement.const(ClassReference.Object))
+
+    ExpressionOperation(Declare(declare, mutable = false), Seq(identifier, body), ScopeElement.DefaultConst)
   }
 }
 

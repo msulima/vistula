@@ -5,9 +5,8 @@ import pl.msulima.vistula.template.parser
 import pl.msulima.vistula.transpiler.dereferencer.control.FunctionDereferencer
 import pl.msulima.vistula.transpiler.dereferencer.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.dereferencer.modules.Reference
-import pl.msulima.vistula.transpiler.dereferencer.reference.{BoxDereferencer, FunctionCallDereferencer, LambdaDereferencer}
+import pl.msulima.vistula.transpiler.dereferencer.reference.{BoxDereferencer, DeclareDereferencer, FunctionCallDereferencer, LambdaDereferencer}
 import pl.msulima.vistula.transpiler.dereferencer.{Dereferencer, DereferencerImpl}
-import pl.msulima.vistula.transpiler.expression.reference.Declare
 import pl.msulima.vistula.transpiler.scope._
 import pl.msulima.vistula.transpiler.{ExpressionOperation, _}
 
@@ -33,9 +32,10 @@ object TemplateDereferencer {
 
 trait TemplateDereferencer {
   this: Dereferencer
-    with FunctionCallDereferencer
     with AttributesDereferencer
     with BoxDereferencer
+    with DeclareDereferencer
+    with FunctionCallDereferencer
     with FunctionDereferencer
     with LambdaDereferencer =>
 
@@ -82,10 +82,11 @@ trait TemplateDereferencer {
     if (variables.isEmpty) {
       body
     } else {
-      val variableDeclarations = dereference(variables.map(variable => {
-        Declare.introduce(variable, body = Reference(Ast.identifier("new vistula.ObservableImpl()")),
-          typedef = ClassReference.Object, mutable = true) // FIXME
-      }))
+      val variableDeclarations = variables.map(variable => {
+        // FIXME constructor and variables are not added to scope
+        dereferenceDeclare(IdConstant(variable), Reference(Ast.identifier("new vistula.ObservableImpl()")),
+          mutable = true, declare = true)
+      })
 
       val innerBody = variableDeclarations :+ body
       wrap(dereferenceScopeExpr(innerBody))

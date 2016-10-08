@@ -6,7 +6,7 @@ import java.nio.file.{Files, Path}
 import fastparse.all._
 import pl.msulima.vistula.parser.{Ast, Statements}
 import pl.msulima.vistula.transpiler.dereferencer.modules.ImportDereferencer
-import pl.msulima.vistula.transpiler.scope.{ClassDefinitionHelper, ClassReference, Scope}
+import pl.msulima.vistula.transpiler.scope.{ClassDefinitionHelper, ClassReference}
 import pl.msulima.vistula.transpiler.{Transformer, Transpiler}
 import pl.msulima.vistula.util.Paths
 
@@ -39,7 +39,7 @@ object Vistula {
 
     val outputStream = new PrintStream(new BufferedOutputStream(new FileOutputStream(resolve.toFile)))
 
-    outputStream.println(Transpiler.toJavaScript(Transformer.transform(ImportDereferencer.packagePreambule(input), Scope.Empty, input)))
+    outputStream.println(Transpiler.toJavaScript(ImportDereferencer.packagePreambule(input)))
 
     Paths.findPackageSourceFiles(input).foreach({
       case (file, pack) =>
