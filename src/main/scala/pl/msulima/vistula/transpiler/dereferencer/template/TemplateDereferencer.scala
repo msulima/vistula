@@ -2,13 +2,14 @@ package pl.msulima.vistula.transpiler.dereferencer.template
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
-import pl.msulima.vistula.transpiler._
-import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.dereferencer.control.FunctionDereferencer
 import pl.msulima.vistula.transpiler.dereferencer.reference.{BoxDereferencer, FunctionCallDereferencer}
+import pl.msulima.vistula.transpiler.dereferencer.{Dereferencer, DereferencerImpl}
+import pl.msulima.vistula.transpiler.expression.control.FunctionDef2
 import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, FunctionCall, Reference}
 import pl.msulima.vistula.transpiler.scope._
+import pl.msulima.vistula.transpiler.{ExpressionOperation, _}
 
 import scala.io.Source
 
@@ -113,9 +114,17 @@ trait TemplateDereferencer {
         Tokenizer.apply(expression), Ast.identifier("toArray")
       ), Seq())
 
-      val inner = functionCall(ZipAndFlatten, Seq(
-        StaticArray.expr(apply(body).map(toObservable))
-      ))
+      val dereferencer = DereferencerImpl(scope.addToScope(Variable(identifier, ScopeElement.Default)), `package`)
+
+      val inner = {
+        val x = dereferencer.functionCall(ZipAndFlatten, Seq(
+          StaticArray.expr(apply(body).map(toObservable))
+        ))
+
+        val arguments = Seq(Variable(identifier, ScopeElement.Default))
+
+        anonymous(dereferenceScopeExpr(Seq(x)), arguments)
+      }
 
       // val inner = FunctionDef.anonymous(Variable(identifier, ScopeElement.Default), Seq(
       //   FunctionCall(ZipAndFlatten, Seq(
@@ -123,9 +132,14 @@ trait TemplateDereferencer {
       //   ))
       // ))
 
-      val outer = functionCall(ZipAndFlatten, Seq(
-        functionCall(Reference(Reference(TemplateDereferencer.ElementsId), Ast.identifier("map")), Seq(inner))
-      ))
+      val outer = {
+        val x = functionCall(ZipAndFlatten, Seq(
+          functionCall(Reference(Reference(TemplateDereferencer.ElementsId), Ast.identifier("map")), Seq(inner))
+        ))
+        val arguments = Seq(Variable(TemplateDereferencer.ElementsId, ScopeElement.DefaultConst))
+
+        anonymous(dereferenceScopeExpr(Seq(x)), arguments)
+      }
 
       // val outer = FunctionDef.anonymous(Variable(elementsId, ScopeElement.DefaultConst), Seq(
       //   FunctionCall(ZipAndFlatten, Seq(
@@ -134,5 +148,12 @@ trait TemplateDereferencer {
       // ))
 
       toObservable(functionCall(Reference(Box(iterable), Ast.identifier("rxFlatMap")), Seq(outer)))
+  }
+
+  private def anonymous(x: ExpressionOperation, arguments: Seq[Variable]): ExpressionOperation = {
+    val func = FunctionDef2(FunctionReference.Anonymous, arguments)
+    val funcDefinition = FunctionDefinition(arguments.map(_.`type`), x.`type`)
+
+    ExpressionOperation(func, Seq(x), ScopeElement.const(funcDefinition))
   }
 }
