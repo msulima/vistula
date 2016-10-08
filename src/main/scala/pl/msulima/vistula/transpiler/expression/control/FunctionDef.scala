@@ -19,16 +19,8 @@ object FunctionDef {
     })
   }
 
-  def anonymous(body: Seq[Token]): Token = {
-    anonymous(Seq(), body)
-  }
-
   def anonymous(singleArg: Variable, body: Seq[Token]): Token = {
-    anonymous(Seq(singleArg), body)
-  }
-
-  def anonymous(arguments: Seq[Variable], body: Seq[Token]): Token = {
-    Operation(new FunctionDef(FunctionReference.Anonymous, body, arguments), Seq())
+    Operation(new FunctionDef(FunctionReference.Anonymous, body, Seq(singleArg)), Seq())
   }
 }
 

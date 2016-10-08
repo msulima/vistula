@@ -45,6 +45,10 @@ case class Scope(private val imports: ScopePart, declarations: ScopePart) {
     classes(id)
   }
 
+  def addToScope(variables: Seq[Variable]): Scope = {
+    variables.foldLeft(this)((acc, variable) => acc.addToScope(variable))
+  }
+
   def addToScope(variable: Variable): Scope = {
     variable.`type` match {
       case ScopeElement(false, definition: FunctionDefinition) =>

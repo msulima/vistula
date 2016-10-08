@@ -19,6 +19,7 @@ trait LoopDereferencer {
       val program = body.map(Tokenizer.applyStmt)
       val boxLast = program.init :+ Box(program.last)
 
+
       val argument = dereference(FunctionDef.anonymous(Variable(variable, ScopeElement.Default), boxLast))
 
       functionCall(mapFunction, Seq(argument))

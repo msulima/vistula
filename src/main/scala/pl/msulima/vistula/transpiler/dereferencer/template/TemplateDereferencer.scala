@@ -3,9 +3,8 @@ package pl.msulima.vistula.transpiler.dereferencer.template
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.template.parser
 import pl.msulima.vistula.transpiler.dereferencer.control.FunctionDereferencer
-import pl.msulima.vistula.transpiler.dereferencer.reference.{BoxDereferencer, FunctionCallDereferencer}
+import pl.msulima.vistula.transpiler.dereferencer.reference.{BoxDereferencer, FunctionCallDereferencer, LambdaDereferencer}
 import pl.msulima.vistula.transpiler.dereferencer.{Dereferencer, DereferencerImpl}
-import pl.msulima.vistula.transpiler.expression.control.FunctionDef2
 import pl.msulima.vistula.transpiler.expression.data.{StaticArray, StaticString}
 import pl.msulima.vistula.transpiler.expression.reference.{Declare, Reference}
 import pl.msulima.vistula.transpiler.scope._
@@ -32,7 +31,7 @@ object TemplateDereferencer {
 }
 
 trait TemplateDereferencer {
-  this: Dereferencer with FunctionCallDereferencer with BoxDereferencer with FunctionDereferencer =>
+  this: Dereferencer with FunctionCallDereferencer with BoxDereferencer with FunctionDereferencer with LambdaDereferencer =>
 
   private val ZipAndFlatten = Reference(Reference(Scope.VistulaHelper), Ast.identifier("zipAndFlatten"))
   private val IfChangedArrays = Reference(Reference(Scope.VistulaHelper), Ast.identifier("ifChangedArrays"))
@@ -112,16 +111,18 @@ trait TemplateDereferencer {
     case parser.TextNode(text) =>
       functionCall(TextNode, Seq(dereference(StaticString(text))))
     case parser.LoopNode(identifier, expression, body) =>
-      val dereferencer = DereferencerImpl(scope.addToScope(Variable(identifier, ScopeElement.Default)), `package`)
-
       val inner = {
+        val variable = Variable(identifier, ScopeElement.Default)
+
+        val dereferencer = DereferencerImpl(scope.addToScope(variable), `package`)
+
         val x = dereferencer.functionCall(ZipAndFlatten, Seq(
           StaticArray.expr(apply(body).map(toObservable))
         ))
 
-        val arguments = Seq(Variable(identifier, ScopeElement.Default))
+        val arguments = Seq(variable)
 
-        anonymous(dereferenceScopeExpr(Seq(x)), arguments)
+        dereferenceLambda(arguments, dereferenceScopeExpr(Seq(x)))
       }
 
       val outer = {
@@ -135,7 +136,7 @@ trait TemplateDereferencer {
         ))
         val arguments = Seq(Variable(TemplateDereferencer.ElementsId, ScopeElement.DefaultConst))
 
-        anonymous(dereferenceScopeExpr(Seq(x)), arguments)
+        dereferenceLambda(arguments, dereferenceScopeExpr(Seq(x)))
       }
 
       val mapFunctionDefinition = FunctionDefinition(Seq(ScopeElement.Default), ScopeElement.Default)
@@ -149,12 +150,5 @@ trait TemplateDereferencer {
       }
 
       functionCall(source, mapFunctionDefinition, Seq(outer))
-  }
-
-  private def anonymous(x: ExpressionOperation, arguments: Seq[Variable]): ExpressionOperation = {
-    val func = FunctionDef2(FunctionReference.Anonymous, arguments)
-    val funcDefinition = FunctionDefinition(arguments.map(_.`type`), x.`type`)
-
-    ExpressionOperation(func, Seq(x), ScopeElement.const(funcDefinition))
   }
 }

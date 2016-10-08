@@ -30,7 +30,6 @@ object Tokenizer {
         .orElse(Primitives.apply)
 
     priorities
-      .orElse(FunctionCall.apply)
       .orElse(Reference.apply)
       .orElse(Tuple.apply)
       .orElse({

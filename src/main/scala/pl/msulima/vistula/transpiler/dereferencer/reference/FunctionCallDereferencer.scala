@@ -1,19 +1,16 @@
 package pl.msulima.vistula.transpiler.dereferencer.reference
 
+import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.{Dereferencer, OperationDereferencer}
-import pl.msulima.vistula.transpiler.expression.reference.FunctionCall
 import pl.msulima.vistula.transpiler.scope._
 
 trait FunctionCallDereferencer {
   this: Dereferencer with BoxDereferencer =>
 
   def functionCallDereferencer: PartialFunction[Token, Expression] = {
-    case Operation(_: FunctionCall, func +: args) =>
-      val function = dereferenceFunction(func, args)
-      val funcDefinition = getDefinition(function, args)
-
-      functionCall(function, funcDefinition, args.map(dereference))
+    case Direct(Ast.stmt.Expr(Ast.expr.Call(func, args, _, _, _))) =>
+      functionCall(Tokenizer.apply(func), dereference(args.map(Tokenizer.apply)))
   }
 
   def functionCall(func: Token, arguments: Seq[Expression]): ExpressionOperation = {
@@ -68,5 +65,17 @@ trait FunctionCallDereferencer {
     val inputs = functionSubstitutes._2 +: argumentsSubstitutes.map(_._2)
 
     (observables, inputs)
+  }
+}
+
+case class FunctionCall(constructor: Boolean) extends Operator {
+
+  override def apply(operands: List[Constant]) = {
+    val prefix = if (constructor) {
+      "new "
+    } else {
+      ""
+    }
+    s"$prefix${operands.head.value}(${operands.tail.map(_.value).mkString(", ")})"
   }
 }
