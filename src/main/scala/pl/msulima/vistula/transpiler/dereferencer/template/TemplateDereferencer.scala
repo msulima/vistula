@@ -31,7 +31,12 @@ object TemplateDereferencer {
 }
 
 trait TemplateDereferencer {
-  this: Dereferencer with FunctionCallDereferencer with BoxDereferencer with FunctionDereferencer with LambdaDereferencer =>
+  this: Dereferencer
+    with FunctionCallDereferencer
+    with AttributesDereferencer
+    with BoxDereferencer
+    with FunctionDereferencer
+    with LambdaDereferencer =>
 
   private val ZipAndFlatten = Reference(Reference(Scope.VistulaHelper), Ast.identifier("zipAndFlatten"))
   private val IfChangedArrays = Reference(Reference(Scope.VistulaHelper), Ast.identifier("ifChangedArrays"))
@@ -91,15 +96,16 @@ trait TemplateDereferencer {
       val children = childNodes.map(apply)
       val body = StaticArray.expr(children.map(toObservable))
 
-      tag.id.map(id => {
-        functionCall(CreateBoundElement, Seq(
-          dereference(StaticString(tag.name)), dereference(Constant(id.name)), dereference(Attributes(tag)), body
-        ))
-      }).getOrElse({
-        functionCall(CreateElement, Seq(
-          dereference(StaticString(tag.name)), dereference(Attributes(tag)), body
-        ))
-      })
+      val tagName = dereference(StaticString(tag.name))
+      val attribute = dereferenceAttribute(tag)
+
+      tag.id match {
+        case Some(id) =>
+          val idReference = dereference(Constant(id.name))
+          functionCall(CreateBoundElement, Seq(tagName, idReference, attribute, body))
+        case None =>
+          functionCall(CreateElement, Seq(tagName, attribute, body))
+      }
     case parser.ObservableNode(identifier) =>
       functionCall(TextObservable, Seq(dereference(identifier)))
     case parser.IfNode(expr, body, elseBody) =>

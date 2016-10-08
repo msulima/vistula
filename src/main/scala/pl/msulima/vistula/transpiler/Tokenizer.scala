@@ -3,7 +3,6 @@ package pl.msulima.vistula.transpiler
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler.dereferencer.template.TemplateDereferencer
 import pl.msulima.vistula.transpiler.expression.Other
-import pl.msulima.vistula.transpiler.expression.control._
 import pl.msulima.vistula.transpiler.expression.data.{InlineJavaScript, Primitives, Tuple}
 import pl.msulima.vistula.transpiler.expression.reference._
 
@@ -19,7 +18,6 @@ object Tokenizer {
   def applyStmt: PartialFunction[Ast.stmt, Token] = {
     expr
       .orElse(Declare.apply)
-      .orElse(FunctionDef.apply)
       .orElse(Other.apply)
   }
 

@@ -1,6 +1,6 @@
 package pl.msulima.vistula.transpiler
 
-import pl.msulima.vistula.transpiler.expression.control.FunctionScope
+import pl.msulima.vistula.transpiler.dereferencer.control.FunctionScope
 
 object SubstituteObservables {
 

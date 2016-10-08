@@ -7,7 +7,7 @@ import pl.msulima.vistula.transpiler.dereferencer.control._
 import pl.msulima.vistula.transpiler.dereferencer.data.{ClassDereferencer, ConstructorDereferencer, DictDereferencer, TupleDereferencer}
 import pl.msulima.vistula.transpiler.dereferencer.modules.{ImportDereferencer, ReferenceDereferencer}
 import pl.msulima.vistula.transpiler.dereferencer.reference._
-import pl.msulima.vistula.transpiler.dereferencer.template.TemplateDereferencer
+import pl.msulima.vistula.transpiler.dereferencer.template.{AttributesDereferencer, TemplateDereferencer}
 import pl.msulima.vistula.transpiler.scope.{Scope, ScopeElement}
 
 trait Dereferencer {
@@ -26,6 +26,7 @@ trait Dereferencer {
 
 case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferencer
   with ArithmeticDereferencer
+  with AttributesDereferencer
   with AssignDereferencer
   with BoxDereferencer
   with ClassDereferencer

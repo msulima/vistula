@@ -1,4 +1,4 @@
-package pl.msulima.vistula.transpiler.expression.control
+package pl.msulima.vistula.transpiler.dereferencer.control
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
@@ -7,20 +7,11 @@ import pl.msulima.vistula.util.Indent
 
 object FunctionDef {
 
-  def apply: PartialFunction[Ast.stmt, Token] = {
-    case funcDef@Ast.stmt.FunctionDef(name, args, body, _) =>
-      Direct(funcDef)
-  }
-
   def mapArguments(arguments: Ast.arguments) = {
     arguments.args.map({
       case Ast.argument(id, observable, fancyClassName, _) =>
         Variable(id, ScopeElement(observable = observable, ClassReference(fancyClassName)))
     })
-  }
-
-  def anonymous(singleArg: Variable, body: Seq[Token]): Token = {
-    Operation(new FunctionDef(FunctionReference.Anonymous, body, Seq(singleArg)), Seq())
   }
 }
 

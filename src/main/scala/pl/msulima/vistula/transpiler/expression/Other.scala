@@ -12,6 +12,8 @@ object Other {
       Direct(stmt)
     case stmt: Ast.expr.Dereference =>
       Direct(stmt)
+    case funcDef@Ast.stmt.FunctionDef(name, args, body, _) =>
+      Direct(funcDef)
     case stmt@Ast.stmt.For(Ast.expr.Name(argument, Ast.expr_context.Load), iterable, body) =>
       Direct(stmt)
     case stmt: Ast.stmt.If =>

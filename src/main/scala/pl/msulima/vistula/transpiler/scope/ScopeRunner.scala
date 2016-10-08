@@ -4,7 +4,7 @@ import pl.msulima.vistula.Package
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.DereferencerImpl
-import pl.msulima.vistula.transpiler.expression.control.FunctionDef
+import pl.msulima.vistula.transpiler.dereferencer.control.FunctionDef
 
 case object ScopeRunner {
 

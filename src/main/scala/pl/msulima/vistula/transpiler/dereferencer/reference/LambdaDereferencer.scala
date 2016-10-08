@@ -2,8 +2,8 @@ package pl.msulima.vistula.transpiler.dereferencer.reference
 
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
+import pl.msulima.vistula.transpiler.dereferencer.control.{FunctionDef, FunctionDef2}
 import pl.msulima.vistula.transpiler.dereferencer.{Dereferencer, DereferencerImpl}
-import pl.msulima.vistula.transpiler.expression.control.{FunctionDef, FunctionDef2}
 import pl.msulima.vistula.transpiler.scope.{FunctionDefinition, FunctionReference, ScopeElement, Variable}
 
 trait LambdaDereferencer {

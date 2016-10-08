@@ -3,13 +3,12 @@ package pl.msulima.vistula.transpiler.dereferencer.control
 import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
-import pl.msulima.vistula.transpiler.dereferencer.reference.FunctionCallDereferencer
-import pl.msulima.vistula.transpiler.expression.control.FunctionDef
+import pl.msulima.vistula.transpiler.dereferencer.reference.{FunctionCallDereferencer, LambdaDereferencer}
 import pl.msulima.vistula.transpiler.expression.reference.Reference
 import pl.msulima.vistula.transpiler.scope.{ScopeElement, Variable}
 
 trait LoopDereferencer {
-  this: Dereferencer with FunctionCallDereferencer =>
+  this: Dereferencer with FunctionCallDereferencer with LambdaDereferencer =>
 
   private val MapFunction = Ast.identifier("map")
 
@@ -19,8 +18,7 @@ trait LoopDereferencer {
       val program = body.map(Tokenizer.applyStmt)
       val boxLast = program.init :+ Box(program.last)
 
-
-      val argument = dereference(FunctionDef.anonymous(Variable(variable, ScopeElement.Default), boxLast))
+      val argument = dereferenceLambda(Seq(Variable(variable, ScopeElement.Default)), boxLast)
 
       functionCall(mapFunction, Seq(argument))
   }
