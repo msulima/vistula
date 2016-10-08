@@ -10,7 +10,9 @@ case class Observable(token: Token) extends Token
 
 case class Box(token: Token) extends Token
 
-case class Constant(value: String) extends Token
+case class Constant(value: String)
+
+case class IdConstant(value: Ast.identifier) extends Token
 
 case class TypedConstant(value: String, `type`: ScopeElement) extends Token
 

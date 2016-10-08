@@ -20,7 +20,7 @@ object Declare {
   }
 
   def apply(identifier: Ast.identifier, body: Token, mutable: Boolean, declare: Boolean): Operation = {
-    Operation(Declare(declare = declare, mutable = mutable), Seq(Constant(identifier.name), body))
+    Operation(Declare(declare = declare, mutable = mutable), Seq(IdConstant(identifier), body))
   }
 }
 

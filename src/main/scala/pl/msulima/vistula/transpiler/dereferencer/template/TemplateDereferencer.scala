@@ -82,7 +82,7 @@ trait TemplateDereferencer {
       body
     } else {
       val variableDeclarations = dereference(variables.map(variable => {
-        Declare.introduce(variable, body = Operation(Reference, Seq(Constant("new vistula.ObservableImpl()"))),
+        Declare.introduce(variable, body = Reference(Ast.identifier("new vistula.ObservableImpl()")),
           typedef = ClassReference.Object, mutable = true) // FIXME
       }))
 
@@ -101,7 +101,7 @@ trait TemplateDereferencer {
 
       tag.id match {
         case Some(id) =>
-          val idReference = dereference(Constant(id.name))
+          val idReference = dereference(IdConstant(id))
           functionCall(CreateBoundElement, Seq(tagName, idReference, attribute, body))
         case None =>
           functionCall(CreateElement, Seq(tagName, attribute, body))

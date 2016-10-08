@@ -48,7 +48,7 @@ trait ClassDereferencer {
     methods.map(method => {
       val prototypeName = FunctionReference(`package`, Ast.identifier(identifier.name + ".prototype." + method.name.name.name)).toIdentifier
 
-      dereferencer.dereferenceDeclare(Constant(prototypeName.name), Operation(method, Seq()), mutable = false, declare = false)
+      dereferencer.dereferenceDeclare(IdConstant(prototypeName), Operation(method, Seq()), mutable = false, declare = false)
     })
   }
 }

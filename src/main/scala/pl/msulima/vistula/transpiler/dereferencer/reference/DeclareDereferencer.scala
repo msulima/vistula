@@ -29,7 +29,7 @@ trait DeclareDereferencer {
 
   def introduce(identifier: Ast.identifier, body: Token, typedef: ClassType, mutable: Boolean, declare: Boolean = true) = {
     val variable = Variable(identifier, ScopeElement(mutable, typedef))
-    val result = dereferenceDeclare(Constant(identifier.name), body, mutable, declare)
+    val result = dereferenceDeclare(IdConstant(identifier), body, mutable, declare)
 
     ScopedResult(scope.addToScope(variable), Seq(result))
   }

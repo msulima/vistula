@@ -13,11 +13,11 @@ case object Reference extends Operator {
   }
 
   def apply(id: Ast.identifier): Token = {
-    Operation(Reference, Seq(Constant(id.name)))
+    Operation(Reference, Seq(IdConstant(id)))
   }
 
   def apply(source: Token, attribute: Ast.identifier): Token = {
-    Operation(Reference, Seq(source, Constant(attribute.name)))
+    Operation(Reference, Seq(source, IdConstant(attribute)))
   }
 
   override def apply(operands: List[Constant]): String = {

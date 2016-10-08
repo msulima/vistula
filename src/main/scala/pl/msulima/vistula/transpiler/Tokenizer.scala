@@ -5,10 +5,11 @@ import pl.msulima.vistula.transpiler.dereferencer.template.TemplateDereferencer
 import pl.msulima.vistula.transpiler.expression.Other
 import pl.msulima.vistula.transpiler.expression.data.{InlineJavaScript, Primitives, Tuple}
 import pl.msulima.vistula.transpiler.expression.reference._
+import pl.msulima.vistula.transpiler.scope.{ClassReference, ScopeElement}
 
 object Tokenizer {
 
-  val Pass = Constant("")
+  val Pass = TypedConstant("", ScopeElement.const(ClassReference.Unit))
 
   private val expr: PartialFunction[Ast.stmt, Token] = {
     case Ast.stmt.Expr(ex) =>

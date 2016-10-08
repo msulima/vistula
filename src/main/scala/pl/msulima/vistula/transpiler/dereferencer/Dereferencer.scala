@@ -77,8 +77,8 @@ case class DereferencerImpl(scope: Scope, `package`: Package) extends Dereferenc
   }
 
   private def default: PartialFunction[Token, Expression] = {
-    case x: Constant =>
-      ExpressionConstant(x.value, ScopeElement.DefaultConst)
+    case x: IdConstant =>
+      ExpressionConstant(x.value.name, ScopeElement.DefaultConst)
     case x: TypedConstant =>
       ExpressionConstant(x.value, x.`type`)
   }
