@@ -89,7 +89,7 @@ trait TemplateDereferencer {
       })
 
       val innerBody = variableDeclarations :+ body
-      wrap(dereferenceScopeExpr(innerBody))
+      wrap(reduceToScope(innerBody))
     }
   }
 
@@ -130,7 +130,7 @@ trait TemplateDereferencer {
 
         val arguments = Seq(variable)
 
-        dereferenceLambda(arguments, dereferenceScopeExpr(Seq(x)))
+        dereferenceLambda(arguments, reduceToScope(Seq(x)))
       }
 
       val outer = {
@@ -144,7 +144,7 @@ trait TemplateDereferencer {
         ))
         val arguments = Seq(Variable(TemplateDereferencer.ElementsId, ScopeElement.DefaultConst))
 
-        dereferenceLambda(arguments, dereferenceScopeExpr(Seq(x)))
+        dereferenceLambda(arguments, reduceToScope(Seq(x)))
       }
 
       val mapFunctionDefinition = FunctionDefinition(Seq(ScopeElement.Default), ScopeElement.Default)

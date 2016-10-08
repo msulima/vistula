@@ -23,8 +23,8 @@ trait IfDereferencer {
 
   private def dereferenceIf(testExpr: expr, tokenizedBody: Seq[Expression], tokenizedOrElse: Seq[Expression]): Expression = {
     val test = dereference(testExpr)
-    val body = dereferenceScopeExpr(tokenizedBody)
-    val orElse = dereferenceScopeExpr(tokenizedOrElse)
+    val body = reduceToScope(tokenizedBody)
+    val orElse = reduceToScope(tokenizedOrElse)
 
     if (test.`type`.observable || body.`type`.observable || orElse.`type`.observable) {
       functionCall(IfStatement, Seq(
@@ -43,7 +43,7 @@ trait IfDereferencer {
     if (program.size == 1) {
       program.head
     } else {
-      wrap(dereferenceScopeExpr(program))
+      wrap(reduceToScope(program))
     }
   }
 }

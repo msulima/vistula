@@ -4,7 +4,7 @@ import pl.msulima.vistula.parser.Ast
 import pl.msulima.vistula.transpiler._
 import pl.msulima.vistula.transpiler.dereferencer.Dereferencer
 import pl.msulima.vistula.transpiler.dereferencer.modules.Reference
-import pl.msulima.vistula.transpiler.dereferencer.reference.FunctionCallDereferencer
+import pl.msulima.vistula.transpiler.dereferencer.reference.{FunctionCallDereferencer, LambdaDereferencer}
 import pl.msulima.vistula.transpiler.scope.{Scope, ScopeElement, Variable}
 
 object GeneratorBody {
@@ -26,7 +26,7 @@ object GeneratorSource {
 }
 
 trait GeneratorDereferencer {
-  this: Dereferencer with FunctionCallDereferencer with FunctionDereferencer =>
+  this: Dereferencer with FunctionCallDereferencer with LambdaDereferencer =>
 
   def generatorDereferencer: PartialFunction[Token, Expression] = {
     case Direct(Ast.stmt.Expr(Ast.expr.GeneratorExp(GeneratorBody(initial, body), GeneratorSource(acc, source)))) =>
@@ -35,7 +35,7 @@ trait GeneratorDereferencer {
         Variable(source, ScopeElement.DefaultConst)
       )
       val transpiledBody = Box(Tokenizer.applyStmt(body))
-      val innerBody = anonymousFunction(arguments, Seq(transpiledBody))
+      val innerBody = dereferenceLambda(arguments, Seq(transpiledBody))
 
       functionCall(Reference(Reference(Scope.VistulaHelper), Ast.identifier("aggregate")), Seq(
         dereference(Reference(source)),

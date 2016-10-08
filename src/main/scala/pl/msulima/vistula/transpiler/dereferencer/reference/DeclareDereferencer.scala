@@ -44,11 +44,7 @@ trait DeclareDereferencer {
   }
 
   def dereferenceDeclare(identifier: Token, body: Token, mutable: Boolean, declare: Boolean): Expression = {
-    dereferenceDeclare(dereference(identifier), body, mutable, declare)
-  }
-
-  def dereferenceDeclare(identifier: Expression, body: Token, mutable: Boolean, declare: Boolean): Expression = {
-    dereferenceDeclare(identifier, dereference(body), mutable, declare)
+    dereferenceDeclare(dereference(identifier), dereference(body), mutable, declare)
   }
 
   def dereferenceDeclare(identifier: Expression, value: Expression, mutable: Boolean, declare: Boolean): ExpressionOperation = {

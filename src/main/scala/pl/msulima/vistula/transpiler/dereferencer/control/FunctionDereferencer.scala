@@ -19,17 +19,15 @@ trait FunctionDereferencer {
   }
 
   def dereferenceAndAddToScope(func: Ast.stmt.FunctionDef) = {
-    val functionDef = toFunctionDef(func)
-
-    val id = functionDef.name
-    val body = dereferenceFunction(functionDef)
+    val id = func.name
+    val body = dereferenceFunction(toFunctionDef(func))
     val declaration = if (`package` == Package.Root) {
       body
     } else {
-      dereferenceDeclare(IdConstant.expr(id.toIdentifier), body, mutable = false, declare = false)
+      dereferenceDeclare(IdConstant.expr(id), body, mutable = false, declare = false)
     }
 
-    ScopedResult(scope.addToScope(Variable(id.name, body.`type`)), Seq(declaration))
+    ScopedResult(scope.addToScope(Variable(id, body.`type`)), Seq(declaration))
   }
 
   def toFunctionDef(func: Ast.stmt.FunctionDef): FunctionDef = {
@@ -42,37 +40,28 @@ trait FunctionDereferencer {
     )
   }
 
-  def wrap(innerBody: Expression): ExpressionOperation = {
-    val func = FunctionDef(FunctionReference.Anonymous, Seq(), Seq())
-    val funcDefinition = FunctionDefinition(Seq(), innerBody.`type`)
-    val innerFunction = ExpressionOperation(func, Seq(innerBody), ScopeElement.const(funcDefinition))
-
-    functionCall(Wrap, Seq(innerFunction))
-  }
-
-  def anonymousFunction(arguments: Seq[Variable], body: Seq[Token]): ExpressionOperation = {
-    dereferenceFunction(FunctionReference.Anonymous, arguments, body)
+  def wrap(body: Expression): Expression = {
+    functionCall(Wrap, Seq(functionOperation(FunctionReference.Anonymous, Seq(), body)))
   }
 
   def dereferenceFunction(func: FunctionDef): ExpressionOperation = {
     dereferenceFunction(func.name, func.arguments, func.program)
   }
 
-  private def dereferenceFunction(name: FunctionReference, arguments: Seq[Variable], program: Seq[Token]): ExpressionOperation = {
-    val body = dereferenceScope(arguments.map(ImportVariable) ++ program)
+  def dereferenceFunction(name: FunctionReference, arguments: Seq[Variable], program: Seq[Token]): ExpressionOperation = {
+    val body = reduceToScope(dereference(arguments.map(ImportVariable) ++ program))
 
+    functionOperation(name, arguments, body)
+  }
+
+  def functionOperation(name: FunctionReference, arguments: Seq[Variable], body: Expression) = {
     val func = FunctionDef2(name, arguments)
     val funcDefinition = FunctionDefinition(arguments.map(_.`type`), body.`type`)
 
     ExpressionOperation(func, Seq(body), ScopeElement.const(funcDefinition))
   }
 
-  def dereferenceScope(program: Seq[Token]): ExpressionOperation = {
-    val result = dereference(program)
-    dereferenceScopeExpr(result)
-  }
-
-  def dereferenceScopeExpr(result: Seq[Expression]): ExpressionOperation = {
+  def reduceToScope(result: Seq[Expression]): ExpressionOperation = {
     val maybeLast = findReturn(result, box = false)
     val body = result.init ++ maybeLast.toSeq
     val returnType = body.lastOption.map(_.`type`).getOrElse(ScopeElement.const(ClassReference.Unit))

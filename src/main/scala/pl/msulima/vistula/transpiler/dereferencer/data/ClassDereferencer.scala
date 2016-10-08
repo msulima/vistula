@@ -10,6 +10,7 @@ import pl.msulima.vistula.transpiler.scope._
 trait ClassDereferencer {
   this: Dereferencer with ConstructorDereferencer with DeclareDereferencer with FunctionDereferencer =>
 
+  private val ThisId = Ast.identifier("this")
 
   def classDereferencer(classDef: Ast.stmt.ClassDef) = {
     val identifier = classDef.name
@@ -29,7 +30,11 @@ trait ClassDereferencer {
       field.id -> field.`type`
     }).toMap ++ declarations
 
-    val dereferencerImpl = DereferencerImpl(scope.addToScope(ClassReferenceAndDefinition(ClassReference(`package`, identifier), ClassDefinition(members))), `package`)
+    val classReference = ClassReference(`package`, identifier)
+    val dereferencerImpl = DereferencerImpl(scope
+      .addToScope(ClassReferenceAndDefinition(classReference, ClassDefinition(members)))
+      .addToScope(Variable(ThisId, ScopeElement.const(classReference))),
+      `package`)
     val definitions = getMethodDefinitions(dereferencerImpl, identifier, methods)
 
     val scopedResult = constructor(dereferencerImpl, identifier, fields, constructorFunc)
@@ -48,7 +53,7 @@ trait ClassDereferencer {
     methods.map(method => {
       val prototypeName = FunctionReference(`package`, Ast.identifier(identifier.name + ".prototype." + method.name.name.name)).toIdentifier
 
-      dereferencer.dereferenceDeclare(IdConstant(prototypeName), Operation(method, Seq()), mutable = false, declare = false)
+      dereferencer.dereferenceDeclare(IdConstant.expr(prototypeName), dereferenceFunction(method), mutable = false, declare = false)
     })
   }
 }
