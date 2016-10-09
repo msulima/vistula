@@ -14,7 +14,7 @@ class ModulesSpec extends Specification with TranspilerSpecification {
   "merge multiple files from package into one" in {
     Vistula.browserify(Package("examples.modules"))
 
-    readFile("target/vistula/classes/examples.modules.js") must_==
+    readFile("target/vistula/modules/examples.modules.js") must_==
       readFile("/pl/msulima/vistula/transpiler/modules/examples.modules.js")
   }
 }

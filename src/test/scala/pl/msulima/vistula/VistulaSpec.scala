@@ -26,16 +26,11 @@ class VistulaSpec extends Specification {
 
   "transpiles vistula" in {
     Vistula.browserify(Package("vistula"))
+    Vistula.browserify(Package("vistula2.ui"))
     Vistula.browserify(Package("js"))
 
     new File("target/vistula/modules/js.js").exists() must beTrue
     new File("target/vistula/modules/vistula.js").exists() must beTrue
-  }
-
-  "saves files with imports" in {
-    Vistula.compileAll()
-
-    new File("target/vistula/classes/examples/import/App.js").exists() must beTrue
-    new File("target/vistula/classes/vistula/lang/Integer.js").exists() must beTrue
+    new File("target/vistula/modules/vistula2.ui.js").exists() must beTrue
   }
 }

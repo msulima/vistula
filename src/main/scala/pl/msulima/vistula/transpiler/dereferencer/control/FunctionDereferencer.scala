@@ -24,7 +24,7 @@ trait FunctionDereferencer {
     val declaration = if (`package` == Package.Root) {
       body
     } else {
-      dereferenceDeclare(IdConstant.expr(id), body, mutable = false, declare = false)
+      dereferenceDeclare(IdConstant.expr(FunctionReference(`package`, id).toIdentifier), body, mutable = false, declare = false)
     }
 
     ScopedResult(scope.addToScope(Variable(id, body.`type`)), Seq(declaration))

@@ -16,18 +16,6 @@ object Vistula {
 
   private lazy val Predef = readPackageDeclarations(ClassDefinitionHelper.VistulaRoot.resolve("lang"))
 
-  def compileAll() = {
-    Paths.findAllSourceFiles().foreach({
-      case (file, pack) =>
-        val script = Transpiler.toJavaScript(Transformer.transform(read(file), pack, Predef))
-
-        val resolve = Paths.toTargetFile(file)
-
-        resolve.getParent.toFile.mkdirs()
-        Files.write(resolve, script.split("\n").toSeq)
-    })
-  }
-
   def toJavaScript(input: String): String = {
     Transpiler.toJavaScript(Transformer.transform(parse(input), Package.Root, Predef))
   }

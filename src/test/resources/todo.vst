@@ -1,4 +1,5 @@
 import js.Event
+import vistula2.ui.Form
 
 '''# javascript
 const submitTasks = new vistula.ObservableImpl();
@@ -19,7 +20,7 @@ class SubmittedTask {
 def addTask(ev: js.Event) {
   ev.preventDefault()
 
-  submitTasks <- SubmittedTask(True, stdlib.formValueFromEvent(ev), None)
+  submitTasks <- SubmittedTask(True, vistula2.ui.formValueFromEvent(ev), None)
 }
 
 def currentFilter(hash) {

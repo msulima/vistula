@@ -1,0 +1,17 @@
+
+def formValueFromEvent(ev: vistula.lang.Object) {
+    let toReturn = None
+    '''# javascript
+    let elements = ev.srcElement.elements;
+    let formValue = {};
+    Object.keys(elements).forEach(function (key) {
+        formValue[elements[key].name] = vistula.toObservable(elements[key].value);
+    });
+    Object.keys(elements).forEach(function (key) {
+        elements[key].value = "";
+    });
+    toReturn.rxPush(formValue);
+    '''
+
+    toReturn
+}
