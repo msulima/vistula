@@ -16,9 +16,11 @@ examples.modules.Bar.prototype.bar = function bar() {
 examples.modules.staticBar = function staticBar(x) {
     return x;
 };
-examples.modules.Foo = function Foo() {
+examples.modules.nesting = {};
+examples.modules.nesting.othernesting = {};
+examples.modules.nesting.othernesting.Foo = function Foo() {
     ;
 };
-examples.modules.Foo.prototype.foo = function foo() {
+examples.modules.nesting.othernesting.Foo.prototype.foo = function foo() {
     return 1;
 };

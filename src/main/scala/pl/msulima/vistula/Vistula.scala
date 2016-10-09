@@ -27,23 +27,28 @@ object Vistula {
 
     val outputStream = new PrintStream(new BufferedOutputStream(new FileOutputStream(resolve.toFile)))
 
-    outputStream.println(Transpiler.toJavaScript(ImportDereferencer.packagePreambule(input)))
+    outputStream.println(Transpiler.toJavaScript(ImportDereferencer.modulePreambule(input)))
 
     Paths.findPackageSourceFiles(input).foreach({
-      case (file, pack) =>
-        val program = Transformer.transform(read(file), pack, Predef)
+      case (pack, files) =>
+        outputStream.println(Transpiler.toJavaScript(ImportDereferencer.packagePreambule(pack)))
+        files.foreach(file => {
+          val program = Transformer.transform(read(file), pack, Predef)
 
-        val script = Transpiler.toJavaScript(program)
+          val script = Transpiler.toJavaScript(program)
 
-        outputStream.println(script)
+          outputStream.println(script)
+        })
     })
     outputStream.close()
   }
 
   private def readPackageDeclarations(input: Package) = {
-    val imports = Paths.findPackageSourceFiles(input).map({
-      case (file, pack) =>
-        Transformer.extractScope(read(file), pack).declarations
+    val imports = Paths.findPackageSourceFiles(input).flatMap({
+      case (pack, files) =>
+        files.map(file => {
+          Transformer.extractScope(read(file), pack).declarations
+        })
     })
 
     imports.reduce(_.addToScope(_))

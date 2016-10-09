@@ -17,11 +17,7 @@ object Paths {
     deleteRecursively(TargetDir.toFile)
   }
 
-  def findAllSourceFiles() = {
-    findPackageSourceFiles(Package.Root)
-  }
-
-  def findPackageSourceFiles(input: Package) = {
+  def findPackageSourceFiles(input: Package): Seq[(Package, Seq[Path])] = {
     val path = if (input.path.isEmpty) {
       SourceDir
     } else {
@@ -29,7 +25,8 @@ object Paths {
       SourceDir.resolve(JavaPaths.get(names.head, names.tail: _*))
     }
 
-    getAllFiles(path, input)
+    val filesByPackage = getAllFiles(path, input).groupBy(_._2).mapValues(_.map(_._1).filterNot(_.toFile.isDirectory).toSeq)
+    filesByPackage.toSeq.sortBy(_._1.toIdentifier.name)
   }
 
   private def getAllFiles(top: Path, `package`: Package): Iterable[(Path, Package)] = {
@@ -38,11 +35,15 @@ object Paths {
     try {
       directoryStream = Files.newDirectoryStream(top)
       directoryStream.flatMap(dir => {
-        if (dir.toFile.isDirectory) {
+        val currentPackage = dir -> `package`
+
+        val nestedFiles = if (dir.toFile.isDirectory) {
           getAllFiles(dir, `package`.resolve(dir.toFile.getName))
         } else {
-          Seq(dir -> `package`)
+          Seq()
         }
+
+        currentPackage +: nestedFiles.toSeq
       })
     } finally {
       if (directoryStream != null) {

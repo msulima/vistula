@@ -11,18 +11,20 @@ import pl.msulima.vistula.{Package, Vistula}
 
 object ImportDereferencer {
 
-  def packagePreambule(`package`: Package): Seq[Expression] = {
+  def modulePreambule(`package`: Package): Seq[Expression] = {
     if (`package` == Package.Root) {
       Seq()
     } else {
       val id = `package`.path.head
-      val root = declareAsEmptyDict(id, declare = true)
+      Seq(declareAsEmptyDict(id, declare = true))
+    }
+  }
 
-      val modules = `package`.path.inits.toSeq.reverse.drop(2).map(path => {
-        val id = Package(path).toIdentifier
-        declareAsEmptyDict(id, declare = false)
-      })
-      root +: modules
+  def packagePreambule(`package`: Package): Seq[Expression] = {
+    if (`package`.path.size > 1) {
+      Seq(declareAsEmptyDict(`package`.toIdentifier, declare = false))
+    } else {
+      Seq()
     }
   }
 
