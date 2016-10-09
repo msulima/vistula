@@ -1,4 +1,5 @@
 import js.Date
+import vistula2.net.Ajax
 
 '''# javascript
 let start = vistula.constantObservable(new Date().getTime());
@@ -51,7 +52,7 @@ Hello {{ name }}!
   {% endif %}
   </p>
   <ul>
-    {% for person in stdlib.net.ajaxGet("http://uinames.com/api/?amount=3") %}
+    {% for person in vistula2.net.ajaxGet("http://uinames.com/api/?amount=3") %}
       <li>{{ person.name }} from {{ person.region }}</li>
     {% endfor %}
   </ul>

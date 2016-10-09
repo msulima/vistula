@@ -11,49 +11,12 @@ function appendChild(Target, Observables) {
     });
 }
 
-function ajaxGet(Url) {
-    const obs = new vistula.ObservableImpl();
-
-    return Url.rxFlatMap(function (url) {
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            var DONE = this.DONE || 4;
-            if (this.readyState === DONE) {
-                var value = vistula.toObservable(JSON.parse(this.responseText));
-                value.rxForEach(obs.rxPush.bind(obs));
-            }
-        };
-        request.open("GET", url, true);
-        request.send(null);
-
-        return obs;
-    });
-}
-
-function formValueFromEvent(_ev) {
-    let ev = _ev.rxLastValue();
-    let elements = ev.srcElement.elements;
-    let formValue = {};
-    Object.keys(elements).forEach(function (key) {
-        formValue[elements[key].name] = vistula.toObservable(elements[key].value);
-    });
-    Object.keys(elements).forEach(function (key) {
-        elements[key].value = "";
-    });
-    return vistula.constantObservable(formValue);
-}
-
 const stdlib = vistula.toObservable({
     dom: {
         appendChild: appendChild
     },
-    net: {
-        ajaxGet: ajaxGet
-    },
     storage: require("./storage"),
-    ajaxGet: ajaxGet,
     appendChild: appendChild,
-    formValueFromEvent: formValueFromEvent,
 });
 
 // FIXME
