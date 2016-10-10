@@ -1,0 +1,18 @@
+
+
+def appendChild(targetId: vistula.lang.String, Observables) {
+    let obs = None
+
+    '''# javascript
+    let currentChildren = [];
+
+    return Observables.rxMap(($arg) => {
+        const target = document.getElementById(targetId);
+        const nextChildren = $arg;
+        vistula.dom.updateChildren(target, 0, currentChildren, nextChildren);
+        currentChildren = nextChildren;
+    });
+    '''
+
+    obs
+}

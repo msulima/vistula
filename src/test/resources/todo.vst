@@ -1,5 +1,6 @@
 import js.Event
 import vistula2.ui.Form
+import vistula2.ui.Dom
 
 '''# javascript
 const submitTasks = new vistula.ObservableImpl();
@@ -93,7 +94,7 @@ let leftTodosCount = allTodos.size() - completed.size()
 
 let app = '''# html:/todo.vst.html'''
 
-let foo = stdlib.dom.appendChild("todoapp", app)
+let foo = vistula2.ui.appendChild("todoapp", app)
 
 def toggleAll() {
   const x = leftTodosCount

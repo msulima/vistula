@@ -1,5 +1,6 @@
 import js.Date
 import vistula2.net.Ajax
+import vistula2.ui.Dom
 
 '''# javascript
 let start = vistula.constantObservable(new Date().getTime());
@@ -59,7 +60,7 @@ Hello {{ name }}!
 </div>
 '''
 
-let foo = stdlib.dom.appendChild("main", main)
+let foo = vistula2.ui.appendChild("main", main)
 
 '''# javascript
 
