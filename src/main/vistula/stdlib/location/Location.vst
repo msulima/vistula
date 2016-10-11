@@ -1,0 +1,15 @@
+
+def hash() {
+    let hash = None
+
+    '''# javascript
+    hash.rxPush(window.location.hash.substring(1));
+
+    // TODO global source
+    window.addEventListener("hashchange", ev => {
+        hash.rxPush(window.location.hash.substring(1));
+    });
+    '''
+
+    hash
+}

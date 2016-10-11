@@ -26,11 +26,11 @@ class VistulaSpec extends Specification {
 
   "transpiles vistula" in {
     Vistula.browserify(Package("vistula"))
-    Vistula.browserify(Package("vistula2"))
+    Vistula.browserify(Package("stdlib"))
     Vistula.browserify(Package("js"))
 
     new File("target/vistula/modules/js.js").exists() must beTrue
     new File("target/vistula/modules/vistula.js").exists() must beTrue
-    new File("target/vistula/modules/vistula2.js").exists() must beTrue
+    new File("target/vistula/modules/stdlib.js").exists() must beTrue
   }
 }

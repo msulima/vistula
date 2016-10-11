@@ -1,7 +1,8 @@
 import js.Event
-import vistula2.ui.Form
-import vistula2.ui.Dom
-import vistula2.storage.LocalStorage
+import stdlib.ui.Form
+import stdlib.ui.Dom
+import stdlib.storage.LocalStorage
+import stdlib.location.Location
 
 '''# javascript
 const submitTasks = new vistula.ObservableImpl();
@@ -22,7 +23,7 @@ class SubmittedTask {
 def addTask(ev: js.Event) {
   ev.preventDefault()
 
-  submitTasks <- SubmittedTask(True, vistula2.ui.formValueFromEvent(ev), None)
+  submitTasks <- SubmittedTask(True, stdlib.ui.formValueFromEvent(ev), None)
 }
 
 def currentFilter(hash) {
@@ -35,7 +36,7 @@ def currentFilter(hash) {
   }
 }
 
-let filter = currentFilter(stdlib.location.hash)
+let filter = currentFilter(stdlib.location.hash())
 
 def updateTodos(allTodos, action: *SubmittedTask) {
   if (action.isAdd) {
@@ -47,9 +48,9 @@ def updateTodos(allTodos, action: *SubmittedTask) {
 
 let storageName = "todos-vistula"
 
-let allTodos: vistula.collection.Seq = (vistula2.storage.getOrDefault(storageName, vistula.Seq.apply()) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
+let allTodos: vistula.collection.Seq = (stdlib.storage.getOrDefault(storageName, vistula.Seq.apply()) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
 
-let bar = vistula2.storage.set(storageName, allTodos)
+let bar = stdlib.storage.set(storageName, allTodos)
 
 def isVisible(todo) {
   if (filter == "all") {
@@ -95,7 +96,7 @@ let leftTodosCount = allTodos.size() - completed.size()
 
 let app = '''# html:/todo.vst.html'''
 
-let foo = vistula2.ui.appendChild("todoapp", app)
+let foo = stdlib.ui.appendChild("todoapp", app)
 
 def toggleAll() {
   const x = leftTodosCount

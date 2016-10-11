@@ -13,22 +13,11 @@ object ClassDefinitionHelper {
   private val VistulaDom = ClassReference("vistula.dom.Dom")
   val Vistula = VistulaRoot.packageObjectReference
 
-  val Stdlib = ClassReference("stdlib.Predef")
-  private val StdlibTime = ClassReference("stdlib.time")
-
   val Event = ClassReference("js.Event")
   private val Date = ClassReference("js.Date")
 
-  private val stdlib = Map(
-    Stdlib -> ClassDefinition(Map(
-      Ast.identifier("time") -> ScopeElement.const(StdlibTime)
-    )),
-    StdlibTime -> ClassDefinition(Map(
-      Ast.identifier("clock") -> ScopeElement.observable(Date)
-    ))
-  )
 
-  val defaults: Map[ClassReference, ClassDefinition] = stdlib ++ Map(
+  val defaults: Map[ClassReference, ClassDefinition] = Map(
     ClassReference.Object -> ClassDefinition(Map()),
     Vistula -> ClassDefinition(Map(
       obsDef("aggregate", obs, const, const),

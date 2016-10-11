@@ -90,8 +90,7 @@ object Scope {
     Scope(
       imports = ScopePart(
         variables = Map(
-          VistulaHelper -> ScopeElement.const(ClassDefinitionHelper.Vistula),
-          Ast.identifier("stdlib") -> ScopeElement.observable(ClassDefinitionHelper.Stdlib)
+          VistulaHelper -> ScopeElement.const(ClassDefinitionHelper.Vistula)
         ),
         functions = Map(),
         classes = ClassDefinitionHelper.defaults

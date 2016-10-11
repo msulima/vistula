@@ -1,12 +1,13 @@
 import js.Date
-import vistula2.net.Ajax
-import vistula2.ui.Dom
+import stdlib.net.Ajax
+import stdlib.ui.Dom
+import stdlib.time.Clock
 
 '''# javascript
 let start = vistula.constantObservable(new Date().getTime());
 '''
 
-let clock = stdlib.time.clock
+let clock = stdlib.time.clock()
 
 let ticks = (0 or ticks + 1 for ticks in clock)
 
@@ -53,14 +54,14 @@ Hello {{ name }}!
   {% endif %}
   </p>
   <ul>
-    {% for person in vistula2.net.ajaxGet("http://uinames.com/api/?amount=3") %}
+    {% for person in stdlib.net.ajaxGet("http://uinames.com/api/?amount=3") %}
       <li>{{ person.name }} from {{ person.region }}</li>
     {% endfor %}
   </ul>
 </div>
 '''
 
-let foo = vistula2.ui.appendChild("main", main)
+let foo = stdlib.ui.appendChild("main", main)
 
 '''# javascript
 

@@ -1,0 +1,16 @@
+import js.Date
+
+def clock() {
+    let clock: js.Date = None
+
+    '''# javascript
+    const timer = vistula.constantObservable(0);
+    setInterval(timer.rxPush.bind(timer), 1000);
+
+    return timer.rxMap(function (ignored) {
+        return new Date();
+    });
+    '''
+
+    clock
+}
