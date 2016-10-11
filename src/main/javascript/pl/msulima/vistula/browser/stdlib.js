@@ -1,7 +1,6 @@
 "use strict";
 
 const stdlib = vistula.toObservable({
-    storage: require("./storage"),
 });
 
 // FIXME

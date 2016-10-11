@@ -1,6 +1,7 @@
 import js.Event
 import vistula2.ui.Form
 import vistula2.ui.Dom
+import vistula2.storage.LocalStorage
 
 '''# javascript
 const submitTasks = new vistula.ObservableImpl();
@@ -46,9 +47,9 @@ def updateTodos(allTodos, action: *SubmittedTask) {
 
 let storageName = "todos-vistula"
 
-let allTodos: vistula.collection.Seq = (stdlib.storage.getOrDefault(storageName, vistula.Seq.apply()) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
+let allTodos: vistula.collection.Seq = (vistula2.storage.getOrDefault(storageName, vistula.Seq.apply()) or updateTodos(allTodos, submitTasks) for allTodos in submitTasks)
 
-let bar = stdlib.storage.set(storageName, allTodos)
+let bar = vistula2.storage.set(storageName, allTodos)
 
 def isVisible(todo) {
   if (filter == "all") {

@@ -1,0 +1,26 @@
+
+def getOrDefault(key: vistula.lang.String, DefaultValue: *vistula.lang.Object) {
+    let obs = None
+
+    '''# javascript
+    const storage = localStorage[key];
+    if (storage === undefined) {
+        return DefaultValue;
+    } else {
+        return vistula.toObservable(JSON.parse(storage));
+    }
+    '''
+
+    obs
+}
+
+def set(key: vistula.lang.String, value: *vistula.lang.Object) {
+    '''# javascript
+    return vistula.fromObservable(value).rxMap($arg => {
+        localStorage[key] = JSON.stringify($arg);
+        return value;
+    })
+    '''
+
+    value
+}
