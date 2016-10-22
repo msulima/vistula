@@ -24,13 +24,22 @@ class VistulaSpec extends Specification {
     script must not(beEmpty)
   }
 
+  "transpiles canvas" in {
+    val script = Vistula.toJavaScript(Source.fromInputStream(getClass.getResourceAsStream("/canvas.vst")).mkString)
+
+    Files.write(new File("target/canvas.js").toPath, script.split("\n").toSeq.asJava)
+    script must not(beEmpty)
+  }
+
   "transpiles vistula" in {
     Vistula.browserify(Package("vistula"))
     Vistula.browserify(Package("stdlib"))
     Vistula.browserify(Package("js"))
+    Vistula.browserify(Package("examples.canvas"))
 
     new File("target/vistula/modules/js.js").exists() must beTrue
     new File("target/vistula/modules/vistula.js").exists() must beTrue
     new File("target/vistula/modules/stdlib.js").exists() must beTrue
+    new File("target/vistula/modules/examples.canvas.js").exists() must beTrue
   }
 }

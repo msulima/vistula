@@ -83,6 +83,7 @@ case class Scope(private val imports: ScopePart, declarations: ScopePart) {
 
 object Scope {
 
+  val Document = Ast.identifier("document")
   val VistulaHelper = Ast.identifier("vistula")
   val EmptyScopePart = ScopePart(Map(), Map(), Map())
 
@@ -90,6 +91,7 @@ object Scope {
     Scope(
       imports = ScopePart(
         variables = Map(
+          Document -> ScopeElement.DefaultConst,
           VistulaHelper -> ScopeElement.const(ClassDefinitionHelper.Vistula)
         ),
         functions = Map(),

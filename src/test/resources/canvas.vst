@@ -1,0 +1,33 @@
+import js.Date
+import stdlib.net.Ajax
+import stdlib.ui.Dom
+import stdlib.time.Clock
+import examples.canvas.Chart
+import stdlib.math.Math
+
+let clock = stdlib.time.clock()
+
+let main = '''# html
+{{ clock.getSeconds() }}s.
+<canvas id="canvas" width="300" height="300"></canvas>
+'''
+
+let foo = stdlib.ui.appendChild("main", main)
+
+'''# javascript
+foo.rxForEach(() => {});
+'''
+
+
+const handLength = 100
+const center = handLength + 10
+
+const canvas = document.getElementById("canvas")
+
+let endX = center + handLength * stdlib.math.sinDeg(clock.getSeconds() * 6)
+let endY = center - handLength * stdlib.math.cosDeg(clock.getSeconds() * 6)
+let bar = examples.canvas.line(canvas, center, center, endX, endY)
+
+'''# javascript
+bar.rxForEach(() => {});
+'''

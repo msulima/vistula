@@ -1,0 +1,16 @@
+
+
+def line(canvas: vistula.lang.Object, startX: vistula.lang.Integer, startY: vistula.lang.Integer, endX: vistula.lang.Integer, endY: vistula.lang.Integer) {
+    '''# javascript
+    var ctx = canvas.getContext("2d");
+
+    ctx.clearRect(0, 0, 300, 300);
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+    ctx.closePath();
+    '''
+
+    0
+}
