@@ -44,6 +44,13 @@ trait FunctionDereferencer {
     functionCall(Wrap, Seq(functionOperation(FunctionReference.Anonymous, Seq(), body)))
   }
 
+  def wrapConst(body: Expression): Expression = {
+    // hacky, but probably needs generics to have different return types
+    functionCall(Wrap, Seq(functionOperation(FunctionReference.Anonymous, Seq(), body))).copy(
+      `type` = ScopeElement.DefaultConst
+    )
+  }
+
   def dereferenceFunction(func: FunctionDef): ExpressionOperation = {
     dereferenceFunction(func.name, func.arguments, func.program)
   }

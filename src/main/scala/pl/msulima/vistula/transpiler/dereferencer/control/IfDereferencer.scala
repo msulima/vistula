@@ -35,7 +35,7 @@ trait IfDereferencer {
     } else {
       val innerBody = ExpressionOperation(If, Seq(test, body, orElse), body.`type`)
 
-      wrap(innerBody)
+      wrapConst(innerBody)
     }
   }
 

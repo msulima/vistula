@@ -14,8 +14,6 @@ object ClassDefinitionHelper {
   val Vistula = VistulaRoot.packageObjectReference
 
   val Event = ClassReference("js.Event")
-  private val Date = ClassReference("js.Date")
-
 
   val defaults: Map[ClassReference, ClassDefinition] = Map(
     ClassReference.Object -> ClassDefinition(Map()),
